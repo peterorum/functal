@@ -1,2 +1,2 @@
 # functal
-Functional fractals
+Fractals created using functional javascript.
