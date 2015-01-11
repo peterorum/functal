@@ -1,0 +1,1095 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"hasA",
+				"hasAVowel	words-short.js"
+			],
+			[
+				"transpo",
+				"transporter	sendmail.js"
+			],
+			[
+				"isLength",
+				"isLengthNCurried	words-short.js"
+			],
+			[
+				"isL",
+				"isLength3	words-jkqx.js"
+			],
+			[
+				"ph",
+				"phantomPath	take-screenshot.js"
+			],
+			[
+				"file",
+				"filename	random-spec.js"
+			],
+			[
+				"md5",
+				"md5Actual	random-spec.js"
+			],
+			[
+				"Conf",
+				"ConfigPage()	config-spec.js"
+			],
+			[
+				"Ra",
+				"RandomHomepage()	random-spec.js"
+			],
+			[
+				"f",
+				"filename"
+			],
+			[
+				"p",
+				"pathname"
+			],
+			[
+				"rem",
+				"remotePort"
+			],
+			[
+				"to",
+				"toString"
+			],
+			[
+				"ch",
+				"channel1"
+			],
+			[
+				"wr",
+				"writeData"
+			],
+			[
+				"get",
+				"getConnection"
+			],
+			[
+				"dere",
+				"degreesNormalized"
+			],
+			[
+				"ba",
+				"background-color"
+			],
+			[
+				"ev",
+				"everyScope"
+			],
+			[
+				"list",
+				"listenerArgs"
+			],
+			[
+				"l",
+				"length"
+			],
+			[
+				"i",
+				"index  (variable)"
+			],
+			[
+				"lis",
+				"listeners"
+			],
+			[
+				"index",
+				"indexOf"
+			],
+			[
+				"tr",
+				"trackVeryOldValue"
+			],
+			[
+				"old",
+				"oldLength"
+			],
+			[
+				"new",
+				"newLength"
+			],
+			[
+				"po",
+				"postDigestQueue"
+			],
+			[
+				"d",
+				"postDigestQueue"
+			],
+			[
+				"as",
+				"asyncQueue"
+			],
+			[
+				"asy",
+				"asyncQueue"
+			],
+			[
+				"a",
+				"asyncQueue"
+			],
+			[
+				"async",
+				"asyncEvaluatedImmediately"
+			],
+			[
+				"v",
+				"valueEq"
+			],
+			[
+				"New",
+				"newValue"
+			],
+			[
+				"wat",
+				"watcher"
+			],
+			[
+				"last",
+				"lastDirtyWatch"
+			],
+			[
+				"wa",
+				"watchExecutions"
+			],
+			[
+				"digest",
+				"digestOnce"
+			],
+			[
+				"c",
+				"createSpy"
+			],
+			[
+				"proto",
+				"prototype"
+			],
+			[
+				"li",
+				"listenerFn"
+			],
+			[
+				"watch",
+				"watchFn"
+			],
+			[
+				"ng-s",
+				"ng-show	AngularJS"
+			],
+			[
+				"str_",
+				"str_replace"
+			],
+			[
+				"jso",
+				"json_encode"
+			],
+			[
+				"pjo_sett",
+				"pjo_setting"
+			],
+			[
+				"cl",
+				"clearTimeout"
+			],
+			[
+				"blo",
+				"blogFlash"
+			],
+			[
+				"bl",
+				"blogFlash"
+			],
+			[
+				"add",
+				"addClass  (function)"
+			],
+			[
+				"screen-sm-",
+				"screen-sm-max"
+			],
+			[
+				"ou",
+				"outerWidth  (variable)"
+			],
+			[
+				"font-",
+				"font-size"
+			],
+			[
+				"ov",
+				"overflow-x"
+			],
+			[
+				"the_p",
+				"the_permalink"
+			],
+			[
+				"text",
+				"text-align"
+			],
+			[
+				"get_p",
+				"get_permalink"
+			],
+			[
+				"paddi",
+				"padding-left"
+			],
+			[
+				"backg",
+				"background"
+			],
+			[
+				"import",
+				"important"
+			],
+			[
+				"scro",
+				"scrollToAccordion"
+			],
+			[
+				"img",
+				"img-responsive"
+			],
+			[
+				"text-",
+				"text-transform"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"back",
+				"background"
+			],
+			[
+				"screen-xs-",
+				"screen-xs-max"
+			],
+			[
+				"clear",
+				"clearTimeout  (function)"
+			],
+			[
+				"op",
+				"openTimer"
+			],
+			[
+				"screen-sm",
+				"screen-xs-max"
+			],
+			[
+				"aff",
+				"aff-accordion-header"
+			],
+			[
+				"aff-",
+				"aff-accordion-heading"
+			],
+			[
+				"file_",
+				"file_version"
+			],
+			[
+				"array_p",
+				"array_push"
+			],
+			[
+				"m",
+				"margin-left"
+			],
+			[
+				"border-rig",
+				"border-top-right-radius"
+			],
+			[
+				"contact",
+				"contact-page"
+			],
+			[
+				"border",
+				"border-right"
+			],
+			[
+				"te",
+				"text-align"
+			],
+			[
+				"t",
+				"table-cell"
+			],
+			[
+				"awards",
+				"awardsImage"
+			],
+			[
+				"hi",
+				"highlightCount"
+			],
+			[
+				"awad",
+				"awardsImage"
+			],
+			[
+				"bac",
+				"background-color"
+			],
+			[
+				"backgru",
+				"background-image"
+			],
+			[
+				"resize",
+				"resizeVideo"
+			],
+			[
+				"margin",
+				"margin-top"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"bio",
+				"bioContent"
+			],
+			[
+				"pa",
+				"padding-bottom"
+			],
+			[
+				"o",
+				"opacity"
+			],
+			[
+				"wasV",
+				"wasVisible"
+			],
+			[
+				"toggle",
+				"toggleClass  (function)"
+			],
+			[
+				"bo",
+				"border"
+			],
+			[
+				"abu",
+				"about-page"
+			],
+			[
+				"text-de",
+				"text-decoration"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"ja",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"re",
+				"Package Control: Remove Package"
+			],
+			[
+				"du",
+				"File: Duplicate"
+			],
+			[
+				"dupl",
+				"File: Duplicate"
+			],
+			[
+				"mo",
+				"File: Move"
+			],
+			[
+				"i",
+				"Package Control: Install Package"
+			],
+			[
+				"Snippet: ",
+				"Snippet: #!/usr/bin/env"
+			],
+			[
+				"snip",
+				"Snippet: Lorem ipsum"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"fix",
+				"FixMyJS"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"git push",
+				"Git: Push"
+			],
+			[
+				"git comm",
+				"Git: Quick Commit"
+			],
+			[
+				"commit",
+				"Git: Commit"
+			],
+			[
+				"git add",
+				"Git: Add Current File"
+			],
+			[
+				"add",
+				"Git: Add Signed Tag"
+			],
+			[
+				"git clone",
+				"Git: Quick Log Current File"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"push",
+				"Git: Push"
+			],
+			[
+				"qui",
+				"Git: Quick Commit"
+			],
+			[
+				"commt",
+				"Git: Commit"
+			],
+			[
+				"pus",
+				"Git: Push"
+			],
+			[
+				"comm",
+				"Git: Quick Commit"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"pack",
+				"Package Control: List Packages"
+			],
+			[
+				"disab",
+				"Package Control: Disable Package"
+			],
+			[
+				"css",
+				"Run CSScomb JS"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"jshint",
+				"JSHint"
+			],
+			[
+				"git:v",
+				"Git: Version"
+			],
+			[
+				"git:st",
+				"Git: Status"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Package Control: Install Package"
+			],
+			[
+				"form",
+				"Format Code"
+			],
+			[
+				"code",
+				"Format Code"
+			],
+			[
+				"FindKeyConflicts",
+				"FindKeyConflicts: All Conflicts"
+			],
+			[
+				"Form",
+				"Format Code"
+			],
+			[
+				"format code",
+				"Format Code"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 186.0,
+		"history":
+		[
+			"os.path.exists(\"/Library/Frameworks/Python.framework/Versions/3.4/lib/python3.4/site-packages/pylint/lint.py\")",
+			"os.path.exists(\"/Library/Frameworks/Python.framework/Versions/3.4/lib/python3.4/site-packages/pylint/lint.pyw\")",
+			"os.path.exists(\"/Library/Frameworks/Python.framework/Versions/3.4/lib/python3.4/site-packages/pylint/lint.py\")",
+			"os.path.exists(pylint_path)",
+			"import os",
+			"os.path.exists(pylint_path)",
+			"sublime.log_commands(False)",
+			"sublime.log_commands(True)",
+			"view.run_command(\"hello_world\")",
+			"view.run_command(\"example\")",
+			"view.run_command(\"hello_world\")",
+			"FindKeyConflicts",
+			"Format Code",
+			"codeformatter",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/peterorum/Projects/functal"
+	],
+	"file_history":
+	[
+		"/Users/peterorum/Projects/random/words-short.js",
+		"/private/tmp/step-18.md",
+		"/Users/peterorum/Projects/random/words-jkqx.js",
+		"/Users/peterorum/Projects/random/sendmail.js",
+		"/usr/local/bin/gph",
+		"/Users/peterorum/Projects/random/nodemailer-example.js",
+		"/Users/peterorum/Projects/paintingsilove/PaintingsILove/Web.config.live",
+		"/Users/peterorum/Projects/random/package.json",
+		"/Users/peterorum/Projects/random/get-word.js",
+		"/Users/peterorum/Projects/random/words.txt",
+		"/private/tmp/x.txt",
+		"/usr/local/bin/gp",
+		"/Users/peterorum/Projects/random/server.js",
+		"/Users/peterorum/Projects/random/ci-string.js",
+		"/Users/peterorum/Projects/random/nmon",
+		"/private/tmp/step-17.md",
+		"/Users/peterorum/Projects/random/cis.js",
+		"/Users/peterorum/.profile",
+		"/usr/local/bin/gp2",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/HTML-CSS-JS Prettify/.jsbeautifyrc",
+		"/Users/peterorum/Projects/seraline/package.json",
+		"/Users/peterorum/Projects/random/.gitignore",
+		"/Users/peterorum/Projects/seraline/server.js",
+		"/Volumes/Git 2.2.1 Mavericks Intel Universal/setup git PATH for non-terminal programs.sh",
+		"/Volumes/Git 2.2.1 Mavericks Intel Universal/uninstall.sh",
+		"/Volumes/Git 2.2.1 Mavericks Intel Universal/README.txt",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/peterorum/Projects/seraline/index.js",
+		"/Users/peterorum/Projects/random/scraper.js",
+		"/Users/peterorum/Projects/random/README.md",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/Terminal/Default (OSX).sublime-keymap",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/Terminal/Terminal.sublime-settings",
+		"/Users/peterorum/Dropbox/Screensavers/data.txt",
+		"/Users/peterorum/Dropbox/Screensavers/namelog.txt",
+		"/Users/peterorum/Projects/random/protractor-conf-chrome.js",
+		"/Users/peterorum/Projects/random/.jshintrc",
+		"/Users/peterorum/Projects/random/phantom/run-take-screenshot.js",
+		"/Users/peterorum/Projects/random/phantom/gruntfile.js",
+		"/Users/peterorum/Projects/random/phantom/take-screenshot.js",
+		"/Users/peterorum/Projects/random/phantom/phantom-save-screenshot.js",
+		"/Users/peterorum/Projects/random/tests/random-chrome.js",
+		"/Users/peterorum/Projects/random/tests/random-spec.js",
+		"/Users/peterorum/Projects/random/gruntfile.js",
+		"/Users/peterorum/Projects/random/phantomjsdriver.log",
+		"/Users/peterorum/Projects/random/.jscsrc",
+		"/Users/peterorum/Projects/random/.flowconfig",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/User/SublimeLinter.sublime-settings",
+		"/Users/peterorum/Projects/random/protractor-conf.js",
+		"/Users/peterorum/Projects/random/process.js",
+		"/Users/peterorum/Projects/random/Procfile",
+		"/private/tmp/step-16.md",
+		"/Users/peterorum/Projects/random/tests/config-spec.js",
+		"/private/tmp/flow.md",
+		"/Users/peterorum/Projects/random/gistfile1.js",
+		"/Users/peterorum/Downloads/gistf53f8996fb8816bb6372-50beea8a3c2349e0c6c4c70a44c126dcfe99d300/gistfile1.js",
+		"/Users/peterorum/Projects/random/run",
+		"/tmp/npmlistg",
+		"/tmp/npmlist",
+		"/Users/peterorum/Downloads/flow/examples/01_HelloWorld/hello.js",
+		"/Users/peterorum/Projects/random/LICENSE",
+		"/Users/peterorum/Projects/random/node_modules/angular-hint/dist/hint.js",
+		"/Users/peterorum/Projects/random/app/app.js",
+		"/private/tmp/step-15.md",
+		"/Users/peterorum/Projects/random/casper.js",
+		"/Users/peterorum/Projects/random/index.html",
+		"/Users/peterorum/Projects/random/controllers/random.js",
+		"/private/tmp/step-14.md",
+		"/Users/peterorum/Projects/process-mail/.gitignore",
+		"/Users/peterorum/Projects/process-mail/server.js",
+		"/Users/peterorum/Projects/process-mail/package.json",
+		"/private/tmp/step-13.md",
+		"/private/tmp/step-12.md",
+		"/Users/peterorum/Projects/random/sockets/client.js",
+		"/Users/peterorum/Projects/random/sockets/server.js",
+		"/Users/peterorum/Projects/random/ssl/server.pem",
+		"/socket-client.js",
+		"/Users/peterorum/Projects/random/make-ssl.sh",
+		"/private/tmp/ssl.md",
+		"/private/tmp/ss.md",
+		"/Users/peterorum/Projects/random/npm-debug.log",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/User/hello",
+		"/Users/peterorum/Dropbox/Sublime/less.sublime-snippet",
+		"/Users/peterorum/Projects/random/phantom-debug.js",
+		"/Users/peterorum/Projects/random/phantom-debug.sh",
+		"/private/tmp/step-10.md",
+		"/Users/peterorum/Projects/random/random.js",
+		"/private/tmp/step-11",
+		"/Users/peterorum/.bashrc",
+		"/Users/peterorum/.gitconfig",
+		"/private/tmp/step-9.md",
+		"/Users/peterorum/Projects/data-science-at-the-command-line/book/ch01/data/fetch-data",
+		"/usr/local/bin/cols",
+		"/Users/peterorum/Projects/data-science-at-the-command-line/book/ch01/data/fashion.csv",
+		"/Users/peterorum/Projects/data-science-at-the-command-line/book/ch01/data/results/fetch-data",
+		"/var/folders/z5/whlsgl694_g12jh0rcvmyy400000gp/T/sublime-sftp-browse-1414672261/sna/home/ec2-user/sna/PIL_Comments.py",
+		"/var/folders/z5/whlsgl694_g12jh0rcvmyy400000gp/T/sublime-sftp-browse-1414671930/sna/home/ec2-user/sna/PIL_Comments.py",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/User/sftp_servers/sna",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/HTML-CSS-JS Prettify/Default (OSX).sublime-keymap",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/FixMyJS/FixMyJS.sublime-settings",
+		"/Users/peterorum/Projects/street-pics/index.html",
+		"/Users/peterorum/Projects/random/random-spec.js",
+		"/Users/peterorum/.ssh/config",
+		"/Users/peterorum/Dropbox/Projects/protractor-examples/index.html",
+		"/Users/peterorum/Dropbox/Projects/protractor-examples/protractor-conf.js",
+		"/Users/peterorum/Projects/random/random-0.1.1.tgz",
+		"/Users/peterorum/Projects/random/random.sublime-project",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ngMock/angular-mocks.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ngRoute/route.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/window.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/urlUtils.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngTransclude.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/script.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/sce.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/timeout.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngShowHide.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngRepeat.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngPluralize.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngNonBindable.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngInit.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngInclude.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngIf.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngController.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngCsp.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngBind.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/input.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/form.js",
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/directives.js"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 138.0,
+		"where_history":
+		[
+			"",
+			"C:\\wamp\\www\\wp-content, -*.sql,C:\\wamp\\www\\wp-content\\themes\\DeepFocus",
+			"C:\\wamp\\www\\wp-content, -*.css, -*.sql,C:\\wamp\\www\\wp-content\\themes\\DeepFocus",
+			"C:\\wamp\\www\\wp-content, -*.css, -*.sql",
+			"C:\\wamp\\www\\Affinity\\wp-content, -*.css, -*.sql",
+			"C:\\wamp\\www\\Affinity\\wp-content, -*.css",
+			"C:\\wamp\\www\\Affinity\\wp-content;-*.css",
+			"C:\\wamp\\www\\Affinity\\wp-content",
+			"C:\\wamp\\www\\Affinity\\wp-content,-*.css",
+			"C:\\wamp\\www\\Affinity\\wp-content -.css",
+			"C:\\wamp\\www\\Affinity\\wp-content",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"hasNoVowel",
+			"hasAVowel",
+			"w3jkqx",
+			"hasCharCurried",
+			"_.",
+			"lodash",
+			"terminal",
+			"uri",
+			"gistfile1",
+			"RandomHomepage",
+			"randomHomePage",
+			"RandomHomepage",
+			"growl",
+			"dev",
+			"urlObj",
+			"export",
+			"fog",
+			"http",
+			"conn, ",
+			"this",
+			"con",
+			"local",
+			"2013",
+			" ",
+			">",
+			"pjo-tw",
+			"faceboo",
+			"container",
+			">",
+			"<",
+			"testApp",
+			".directive",
+			".direct",
+			"cloud",
+			"tag",
+			"nav-menu-wrapper",
+			"@med",
+			"custom",
+			"title-gr",
+			"grid_",
+			"grid_4",
+			"twitter",
+			"des",
+			"optica",
+			"degrees",
+			"log",
+			"degrees",
+			"item",
+			"item1",
+			"html",
+			"body",
+			"item1",
+			"it",
+			"item1",
+			"html",
+			"item2",
+			"ul",
+			"li",
+			"console",
+			"super",
+			"ul",
+			"demo_collection",
+			"find",
+			"    ",
+			"function",
+			"server",
+			"requestHandler",
+			"response",
+			"writeHead",
+			"esponse",
+			"demo_collection",
+			"mongojs",
+			"sublime_plugin",
+			"TextCommand",
+			"self",
+			"run",
+			"sublime",
+			"Hello",
+			"view",
+			"Parent",
+			"parent",
+			"Parent",
+			"parent",
+			"apply",
+			"$$last",
+			"$$lastd",
+			"container",
+			"backgroundTable",
+			"web-v",
+			"</table><table ",
+			"<tb`",
+			"</table><table ",
+			"<tb`",
+			"e0e0e0",
+			"container550",
+			"plus-separator",
+			"plus-separator-d",
+			"plus-sep",
+			"plus-separator-d",
+			"plus-sep",
+			"4px",
+			"photo",
+			"imagined",
+			"2.50",
+			"see other",
+			"unli",
+			"it all",
+			"unlimited",
+			"it all st",
+			"unlimited",
+			"2.50",
+			"unlimited",
+			"it all sta",
+			"Unlimited access on",
+			"it all sta",
+			"Unlimited access on",
+			"digital ",
+			"<ul",
+			"devices-d",
+			"stacks",
+			"bookmark",
+			"imagined",
+			"break",
+			"composite",
+			"blue-b",
+			"cta",
+			"2.50ee",
+			"2.50"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"&gt;",
+			"&lt;",
+			"<td width=\"30\">",
+			"alt=\"spacer\" width=\"7\" height=\"10\" ",
+			"width=\"550\" height=\"60\" ",
+			"width=\"550\" height=\"54\" ",
+			"src=\"http://gasmail.peterorum.com/Emails/RET0XX/Images",
+			"RET0XX",
+			"width: 326px",
+			"width=\"587\"",
+			"width=\"588\"",
+			"width=\"590\"",
+			"width=\"600\"",
+			"src=\"http://gasmail.peterorum.com/Emails/RET058/Images",
+			"<table border=\"0\"",
+			"src=\"http://gasmail.peterorum.com/Emails/RET058/Images",
+			"src=\"images",
+			"src=\"http://gasmail.peterorum.com/Emails/Images",
+			"line-height:21px",
+			"left:16px",
+			"VIEW SCORES NOW",
+			"[The Telegraph+]",
+			"masthead-",
+			"themasthead-",
+			"masthead-",
+			" ",
+			"|",
+			"\\nRewriteCond",
+			"RewriteCond\\n",
+			"RewriteCond\\\\n",
+			"^RewriteCond",
+			"\\nRewriteCond",
+			"random",
+			"street.wpdev.peterorum2.com",
+			"Random",
+			"PJO",
+			"random.peterorum2.com",
+			"wpdev.peterorum2.com",
+			"",
+			"pjo_",
+			"site",
+			"http://oldblog.peterorum2.com",
+			"/testing",
+			"the_post",
+			"hide",
+			"$media_post",
+			"$implementation_post",
+			"$digital_post",
+			"$brand_post",
+			"$advertising_post",
+			"$business_post",
+			"media",
+			"implementation",
+			"digital",
+			"brand",
+			"advertising",
+			"client",
+			"prevId",
+			"nextId",
+			"prevId",
+			"}",
+			"award",
+			"client",
+			"work",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 43.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.git-commit":
+	{
+		"height": 100.0
+	},
+	"output.git-init":
+	{
+		"height": 100.0
+	},
+	"output.git-push":
+	{
+		"height": 100.0
+	},
+	"output.sftp":
+	{
+		"height": 100.0
+	},
+	"project": "functal.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"serv",
+				"server.js"
+			],
+			[
+				"gr",
+				"gruntfile.js"
+			],
+			[
+				"grut",
+				"gruntfile.js"
+			],
+			[
+				".jsh",
+				".jshintrc"
+			],
+			[
+				"pro",
+				"protractor-conf.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 750.0,
+		"selected_items":
+		[
+			[
+				"",
+				"~/Projects/random/random.sublime-project"
+			]
+		],
+		"width": 570.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 251.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
