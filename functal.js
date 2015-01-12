@@ -9,7 +9,8 @@
     var ff = {};
 
     // convert to -1 .. 1
-    ff.normalize = function(range, x){
+    ff.normalize = function(range, x)
+    {
 
         return x / range * 2 - 1;
     };
@@ -17,21 +18,18 @@
     ff.escapeCount = function(options, x, y)
     {
         var count = 0;
+        var o = options;
 
         var z = math.complex(x, y);
 
-        var maxCount = options.maxCount - 1;
-        var limit = options.limit;
-        var c = options.c;
-
-        while(count < maxCount)
+        while (count < o.maxCount() - 1)
         {
             z = math.chain(z)
-            .pow(2)
-            .add(c)
-            .done();
+                .pow(2)
+                .add(o.c())
+                .done();
 
-            if (math.norm(z) > limit)
+            if (math.norm(z) > o.limit())
             {
                 break;
             }
@@ -46,23 +44,23 @@
 
     ff.make = function(options)
     {
-
         var f = {};
         f.options = options;
+        var o = options;
         f.data = [];
 
         var data = f.data;
 
         var startTime = (new Date()).getTime();
 
-        R.range(0, options.width).forEach(function(x)
+        R.range(0, o.width()).forEach(function(x)
         {
             f.data[x] = [];
 
-            R.range(0, options.height).forEach(function(y)
+            R.range(0, o.height()).forEach(function(y)
             {
-                var fx = ff.normalize(options.width, x);
-                var fy = ff.normalize(options.height, y);
+                var fx = ff.normalize(o.width(), x);
+                var fy = ff.normalize(o.height(), y);
 
                 var count = ff.escapeCount(options, fx, fy);
 
@@ -76,15 +74,30 @@
     };
 
     var options = {
-        width: 100,
-        height: 100,
-        maxCount: 256,
-        limit: 2,
-        c: math.random(-0.5, 0.5)
+        width: function()
+        {
+            return 100;
+        },
+        height: function()
+        {
+            return 100;
+        },
+        maxCount: function()
+        {
+            return 256;
+        },
+        limit: function()
+        {
+            return 2;
+        },
+        c: function()
+        {
+            return math.random(-0.5, 0.5);
+        }
     };
 
     var functal = ff.make(options);
 
-    console.log(functal.data);
+    // console.log(functal.data);
     console.log(functal.time);
 }());
