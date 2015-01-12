@@ -563,7 +563,7 @@
 				"Format Code"
 			]
 		],
-		"width": 593.0
+		"width": 602.0
 	},
 	"console":
 	{
@@ -602,6 +602,12 @@
 	],
 	"file_history":
 	[
+		"/Users/peterorum/Projects/functal/functal.js",
+		"/Users/peterorum/Dropbox/EC2/pjo-usa.ppk",
+		"/Users/peterorum/Dropbox/EC2/pjo2.ppk",
+		"/Users/peterorum/Projects/functal/node_modules/mathjs/dist/math.js",
+		"/Users/peterorum/Projects/seractal/mandel.cpp",
+		"/Users/peterorum/Dropbox/EC2/pjo2.pem",
 		"/Users/peterorum/Projects/random/words-short.js",
 		"/private/tmp/step-18.md",
 		"/Users/peterorum/Projects/random/words-jkqx.js",
@@ -723,13 +729,7 @@
 		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngNonBindable.js",
 		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngInit.js",
 		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngInclude.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngIf.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngController.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngCsp.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngBind.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/input.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/form.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/directives.js"
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngIf.js"
 	],
 	"find":
 	{
@@ -759,6 +759,22 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"distribution",
+			"_random",
+			"distributio",
+			"random",
+			"bailout",
+			"escape_cou",
+			"m_limit",
+			"escape_cou",
+			"m_max_bailout",
+			"escape_c",
+			"m_bUpdatingColors",
+			"m_fLimnXAdj",
+			"m_screen_width",
+			"float",
+			"escape_count",
+			"escape",
 			"hasNoVowel",
 			"hasAVowel",
 			"w3jkqx",
@@ -870,23 +886,7 @@
 			"it all st",
 			"unlimited",
 			"2.50",
-			"unlimited",
-			"it all sta",
-			"Unlimited access on",
-			"it all sta",
-			"Unlimited access on",
-			"digital ",
-			"<ul",
-			"devices-d",
-			"stacks",
-			"bookmark",
-			"imagined",
-			"break",
-			"composite",
-			"blue-b",
-			"cta",
-			"2.50ee",
-			"2.50"
+			"unlimited"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -976,7 +976,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 23.0
+		"height": 34.0
 	},
 	"input":
 	{
