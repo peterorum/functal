@@ -391,6 +391,30 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "functal.js",
+			"settings":
+			{
+				"buffer_size": 2230,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "package.json",
+			"settings":
+			{
+				"buffer_size": 586,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "plus-fp/plus-fp.js",
+			"settings":
+			{
+				"buffer_size": 368,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -603,10 +627,16 @@
 	"file_history":
 	[
 		"/Users/peterorum/Projects/functal/functal.js",
+		"/Users/peterorum/Projects/wrd/server.js",
+		"/Users/peterorum/Projects/wrd/startdb",
+		"/usr/local/etc/mongod.conf",
+		"/Users/peterorum/Projects/seractal/mandel.cpp",
+		"/var/folders/z5/whlsgl694_g12jh0rcvmyy400000gp/T/sublime-sftp-browse-1420978638/node/home/ec2-user/functal/functal.js",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/User/sftp_servers/node",
+		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/User/sftp_servers/sna",
 		"/Users/peterorum/Dropbox/EC2/pjo-usa.ppk",
 		"/Users/peterorum/Dropbox/EC2/pjo2.ppk",
 		"/Users/peterorum/Projects/functal/node_modules/mathjs/dist/math.js",
-		"/Users/peterorum/Projects/seractal/mandel.cpp",
 		"/Users/peterorum/Dropbox/EC2/pjo2.pem",
 		"/Users/peterorum/Projects/random/words-short.js",
 		"/private/tmp/step-18.md",
@@ -705,7 +735,6 @@
 		"/Users/peterorum/Projects/data-science-at-the-command-line/book/ch01/data/results/fetch-data",
 		"/var/folders/z5/whlsgl694_g12jh0rcvmyy400000gp/T/sublime-sftp-browse-1414672261/sna/home/ec2-user/sna/PIL_Comments.py",
 		"/var/folders/z5/whlsgl694_g12jh0rcvmyy400000gp/T/sublime-sftp-browse-1414671930/sna/home/ec2-user/sna/PIL_Comments.py",
-		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/User/sftp_servers/sna",
 		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/HTML-CSS-JS Prettify/Default (OSX).sublime-keymap",
 		"/Users/peterorum/Library/Application Support/Sublime Text 3/Packages/FixMyJS/FixMyJS.sublime-settings",
 		"/Users/peterorum/Projects/street-pics/index.html",
@@ -724,12 +753,7 @@
 		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/sce.js",
 		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/timeout.js",
 		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngShowHide.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngRepeat.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngPluralize.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngNonBindable.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngInit.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngInclude.js",
-		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngIf.js"
+		"/Users/peterorum/Dropbox/Projects/angular.js/src/ng/directive/ngRepeat.js"
 	],
 	"find":
 	{
@@ -759,6 +783,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"R.",
+			"limit",
+			"options.",
 			"distribution",
 			"_random",
 			"distributio",
@@ -883,10 +910,7 @@
 			"unli",
 			"it all",
 			"unlimited",
-			"it all st",
-			"unlimited",
-			"2.50",
-			"unlimited"
+			"it all st"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -969,8 +993,109 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "functal.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2230,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1621,
+								1621
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 868.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "package.json",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 586,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								542,
+								542
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "plus-fp/plus-fp.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 368,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								55,
+								55
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
