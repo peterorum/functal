@@ -2,8 +2,12 @@
 {
     "use strict";
 
-    var R = require('ramda');
     var math = require('mathjs');
+    var fs = require('fs');
+    var PNG = require('node-png').PNG;
+
+    var fp = require('lodash-fp');
+    fp.mixin(require('./plus-fp/plus-fp'));
 
     //----------- fractal functions
     var ff = {};
@@ -11,25 +15,32 @@
     // convert to -1 .. 1
     ff.normalize = function(range, x)
     {
-
         return x / range * 2 - 1;
     };
 
-    ff.escapeCount = function(options, x, y)
+    ff.escapeCount = function(f, x, y)
     {
         var count = 0;
-        var o = options;
 
-        var z = math.complex(x, y);
+        // start z at zero
+        var z = math.complex(0, 0);
 
-        while (count < o.maxCount() - 1)
+        // vary c by x & y
+        var c = math.complex(x, y);
+
+        var maxCount = f.maxCount;
+        var limit = f.limit;
+
+        // count how long the iteration takes to break the limit
+
+        while (count < maxCount - 1)
         {
             z = math.chain(z)
                 .pow(2)
-                .add(o.c())
+                .add(c)
                 .done();
 
-            if (math.norm(z) > o.limit())
+            if (math.norm(z) > limit)
             {
                 break;
             }
@@ -45,24 +56,27 @@
     ff.make = function(options)
     {
         var f = {};
-        f.options = options;
-        var o = options;
-        f.data = [];
 
-        var data = f.data;
+        f.width = options.width();
+        f.height = options.height();
+        f.maxCount = options.maxCount();
+        f.limit = options.limit();
+
+        var data = [];
 
         var startTime = (new Date()).getTime();
 
-        R.range(0, o.width()).forEach(function(x)
+        fp.range(0, f.width).forEach(function(x)
         {
-            f.data[x] = [];
+            data[x] = [];
 
-            R.range(0, o.height()).forEach(function(y)
+            var fx = ff.normalize(f.width, x);
+
+            fp.range(0, f.height).forEach(function(y)
             {
-                var fx = ff.normalize(o.width(), x);
-                var fy = ff.normalize(o.height(), y);
+                var fy = ff.normalize(f.height, y);
 
-                var count = ff.escapeCount(options, fx, fy);
+                var count = ff.escapeCount(f, fx, fy);
 
                 data[x][y] = count;
             });
@@ -70,8 +84,47 @@
 
         f.time = ((new Date()).getTime() - startTime) / 1000;
 
+        if (options.file())
+        {
+            ff.png(options.file(), f, data);
+        }
+
         return f;
     };
+
+    // ------------ output to a png image
+
+    ff.png = fp.curry(function(filename, functal, data)
+    {
+        var image = new PNG(
+        {
+            width: functal.width,
+            height: functal.height,
+            filterType: -1
+        });
+
+        for (var y = 0; y < image.height; y++)
+        {
+            for (var x = 0; x < image.width; x++)
+            {
+                var idx = (image.width * y + x) << 2;
+
+                var i = data[x][y];
+
+                // grayscale
+
+                image.data[idx] = i;
+                image.data[idx + 1] = i;
+                image.data[idx + 2] = i;
+                image.data[idx + 3] = 0xff;
+            }
+        }
+
+        image.pack().pipe(fs.createWriteStream(filename));
+
+    });
+
+    // ------------ init a functal
 
     var options = {
         width: function()
@@ -90,14 +143,14 @@
         {
             return 2;
         },
-        c: function()
+        file : function()
         {
-            return math.random(-0.5, 0.5);
+            return 'functals/f000001.png';
         }
     };
 
     var functal = ff.make(options);
 
-    // console.log(functal.data);
-    console.log(functal.time);
+    console.log(functal.time + ' secs');
+
 }());
