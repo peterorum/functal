@@ -197,10 +197,29 @@
         {
             if (err)
             {
-                console.log(err);
+                console.log('error', err);
             }
 
-            console.log(response);
+
+            console.log(response.body);
+
+            // if (response.body.errors)
+            {
+                console.log('try again');
+
+                tuwm.post('First functal', 'functals/f000001.png', function(err, response)
+                {
+                    if (err)
+                    {
+                        console.log('error', err);
+                    }
+
+                    console.log(response.body);
+
+                });
+            }
         });
+
+
     }
 }());
