@@ -13,12 +13,12 @@
     var ff = {};
 
     // convert to -1 .. 1
-    ff.normalize = function(range, x)
+    ff.normalize = fp.curry(function(range, x)
     {
         return x / range * 2 - 1;
-    };
+    });
 
-    ff.escapeCount = function(f, x, y)
+    ff.escapeCount = fp.curry(function(f, x, y)
     {
         var count = 0;
 
@@ -49,11 +49,11 @@
         }
 
         return count;
-    };
+    });
 
     // ---------- make a functal
 
-    ff.make = function(options)
+    ff.make = fp.curry(function(options)
     {
         var f = {};
 
@@ -90,7 +90,7 @@
         }
 
         return f;
-    };
+    });
 
     // ------------ output to a png image
 
