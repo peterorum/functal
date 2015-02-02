@@ -4,10 +4,40 @@
 
     var math = require('mathjs');
     var fs = require('fs');
+
     var PNG = require('node-png').PNG;
 
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
+
+    var Twitter_update_with_media = require('./twitter_update_with_media');
+
+    //------------ twitter
+    var tweet = function(text)
+    {
+        var T = new Twit(
+        {
+            // jshint ignore:start
+            consumer_key: 'cY0JxQ7nBPrUk73qVDxVnc0xy', //process.env.twitterConsumerKey,
+            consumer_secret: 'FHSCngkvIhuH7SRO9J9JVZEWF5llsq6XKCa5mYLzmHukLLyrVq', // process.env.twitterConsumerSecret,
+            access_token: '3007843982-vyu0FnX6aYbt9zQVZ2tSfifUkjEwp0tXwF7edAj', // process.env.twitterAccessToken,
+            access_token_secret: '1KyHHQO12SZRS314dUUOwOxKBOtynwNGaoAzE8wa9fyvW' // process.env.twitterAccessTokenSecret
+                // jshint ignore:end
+        });
+
+        T.post('statuses/update',
+        {
+            status: text
+        }, function(err /*, data, response */ )
+        {
+            if (err)
+            {
+                console.log(err);
+            }
+
+            // console.log(data);
+        });
+    };
 
     //----------- fractal functions
     var ff = {};
@@ -143,7 +173,7 @@
         {
             return 2;
         },
-        file : function()
+        file: function()
         {
             return 'functals/f000001.png';
         }
@@ -153,4 +183,24 @@
 
     console.log(functal.time + ' secs');
 
+    if (process.env.consumer_key)
+    {
+        var tuwm = new Twitter_update_with_media(
+        {
+            consumer_key: process.env.consumer_key,
+            consumer_secret: process.env.consumer_secret,
+            token: process.env.token,
+            token_secret: process.env.token_secret
+        });
+
+        tuwm.post('First functal', 'functals/f000001.png', function(err, response)
+        {
+            if (err)
+            {
+                console.log(err);
+            }
+
+            console.log(response);
+        });
+    }
 }());
