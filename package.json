@@ -23,6 +23,8 @@
   "dependencies": {
     "lodash-fp": "^0.2.0",
     "mathjs": "^1.2.0",
-    "node-png": "^0.4.3"
+    "node-png": "^0.4.3",
+    "request": "^2.52.0",
+    "twit": "^1.1.19"
   }
 }
