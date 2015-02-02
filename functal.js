@@ -185,41 +185,28 @@
 
     if (process.env.consumer_key)
     {
-        var tuwm = new Twitter_update_with_media(
+        setTimeout(function()
         {
-            consumer_key: process.env.consumer_key,
-            consumer_secret: process.env.consumer_secret,
-            token: process.env.token,
-            token_secret: process.env.token_secret
-        });
-
-        tuwm.post('First functal', 'functals/f000001.png', function(err, response)
-        {
-            if (err)
+            var tuwm = new Twitter_update_with_media(
             {
-                console.log('error', err);
-            }
+                consumer_key: process.env.consumer_key,
+                consumer_secret: process.env.consumer_secret,
+                token: process.env.token,
+                token_secret: process.env.token_secret
+            });
 
-
-            console.log(response.body);
-
-            // if (response.body.errors)
+            tuwm.post('First functal', 'functals/f000001.png', function(err, response)
             {
-                console.log('try again');
-
-                tuwm.post('First functal', 'functals/f000001.png', function(err, response)
+                if (err)
                 {
-                    if (err)
-                    {
-                        console.log('error', err);
-                    }
+                    console.log('error', err);
+                }
 
-                    console.log(response.body);
+                console.log(response.body);
 
-                });
-            }
-        });
 
+            });
+        }, 1000);
 
     }
 }());
