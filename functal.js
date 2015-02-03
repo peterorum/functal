@@ -12,7 +12,7 @@
 
     var Q = require('q');
 
-    var Twitter_update_with_media = require('./twitter_update_with_media');
+    var Twitter = require('./twitter_update_with_media');
 
     //----------- fractal functions
     var ff = {};
@@ -91,17 +91,26 @@
 
         f.time = ((new Date()).getTime() - startTime) / 1000;
 
-        ff.png(options.file(), f, data).then(function()
+        if (options.file())
+        {
+            f.file = options.file();
+
+            ff.png(f, data).then(function()
+            {
+                deferred.resolve(f);
+            });
+        }
+        else
         {
             deferred.resolve(f);
-        });
+        }
 
         return deferred.promise;
     });
 
     // ------------ output to a png image
 
-    ff.png = fp.curry(function(filename, functal, data)
+    ff.png = fp.curry(function(functal, data)
     {
         var deferred = Q.defer();
 
@@ -129,7 +138,7 @@
             }
         }
 
-        image.pack().pipe(fs.createWriteStream(filename)).on('close', function()
+        image.pack().pipe(fs.createWriteStream(functal.file)).on('close', function()
         {
             deferred.resolve();
         });
@@ -167,9 +176,9 @@
     {
         console.log(functal.time + ' secs');
 
-        if (process.env.consumer_key)
+        if (functal.file && process.env.consumer_key)
         {
-            var tuwm = new Twitter_update_with_media(
+            var twit = new Twitter(
             {
                 consumer_key: process.env.consumer_key,
                 consumer_secret: process.env.consumer_secret,
@@ -177,7 +186,7 @@
                 token_secret: process.env.token_secret
             });
 
-            tuwm.post('First functal', 'functals/f000001.png', function(err, response)
+            twit.post('First functal', functal.file, function(err, response)
             {
                 if (err)
                 {
@@ -188,5 +197,4 @@
             });
         }
     });
-
 }());
