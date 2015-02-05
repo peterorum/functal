@@ -169,7 +169,7 @@
         },
         file: function()
         {
-            return 'functals/functal-' + moment.utc().format('YYMMDDHHmmssSSS') + '.png';
+            return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS') + '.png';
         }
     };
 
