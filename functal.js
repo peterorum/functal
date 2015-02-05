@@ -3,6 +3,7 @@
     "use strict";
 
     var math = require('mathjs');
+    var moment = require('moment');
     var fs = require('fs');
 
     var PNG = require('node-png').PNG;
@@ -12,7 +13,7 @@
 
     var Q = require('q');
 
-    var Twitter = require('./twitter_update_with_media');
+    var twit = require('./twitter_update_with_media');
 
     //----------- fractal functions
     var ff = {};
@@ -168,7 +169,7 @@
         },
         file: function()
         {
-            return 'functals/f000001.png';
+            return 'functals/functal-' + moment.utc().format('YYMMDDHHmmssSSS') + '.png';
         }
     };
 
@@ -176,25 +177,6 @@
     {
         console.log(functal.time + ' secs');
 
-        if (functal.file && process.env.consumer_key)
-        {
-            var twit = new Twitter(
-            {
-                consumer_key: process.env.consumer_key,
-                consumer_secret: process.env.consumer_secret,
-                token: process.env.token,
-                token_secret: process.env.token_secret
-            });
-
-            twit.post('First functal', functal.file, function(err, response)
-            {
-                if (err)
-                {
-                    console.log('error', err);
-                }
-
-                console.log(JSON.parse(response.body).text);
-            });
-        }
+        // twit.tweet('#fractal', functal.file);
     });
 }());
