@@ -10,7 +10,6 @@
 
     request = require('request');
 
-
     twitter_update_with_media = (function()
     {
         function twitter_update_with_media(auth_settings)
@@ -35,6 +34,28 @@
 
     })();
 
-    module.exports = twitter_update_with_media;
+    exports.tweet = function(text, file)
+    {
+        if (process.env.consumer_key)
+        {
+            var twit = new twitter_update_with_media(
+            {
+                consumer_key: process.env.consumer_key,
+                consumer_secret: process.env.consumer_secret,
+                token: process.env.token,
+                token_secret: process.env.token_secret
+            });
+
+            twit.post(text, file, function(err, response)
+            {
+                if (err)
+                {
+                    console.log('error', err);
+                }
+
+                console.log(JSON.parse(response.body).text);
+            });
+        }
+    };
 
 }).call(this);
