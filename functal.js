@@ -18,12 +18,6 @@
     //----------- fractal functions
     var ff = {};
 
-    // convert to -1 .. 1
-    ff.normalize = fp.curry(function(range, x)
-    {
-        return x / range * 2 - 1;
-    });
-
     ff.escapeCount = fp.curry(function(f, x, y)
     {
         var count = 0;
@@ -57,11 +51,63 @@
         return count;
     });
 
+    ff.process = function(f, sample)
+    {
+        // sample is undefined for full resolution
+        // 3 to take points a third of the way in
+
+        var data = [];
+
+        var xincr = 1;
+        var yincr = 1;
+
+        if (sample)
+        {
+            xincr = f.width / sample;
+            yincr = f.height / sample;
+        }
+
+        var fxincr = (f.range.x2 - f.range.x1) / f.width;
+        var fyincr = (f.range.y2 - f.range.y1) / f.height;
+
+        var x = 0;
+        var i = 0;
+
+        while (x < f.width)
+        {
+            var fx = f.range.x1 + fxincr * x;
+
+            data[i] = [];
+
+            var y = 0;
+            var j = 0;
+
+            while (y < f.height)
+            {
+                var fy = f.range.y1 + fyincr * y;
+
+                var count = ff.escapeCount(f, fx, fy);
+
+                data[i][j] = count;
+
+                y += xincr;
+                j++;
+            }
+
+            x += yincr;
+            i++;
+        }
+
+        return data;
+    };
+
     // ---------- make a functal
 
     ff.make = fp.curry(function(options)
     {
         var deferred = Q.defer();
+
+        var startTime = (new Date()).getTime();
 
         var f = {};
 
@@ -69,41 +115,36 @@
         f.height = options.height();
         f.maxCount = options.maxCount();
         f.limit = options.limit();
+        f.range = fp.clone(options.range());
 
-        var data = [];
+        // sample
+        var data = ff.process(f, 3);
 
-        var startTime = (new Date()).getTime();
+        f.stddev = math.std(data);
 
-        fp.range(0, f.width).forEach(function(x)
+        if (f.stddev < 100)
         {
-            data[x] = [];
-
-            var fx = ff.normalize(f.width, x);
-
-            fp.range(0, f.height).forEach(function(y)
-            {
-                var fy = ff.normalize(f.height, y);
-
-                var count = ff.escapeCount(f, fx, fy);
-
-                data[x][y] = count;
-            });
-        });
-
-        f.time = ((new Date()).getTime() - startTime) / 1000;
-
-        if (options.file())
-        {
-            f.file = options.file();
-
-            ff.png(f, data).then(function()
-            {
-                deferred.resolve(f);
-            });
+            deferred.reject(f, data);
         }
         else
         {
-            deferred.resolve(f);
+            data = ff.process(f);
+
+            f.time = ((new Date()).getTime() - startTime) / 1000;
+
+            if (options.file())
+            {
+                f.file = options.file();
+
+                ff.png(f, data).then(function()
+                {
+                    deferred.resolve(f);
+                });
+            }
+            else
+            {
+                deferred.resolve(f);
+            }
         }
 
         return deferred.promise;
@@ -148,35 +189,71 @@
 
     });
 
+    ff.setOptions = function()
+    {
+
+        var options = {
+            width: function()
+            {
+                return 100;
+            },
+            height: function()
+            {
+                return 100;
+            },
+            maxCount: function()
+            {
+                return 256;
+            },
+            limit: function()
+            {
+                return 2;
+            },
+            file: function()
+            {
+                return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS') + '.png';
+            },
+            range: function()
+            {
+                var x1 = fp.random(2, true) - 1;
+                var x2 = x1 + fp.random(2 - x1, true);
+                var y1 = fp.random(2, true) - 1;
+                var y2 = y1 + fp.random(2 - y1, true);
+
+                return {
+                    x1: x1,
+                    x2: x2,
+                    y1: y1,
+                    y2: y2
+                };
+            }
+
+        };
+
+        return options;
+    };
     // ------------ init a functal
 
-    var options = {
-        width: function()
-        {
-            return 100;
-        },
-        height: function()
-        {
-            return 100;
-        },
-        maxCount: function()
-        {
-            return 256;
-        },
-        limit: function()
-        {
-            return 2;
-        },
-        file: function()
-        {
-            return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS') + '.png';
-        }
+    // recurse until successful
+
+    ff.attempt = function()
+    {
+        var options = ff.setOptions();
+
+        ff.make(options).then(function(functal)
+            {
+                console.log(functal.time + ' secs');
+                console.log('stddev', functal.stddev);
+
+                twit.tweet('#fractal', functal.file);
+            },
+            function(functal, data)
+            {
+                console.log('rejected', 'stddev', functal.stddev);
+                ff.attempt();
+            });
     };
 
-    ff.make(options).then(function(functal)
-    {
-        console.log(functal.time + ' secs');
+    ff.attempt();
 
-        // twit.tweet('#fractal', functal.file);
-    });
 }());
