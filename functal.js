@@ -130,7 +130,7 @@
         f.range = options.range();
         f.set = {
             name: options.set.name,
-            params: option.set.params()
+            params: options.set.params()
         };
         f.z = options.set.z;
         f.c = options.set.c;
