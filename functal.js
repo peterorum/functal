@@ -17,7 +17,7 @@
     var twit = require('./tweet-media');
 
     // smaller image, no tweet
-    var isDev = (process.env.USER !== 'ec2-user');
+    var isDev = (process.env.TERM_PROGRAM  === 'Apple_Terminal');
 
     //----------- fractal functions
 
