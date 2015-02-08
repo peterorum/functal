@@ -128,8 +128,10 @@
         f.maxCount = options.maxCount();
         f.limit = options.limit();
         f.range = options.range();
-        f.set = options.set.name;
-        f.setParams = options.set.params();
+        f.set = {
+            name: options.set.name,
+            params: option.set.params()
+        };
         f.z = options.set.z;
         f.c = options.set.c;
 
@@ -320,7 +322,9 @@
             params: function()
             {
                 // stored for recreating
-                return {c: this.c()};
+                return {
+                    c: this.c()
+                };
             }
 
         }];
