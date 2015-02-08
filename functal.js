@@ -26,17 +26,8 @@
     {
         var count = 0;
 
-        // // start z at zero
-        // var z = math.complex(0, 0);
-
-        // // vary c by x & y
-        // var c = math.complex(x, y);
-
-        // start z at zero
-        var c = f.c;
-
-        // vary c by x & y
-        var z = math.complex(x, y);
+        var z = f.z(x, y);
+        var c = f.c(x, y);
 
         var maxCount = f.maxCount;
         var limit = f.limit;
@@ -132,7 +123,9 @@
         f.maxCount = options.maxCount();
         f.limit = options.limit();
         f.range = options.range();
-        f.c = options.c();
+        f.set = options.set.toString();
+        f.z = options.set.z;
+        f.c = options.set.c;
 
         // sample
         var data = ff.process(f, 3);
@@ -257,12 +250,6 @@
                 // filename with utc time
                 return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
             },
-            c: function()
-            {
-                var cmax = 1.75;
-
-                return math.complex(fp.random(-cmax, cmax), fp.random(-cmax, cmax));
-            }
         };
 
         // keep selected subarea the same aspect ratio as the image
@@ -293,6 +280,44 @@
             };
         };
 
+        var sets = [
+        {
+            name: 'mandelbrot',
+            z: function()
+            {
+                return math.complex(0, 0);
+            },
+            c: function(x, y)
+            {
+                return math.complex(x, y);
+            },
+            toString: function()
+            {
+                return this.name;
+            }
+        },
+        {
+            name: 'julia',
+            z: function(x, y)
+            {
+                return math.complex(x, y);
+            },
+            c: fp.once(function()
+            {
+                var cmax = 1.75;
+
+                var c = math.complex(fp.random(-cmax, cmax), fp.random(-cmax, cmax));
+
+                return c;
+            }),
+            toString: function()
+            {
+                return this.name + ' ' + this.c();
+            }
+
+        }];
+
+        options.set = sets[fp.random(0, sets.length - 1)];
 
         return options;
     };
