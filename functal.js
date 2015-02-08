@@ -26,11 +26,17 @@
     {
         var count = 0;
 
+        // // start z at zero
+        // var z = math.complex(0, 0);
+
+        // // vary c by x & y
+        // var c = math.complex(x, y);
+
         // start z at zero
-        var z = math.complex(0, 0);
+        var c = f.c;
 
         // vary c by x & y
-        var c = math.complex(x, y);
+        var z = math.complex(x, y);
 
         var maxCount = f.maxCount;
         var limit = f.limit;
@@ -74,11 +80,15 @@
         var fxincr = (f.range.x2 - f.range.x1) / f.width;
         var fyincr = (f.range.y2 - f.range.y1) / f.height;
 
+        // x,y  pixel position
         var x = 0;
+
+        // i,j index into data result matrix
         var i = 0;
 
         while (x < f.width)
         {
+            // translate to the sub-range
             var fx = f.range.x1 + fxincr * x;
 
             data[i] = [];
@@ -109,6 +119,7 @@
 
     ff.make = fp.curry(function(options)
     {
+        // async file writing at end
         var deferred = Q.defer();
 
         var startTime = (new Date()).getTime();
@@ -121,6 +132,7 @@
         f.maxCount = options.maxCount();
         f.limit = options.limit();
         f.range = options.range();
+        f.c = options.c();
 
         // sample
         var data = ff.process(f, 3);
@@ -139,7 +151,7 @@
             data = ff.process(f);
 
             // store time taken
-            f.time = ((new Date()).getTime() - startTime) / 1000;
+            f.time = ((new Date()).getTime() - startTime);
 
             // save
             if (options.file())
@@ -191,10 +203,15 @@
                 var i = data[x][y];
 
                 // grayscale
+                var clr = {
+                    r: i,
+                    g: i,
+                    b: i
+                };
 
-                image.data[idx] = i;
-                image.data[idx + 1] = i;
-                image.data[idx + 2] = i;
+                image.data[idx] = clr.r;
+                image.data[idx + 1] = clr.g;
+                image.data[idx + 2] = clr.b;
                 image.data[idx + 3] = 0xff;
             }
         }
@@ -239,6 +256,12 @@
             {
                 // filename with utc time
                 return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
+            },
+            c: function()
+            {
+                var cmax = 1.75;
+
+                return math.complex(fp.random(-cmax, cmax), fp.random(-cmax, cmax));
             }
         };
 
@@ -248,15 +271,18 @@
         {
             var aspect = options.width() / options.height();
 
-            var width = fp.random(0.001, 2);
+            // range is form -max to max
+            var max = 2;
 
-            var x1 = fp.random(-1, 1 - width);
+            var width = fp.random(0.001, 2 * max);
+
+            var x1 = fp.random(-max, max - width);
 
             var x2 = x1 + width;
 
             var height = width / aspect;
 
-            var y1 = fp.random(-1, 1 - height);
+            var y1 = fp.random(-max, max - height);
             var y2 = y1 + height;
 
             return {
@@ -280,12 +306,14 @@
 
         ff.make(options).then(function(functal)
             {
+                var msg = '#fractal #functal v' + functal.version + ' calc time ' + moment.duration(functal.time).humanize();
+
                 console.log('--- success');
                 console.log(functal);
+                console.log(msg);
 
                 if (!isDev)
                 {
-                    var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.time + ' secs';
                     twit.tweet(msg, functal.file + '.png');
                 }
             },
