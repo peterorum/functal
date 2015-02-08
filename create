@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#crontab...
+#PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/aws/bin:/home/ec2-user/bin
+#MAILTO=me@example.com
+#00 10 * * * /home/ec2-user/functal/create
+
 source $HOME/.bash_profile
 
 cd $HOME/functal
