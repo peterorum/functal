@@ -58,7 +58,7 @@
     ff.process = function(f, sample)
     {
         // sample is undefined for full resolution
-        // 3 to take points a third of the way in
+        // use eg 3 to take points a third of the way in
 
         var data = [];
 
@@ -94,11 +94,11 @@
 
                 data[i][j] = count;
 
-                y += xincr;
+                y += yincr;
                 j++;
             }
 
-            x += yincr;
+            x += xincr;
             i++;
         }
 
