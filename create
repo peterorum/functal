@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source /home/ec2-user/.bash_profile
+
 cd /home/ec2-user/functal
 
 /usr/local/bin/node functal
