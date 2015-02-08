@@ -4,4 +4,4 @@ source $HOME/.bash_profile
 
 cd $HOME/functal
 
-/usr/local/bin/node functal
+node functal
