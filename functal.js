@@ -350,7 +350,7 @@
                 var msg = '#fractal #functal v' + functal.version + ' calc time ' + moment.duration(functal.time).humanize();
 
                 console.log('--- success');
-                console.log(functal);
+                console.log(JSON.stringify(functal, null, 4));
                 console.log(msg);
 
                 if (!isDev)
@@ -361,7 +361,7 @@
             function(functal, data)
             {
                 console.log('--- rejected');
-                console.log(functal);
+                console.log(JSON.stringify(functal, null, 4));
                 // retry
                 ff.attempt();
             });
