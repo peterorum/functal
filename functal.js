@@ -248,17 +248,16 @@
         {
             var aspect = options.width() / options.height();
 
-            var x1 = fp.random(2, true) - 1;
-            var x2 = x1 + fp.random(2 - x1, true);
-            var y1 = fp.random(2, true) - 1;
-            var y2 = y1 + (x2 - x1) / aspect;
+            var width = fp.random(0.001, 2);
 
-            // keep within -1..1
-            if (y2 > 1)
-            {
-                y1 = y1 - (y2 - 1);
-                y2 = 1;
-            }
+            var x1 = fp.random(-1, 1 - width);
+
+            var x2 = x1 + width;
+
+            var height = width / aspect;
+
+            var y1 = fp.random(-1, 1 - height);
+            var y2 = y1 + height;
 
             return {
                 x1: x1,
@@ -281,17 +280,19 @@
 
         ff.make(options).then(function(functal)
             {
-                var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.time + ' secs';
-                console.log(msg);
+                console.log('--- success');
+                console.log(functal);
 
                 if (!isDev)
                 {
+                    var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.time + ' secs';
                     twit.tweet(msg, functal.file + '.png');
                 }
             },
             function(functal, data)
             {
-                console.log('rejected', 'stddev', functal.stddev);
+                console.log('--- rejected');
+                console.log(functal);
                 ff.attempt();
             });
     };
