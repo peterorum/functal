@@ -218,11 +218,11 @@
 
             width: function()
             {
-                return 100;
+                return 1024;
             },
             height: function()
             {
-                return 100;
+                return 768;
             },
             maxCount: function()
             {
@@ -248,7 +248,14 @@
             var x1 = fp.random(2, true) - 1;
             var x2 = x1 + fp.random(2 - x1, true);
             var y1 = fp.random(2, true) - 1;
-            var y2 = y1 + (x2 - x1) / aspect; // coulld end up higher than 1
+            var y2 = y1 + (x2 - x1) / aspect;
+
+            // keep within -1..1
+            if (y2 > 1)
+            {
+                y1 = y1 - (y2 - 1);
+                y2 = 1;
+            }
 
             return {
                 x1: x1,
@@ -274,7 +281,7 @@
                 console.log(functal.time + ' secs');
                 console.log('stddev', functal.stddev);
 
-                twit.tweet('#fractal', functal.file + '.png');
+                // twit.tweet('#fractal', functal.file + '.png');
             },
             function(functal, data)
             {
