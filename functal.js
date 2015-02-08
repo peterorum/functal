@@ -16,6 +16,9 @@
 
     var twit = require('./tweet-media');
 
+    // smaller image, no tweet
+    var isDev = (process.env.USER !== 'ec2-user');
+
     //----------- fractal functions
     var ff = {};
 
@@ -218,11 +221,11 @@
 
             width: function()
             {
-                return 1024;
+                return (isDev ? 100 : 1024);
             },
             height: function()
             {
-                return 768;
+                return (isDev ? 100 : 768);
             },
             maxCount: function()
             {
@@ -281,7 +284,10 @@
                 console.log(functal.time + ' secs');
                 console.log('stddev', functal.stddev);
 
-                twit.tweet('#fractal', functal.file + '.png');
+                if (!isDev)
+                {
+                    twit.tweet('#fractal', functal.file + '.png');
+                }
             },
             function(functal, data)
             {
