@@ -117,38 +117,48 @@
         f.height = options.height();
         f.maxCount = options.maxCount();
         f.limit = options.limit();
-        f.range = fp.clone(options.range());
+        f.range = options.range();
 
         // sample
         var data = ff.process(f, 3);
 
+        // calc std dev for the sample data
         f.stddev = math.std(data);
 
+        // fail if not enough variation in the image sample
         if (f.stddev < 100)
         {
             deferred.reject(f, data);
         }
         else
         {
+            // create fractal
             data = ff.process(f);
 
+            // store time taken
             f.time = ((new Date()).getTime() - startTime) / 1000;
 
+            // save
             if (options.file())
             {
                 f.file = options.file();
 
-                fsq.writeFile(f.file + '.json', JSON.stringify(f, null, 4)).then(function()
-                {
-                    return ff.png(f, data);
+                // save options spec
+                fsq.writeFile(f.file + '.json', JSON.stringify(f, null, 4))
+                    .then(function()
+                    {
+                        // save png
+                        return ff.png(f, data);
 
-                }).then(function()
-                {
-                    deferred.resolve(f);
-                });
+                    }).then(function()
+                    {
+                        // exit
+                        deferred.resolve(f);
+                    });
             }
             else
             {
+                // no file required - just exit
                 deferred.resolve(f);
             }
         }
