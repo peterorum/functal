@@ -2,4 +2,4 @@
 
 cd /home/ec2-user/functal
 
-node functal
+/usr/local/bin/node functal
