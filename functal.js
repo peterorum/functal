@@ -20,9 +20,10 @@
     var isDev = (process.env.USER !== 'ec2-user');
 
     //----------- fractal functions
+
     var ff = {};
 
-    ff.escapeCount = fp.curry(function(f, x, y)
+    ff.escapeCount = function(f, x, y)
     {
         var count = 0;
 
@@ -50,24 +51,28 @@
         }
 
         return count;
-    });
+    };
 
     ff.process = function(f, sample)
     {
         // sample is undefined for full resolution
         // use eg 3 to take points a third of the way in
 
+        // store image results
         var data = [];
 
+        // default to every pixel
         var xincr = 1;
         var yincr = 1;
 
+        // if sample, only do a few
         if (sample)
         {
             xincr = f.width / sample;
             yincr = f.height / sample;
         }
 
+        // scaled increment
         var fxincr = (f.range.x2 - f.range.x1) / f.width;
         var fyincr = (f.range.y2 - f.range.y1) / f.height;
 
@@ -108,7 +113,7 @@
 
     // ---------- make a functal
 
-    ff.make = fp.curry(function(options)
+    ff.make = function(options)
     {
         // async file writing at end
         var deferred = Q.defer();
@@ -173,11 +178,11 @@
         }
 
         return deferred.promise;
-    });
+    };
 
     // ------------ output to a png image
 
-    ff.png = fp.curry(function(functal, data)
+    ff.png = function(functal, data)
     {
         var deferred = Q.defer();
 
@@ -217,7 +222,7 @@
 
         return deferred.promise;
 
-    });
+    };
 
     ff.setOptions = function()
     {
@@ -281,6 +286,7 @@
             };
         };
 
+        // types of fractals with different initial z & c.
         var sets = [
         {
             name: 'mandelbrot',
@@ -313,18 +319,23 @@
             }),
             params: function()
             {
+                // stored for recreating
                 return {c: this.c()};
             }
 
         }];
 
+        // pick a random set type
         options.set = sets[fp.random(0, sets.length - 1)];
 
         return options;
     };
-    // ------------ init a functal
 
-    // recurse until successful
+    // ------------ make a functal
+
+    // use different options until a fractal with enough variety is found
+
+    // recurse until successful as it's async
 
     ff.attempt = function()
     {
@@ -347,10 +358,12 @@
             {
                 console.log('--- rejected');
                 console.log(functal);
+                // retry
                 ff.attempt();
             });
     };
 
+    // kick off
     ff.attempt();
 
 }());
