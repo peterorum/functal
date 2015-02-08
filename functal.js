@@ -4,8 +4,9 @@
 
     var math = require('mathjs');
     var moment = require('moment');
-    var fs = require('fs');
 
+    var fs = require('fs');
+    var fsq = require('./fsq');
     var PNG = require('node-png').PNG;
 
     var fp = require('lodash-fp');
@@ -13,7 +14,7 @@
 
     var Q = require('q');
 
-    var twit = require('./twitter_update_with_media');
+    var twit = require('./tweet-media');
 
     //----------- fractal functions
     var ff = {};
@@ -111,6 +112,7 @@
 
         var f = {};
 
+        f.version = options.version();
         f.width = options.width();
         f.height = options.height();
         f.maxCount = options.maxCount();
@@ -136,7 +138,11 @@
             {
                 f.file = options.file();
 
-                ff.png(f, data).then(function()
+                fsq.writeFile(f.file + '.json', JSON.stringify(f, null, 4)).then(function()
+                {
+                    return ff.png(f, data);
+
+                }).then(function()
                 {
                     deferred.resolve(f);
                 });
@@ -180,7 +186,7 @@
             }
         }
 
-        image.pack().pipe(fs.createWriteStream(functal.file)).on('close', function()
+        image.pack().pipe(fs.createWriteStream(functal.file + '.png')).on('close', function()
         {
             deferred.resolve();
         });
@@ -193,6 +199,12 @@
     {
 
         var options = {
+            version: function()
+            {
+                //github branch
+                return "1.0.0";
+            },
+
             width: function()
             {
                 return 100;
@@ -211,7 +223,8 @@
             },
             file: function()
             {
-                return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS') + '.png';
+                // filename with utc time
+                return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
             },
             range: function()
             {
@@ -245,7 +258,7 @@
                 console.log(functal.time + ' secs');
                 console.log('stddev', functal.stddev);
 
-                twit.tweet('#fractal', functal.file);
+                // twit.tweet('#fractal', functal.file);
             },
             function(functal, data)
             {
