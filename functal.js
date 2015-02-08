@@ -281,12 +281,12 @@
 
         ff.make(options).then(function(functal)
             {
-                console.log(functal.time + ' secs');
-                console.log('stddev', functal.stddev);
+                var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.time + ' secs';
+                console.log(msg);
 
                 if (!isDev)
                 {
-                    twit.tweet('#fractal', functal.file + '.png');
+                    twit.tweet(msg, functal.file + '.png');
                 }
             },
             function(functal, data)
