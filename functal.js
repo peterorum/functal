@@ -123,7 +123,8 @@
         f.maxCount = options.maxCount();
         f.limit = options.limit();
         f.range = options.range();
-        f.set = options.set.toString();
+        f.set = options.set.name;
+        f.setParams = options.set.params();
         f.z = options.set.z;
         f.c = options.set.c;
 
@@ -291,9 +292,9 @@
             {
                 return math.complex(x, y);
             },
-            toString: function()
+            params: function()
             {
-                return this.name;
+                return {};
             }
         },
         {
@@ -310,9 +311,9 @@
 
                 return c;
             }),
-            toString: function()
+            params: function()
             {
-                return this.name + ' ' + this.c();
+                return {c: this.c()};
             }
 
         }];
