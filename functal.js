@@ -211,8 +211,9 @@
         var options = {
             version: function()
             {
-                //github branch
-                return "1.0.0";
+                // github branch
+
+                return "1.0.1";
             },
 
             width: function()
@@ -235,23 +236,28 @@
             {
                 // filename with utc time
                 return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
-            },
-            range: function()
-            {
-                var x1 = fp.random(2, true) - 1;
-                var x2 = x1 + fp.random(2 - x1, true);
-                var y1 = fp.random(2, true) - 1;
-                var y2 = y1 + fp.random(2 - y1, true);
-
-                return {
-                    x1: x1,
-                    x2: x2,
-                    y1: y1,
-                    y2: y2
-                };
             }
-
         };
+
+        // keep selected subarea the same aspect ratio as the image
+
+        options.range = function()
+        {
+            var aspect = options.width() / options.height();
+
+            var x1 = fp.random(2, true) - 1;
+            var x2 = x1 + fp.random(2 - x1, true);
+            var y1 = fp.random(2, true) - 1;
+            var y2 = y1 + (x2 - x1) / aspect; // coulld end up higher than 1
+
+            return {
+                x1: x1,
+                x2: x2,
+                y1: y1,
+                y2: y2
+            };
+        };
+
 
         return options;
     };
@@ -268,7 +274,7 @@
                 console.log(functal.time + ' secs');
                 console.log('stddev', functal.stddev);
 
-                // twit.tweet('#fractal', functal.file);
+                twit.tweet('#fractal', functal.file + '.png');
             },
             function(functal, data)
             {
