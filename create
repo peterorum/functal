@@ -1,5 +1,5 @@
 #!/bin/sh
 
-cd ~/functal
+cd /home/ec2-user/functal
 
 node functal
