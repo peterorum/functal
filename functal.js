@@ -281,7 +281,7 @@
                 console.log(functal.time + ' secs');
                 console.log('stddev', functal.stddev);
 
-                // twit.tweet('#fractal', functal.file + '.png');
+                twit.tweet('#fractal', functal.file + '.png');
             },
             function(functal, data)
             {
