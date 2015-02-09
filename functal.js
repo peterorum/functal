@@ -7,6 +7,7 @@
 
     var fs = require('fs');
     var fsq = require('./fsq');
+    var clr = require('./color');
     var PNG = require('node-png').PNG;
 
     var fp = require('lodash-fp');
@@ -163,8 +164,12 @@
             name: options.set.name,
             params: options.set.params()
         };
+        f.minStdDev = options.minStdDev();
         f.z = options.set.z;
         f.c = options.set.c;
+
+        f.hue = options.hue();
+        f.saturation = options.saturation();
 
         f.modify = ff.modifiers.angle;
 
@@ -172,10 +177,10 @@
         var data = ff.process(f, 3);
 
         // calc std dev for the sample data
-        f.stddev = math.std(data);
+        f.stdDev = math.std(data);
 
         // fail if not enough variation in the image sample
-        if (f.stddev < 100)
+        if (f.stdDev < f.minStdDev)
         {
             deferred.reject(f, data);
         }
@@ -234,18 +239,19 @@
             {
                 var idx = (image.width * y + x) << 2;
 
-                var i = data[x][y];
+                var index = data[x][y];
 
-                // grayscale
-                var clr = {
-                    r: i,
-                    g: i,
-                    b: i
+                var hsl = {
+                    h: functal.hue,
+                    s: functal.saturation,
+                    l: index / functal.maxCount
                 };
 
-                image.data[idx] = clr.r;
-                image.data[idx + 1] = clr.g;
-                image.data[idx + 2] = clr.b;
+                var rgb = clr.hsl2rgb(hsl);
+
+                image.data[idx] = rgb.r;
+                image.data[idx + 1] = rgb.g;
+                image.data[idx + 2] = rgb.b;
                 image.data[idx + 3] = 0xff;
             }
         }
@@ -291,6 +297,18 @@
                 // filename with utc time
                 return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
             },
+            minStdDev: function()
+            {
+                return 20;
+            },
+            hue: function()
+            {
+                return fp.random(1, true);
+            },
+            saturation: function()
+            {
+                return 1 - math.pow(fp.random(1, true), 2);
+            }
         };
 
         // keep selected subarea the same aspect ratio as the image
@@ -382,9 +400,10 @@
             {
                 var msg = '#fractal #functal v' + functal.version + ' calc time ' + moment.duration(functal.time).humanize();
 
+                functal.message = msg;
+
                 console.log('--- success');
                 console.log(JSON.stringify(functal, null, 4));
-                console.log(msg);
 
                 if (!isDev)
                 {
@@ -401,6 +420,12 @@
     };
 
     // kick off
-    ff.attempt();
+
+    var functals = 10;
+
+    fp.range(0, functals).forEach(function()
+    {
+        ff.attempt();
+    });
 
 }());
