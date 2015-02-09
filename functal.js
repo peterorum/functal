@@ -17,7 +17,7 @@
     var twit = require('./tweet-media');
 
     // smaller image, no tweet
-    var isDev = (process.env.TERM_PROGRAM  === 'Apple_Terminal');
+    var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
 
     //----------- fractal functions
 
@@ -26,9 +26,12 @@
     ff.escapeCount = function(f, x, y)
     {
         var count = 0;
+        var zs = [];
 
         var z = f.z(x, y);
         var c = f.c(x, y);
+
+        zs.push(z);
 
         var maxCount = f.maxCount;
         var limit = f.limit;
@@ -42,6 +45,8 @@
                 .add(c)
                 .done();
 
+            zs.push(z);
+
             if (math.norm(z) > limit)
             {
                 break;
@@ -50,7 +55,12 @@
             count++;
         }
 
-        return count;
+        var result = {
+            count: count,
+            zs: zs
+        };
+
+        return result;
     };
 
     ff.process = function(f, sample)
@@ -96,9 +106,11 @@
             {
                 var fy = f.range.y1 + fyincr * y;
 
-                var count = ff.escapeCount(f, fx, fy);
+                var result = ff.escapeCount(f, fx, fy);
 
-                data[i][j] = count;
+                var adj = f.modify(f, result);
+
+                data[i][j] = adj;
 
                 y += yincr;
                 j++;
@@ -109,6 +121,25 @@
         }
 
         return data;
+    };
+
+    // ---------- post-escape modififiers
+
+    ff.modifiers = {};
+
+    // no change
+    ff.modifiers.identity = fp.identity;
+
+    // treat final calc as an angle
+    ff.modifiers.angle = function(functal, result)
+    {
+        // return 0..1
+
+        var lastz = fp.last(result.zs);
+
+        var val = (math.atan2(lastz.re, lastz.im) / math.pi + 1.0) / 2.0 * 256;
+
+        return val;
     };
 
     // ---------- make a functal
@@ -134,6 +165,8 @@
         };
         f.z = options.set.z;
         f.c = options.set.c;
+
+        f.modify = ff.modifiers.angle;
 
         // sample
         var data = ff.process(f, 3);
@@ -234,7 +267,7 @@
             {
                 // github branch
 
-                return "1.0.1";
+                return "1.0.2";
             },
 
             width: function()
