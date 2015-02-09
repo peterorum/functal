@@ -2,8 +2,13 @@
 {
     "use strict";
 
+    var seedrandom = require('seedrandom');
+    var randomSeed = (new Date()).getTime();
+    seedrandom(randomSeed, { global: true });
+
     var math = require('mathjs');
     var moment = require('moment');
+
 
     var fs = require('fs');
     var fsq = require('./fsq');
@@ -155,6 +160,7 @@
         var f = {};
 
         f.version = options.version();
+        f.seed = randomSeed;
         f.width = options.width();
         f.height = options.height();
         f.maxCount = options.maxCount();
