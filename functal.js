@@ -421,7 +421,7 @@
 
     // kick off
 
-    var functals = 1;
+    var functals = isDev ? 1 : 1;
 
     fp.range(0, functals).forEach(function()
     {
