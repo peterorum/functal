@@ -421,7 +421,7 @@
 
     // kick off
 
-    var functals = 10;
+    var functals = 1;
 
     fp.range(0, functals).forEach(function()
     {
