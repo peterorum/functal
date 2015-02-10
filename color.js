@@ -2,6 +2,8 @@
 {
     "use strict";
 
+    var math = require('mathjs');
+
     var h2rgb = function(f1, f2, h)
     {
         var rgb = f1;
@@ -133,6 +135,17 @@
             h: h,
             s: s,
             l: l
+        };
+
+        return hsl;
+    };
+
+    exports.random = function()
+    {
+        var hsl = {
+            h: math.random(1),
+            s: math.random(1),
+            l: math.random(1),
         };
 
         return hsl;
