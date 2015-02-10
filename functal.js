@@ -4,11 +4,14 @@
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
-    seedrandom(randomSeed, { global: true });
+    // must be first
+    seedrandom(randomSeed,
+    {
+        global: true
+    });
 
     var math = require('mathjs');
     var moment = require('moment');
-
 
     var fs = require('fs');
     var fsq = require('./fsq');
@@ -143,7 +146,7 @@
 
         var lastz = fp.last(result.zs);
 
-        var val = (math.atan2(lastz.re, lastz.im) / math.pi + 1.0) / 2.0 * 256;
+        var val = (math.atan2(lastz.re, lastz.im) / math.pi + 1.0) / 2.0 * functal.maxCount;
 
         return val;
     };
@@ -207,8 +210,10 @@
                 fsq.writeFile(f.file + '.json', JSON.stringify(f, null, 4))
                     .then(function()
                     {
+                        var palette = ff.setPalette(f.maxCount);
+
                         // save png
-                        return ff.png(f, data);
+                        return ff.png(f, data, palette);
 
                     }).then(function()
                     {
@@ -228,7 +233,7 @@
 
     // ------------ output to a png image
 
-    ff.png = function(functal, data)
+    ff.png = function(functal, data, palette)
     {
         var deferred = Q.defer();
 
@@ -245,13 +250,8 @@
             {
                 var idx = (image.width * y + x) << 2;
 
-                var index = data[x][y];
-
-                var hsl = {
-                    h: functal.hue,
-                    s: functal.saturation,
-                    l: index / functal.maxCount
-                };
+                var index = Math.floor(data[x][y]);
+                var hsl = palette[index];
 
                 var rgb = clr.hsl2rgb(hsl);
 
@@ -279,7 +279,7 @@
             {
                 // github branch
 
-                return "1.0.3";
+                return "1.1.1";
             },
 
             width: function()
@@ -292,7 +292,7 @@
             },
             maxCount: function()
             {
-                return 256;
+                return 1024;
             },
             limit: function()
             {
@@ -309,11 +309,11 @@
             },
             hue: function()
             {
-                return fp.random(1, true);
+                return math.random(1);
             },
             saturation: function()
             {
-                return 1 - math.pow(fp.random(1, true), 2);
+                return 1 - math.pow(math.random(1), 2);
             }
         };
 
@@ -392,6 +392,69 @@
         return options;
     };
 
+    // ------------ make color palette
+
+    ff.setPalette = function(size)
+    {
+        var palette = [];
+
+        // set the number of differnet colors to use
+        var numColors = math.randomInt(1, 16);
+
+        // allocate a different amount of each color
+        var weights = math.random([numColors]);
+
+        // sum the weights to normalize them
+        var sum = fp.reduce(function(sum, n)
+        {
+            return sum + n;
+        }, 0, weights);
+
+        // calc how many palette entries each color will have, and set a random color for this gap
+        var gaps = fp.map(function(n)
+        {
+            var gap = {
+                gap: math.max(1, math.round(n / sum * size)), // number of palette entries
+                color: clr.random()
+            };
+
+            return gap;
+
+        }, weights);
+
+        fp.forEach(function(g, k)
+        {
+            // color in the gap is a gradient from one color to the next, wrapping at the end
+            var hsl1 = g.color;
+            var hsl2 = gaps[(k + 1) % gaps.length].color;
+
+            fp.range(0, g.gap).forEach(function(i)
+            {
+                // calc gradient between 2 colors
+                var hsl = {
+                    h: hsl1.h + (hsl2.h - hsl1.h) / g.gap * i,
+                    s: hsl1.s + (hsl2.s - hsl1.s) / g.gap * i,
+                    l: hsl1.l + (hsl2.l - hsl1.l) / g.gap * i
+                };
+
+                palette.push(hsl);
+            });
+        }, gaps);
+
+        // fill if necessary (rounding)
+        fp.range(0, size - palette.length).forEach(function()
+        {
+            palette.push(
+            {
+                h: 0,
+                s: 0,
+                l: 0
+            });
+        });
+
+        return palette;
+    };
+
     // ------------ make a functal
 
     // use different options until a fractal with enough variety is found
@@ -427,7 +490,9 @@
 
     // kick off
 
-    var functals = isDev ? 1 : 1;
+    var devCount = 4;
+
+    var functals = isDev ? devCount : 1;
 
     fp.range(0, functals).forEach(function()
     {
