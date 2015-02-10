@@ -399,7 +399,7 @@
         var palette = [];
 
         // set the number of differnet colors to use
-        var numColors = math.randomInt(1, 16);
+        var numColors = math.randomInt(2, 16);
 
         // allocate a different amount of each color
         var weights = math.random([numColors]);
