@@ -251,9 +251,7 @@
                 var idx = (image.width * y + x) << 2;
 
                 var index = Math.floor(data[x][y]);
-                var hsl = palette[index];
-
-                var rgb = clr.hsl2rgb(hsl);
+                var rgb = palette[index];
 
                 image.data[idx] = rgb.r;
                 image.data[idx + 1] = rgb.g;
@@ -279,7 +277,7 @@
             {
                 // github branch
 
-                return "1.1.1";
+                return "1.1.2";
             },
 
             width: function()
@@ -422,22 +420,23 @@
 
         }, weights);
 
+
         fp.forEach(function(g, k)
         {
             // color in the gap is a gradient from one color to the next, wrapping at the end
-            var hsl1 = g.color;
-            var hsl2 = gaps[(k + 1) % gaps.length].color;
+            var rgb1 = clr.hsl2rgb(g.color);
+            var rgb2 = clr.hsl2rgb(gaps[(k + 1) % gaps.length].color);
 
             fp.range(0, g.gap).forEach(function(i)
             {
                 // calc gradient between 2 colors
-                var hsl = {
-                    h: hsl1.h + (hsl2.h - hsl1.h) / g.gap * i,
-                    s: hsl1.s + (hsl2.s - hsl1.s) / g.gap * i,
-                    l: hsl1.l + (hsl2.l - hsl1.l) / g.gap * i
+                var rgb = {
+                    r: math.round(rgb1.r + (rgb2.r - rgb1.r) / g.gap * i),
+                    g: math.round(rgb1.g + (rgb2.g - rgb1.g) / g.gap * i),
+                    b: math.round(rgb1.b + (rgb2.b - rgb1.b) / g.gap * i)
                 };
 
-                palette.push(hsl);
+                palette.push(rgb);
             });
         }, gaps);
 
@@ -446,9 +445,9 @@
         {
             palette.push(
             {
-                h: 0,
-                s: 0,
-                l: 0
+                r: 0,
+                g: 0,
+                b: 0
             });
         });
 
