@@ -201,6 +201,10 @@
             // store time taken
             f.time = ((new Date()).getTime() - startTime);
 
+            var palette = ff.setPalette(f.maxCount);
+
+            fp.extend( fp.omit('colors', palette), f);
+
             // save
             if (options.file())
             {
@@ -210,8 +214,6 @@
                 fsq.writeFile(f.file + '.json', JSON.stringify(f, null, 4))
                     .then(function()
                     {
-                        var palette = ff.setPalette(f.maxCount);
-
                         // save png
                         return ff.png(f, data, palette);
 
@@ -251,7 +253,7 @@
                 var idx = (image.width * y + x) << 2;
 
                 var index = Math.floor(data[x][y]);
-                var rgb = palette[index];
+                var rgb = palette.colors[index];
 
                 image.data[idx] = rgb.r;
                 image.data[idx + 1] = rgb.g;
@@ -394,62 +396,96 @@
 
     ff.setPalette = function(size)
     {
-        var palette = [];
+        var palette = {};
 
-        // set the number of differnet colors to use
-        var numColors = math.randomInt(2, 16);
+        // keep trying until acceptable palette
 
-        // allocate a different amount of each color
-        var weights = math.random([numColors]);
+        var ok = false;
 
-        // sum the weights to normalize them
-        var sum = fp.reduce(function(sum, n)
-        {
-            return sum + n;
-        }, 0, weights);
+        do {
+            palette.colors = [];
 
-        // calc how many palette entries each color will have, and set a random color for this gap
-        var gaps = fp.map(function(n)
-        {
-            var gap = {
-                gap: math.max(1, math.round(n / sum * size)), // number of palette entries
-                color: clr.random()
-            };
+            // set the number of differnet colors to use
+            palette.numColors = math.randomInt(2, 16);
 
-            return gap;
+            // allocate a different amount of each color
+            var weights = math.random([palette.numColors]);
 
-        }, weights);
-
-
-        fp.forEach(function(g, k)
-        {
-            // color in the gap is a gradient from one color to the next, wrapping at the end
-            var rgb1 = clr.hsl2rgb(g.color);
-            var rgb2 = clr.hsl2rgb(gaps[(k + 1) % gaps.length].color);
-
-            fp.range(0, g.gap).forEach(function(i)
+            // sum the weights to normalize them
+            var sum = fp.reduce(function(sum, n)
             {
-                // calc gradient between 2 colors
-                var rgb = {
-                    r: math.round(rgb1.r + (rgb2.r - rgb1.r) / g.gap * i),
-                    g: math.round(rgb1.g + (rgb2.g - rgb1.g) / g.gap * i),
-                    b: math.round(rgb1.b + (rgb2.b - rgb1.b) / g.gap * i)
+                return sum + n;
+            }, 0, weights);
+
+            // analogous complementray color scheme (adjacents & complemt)
+            var hues = [];
+
+            var hue = math.random(1);
+
+            palette.mainHue = hue;
+
+            // delta to next hue
+            var d = 1 / 12;
+
+            hues.push(hue);
+            hues.push(math.mod(hue + 6 * d, 1));
+            hues.push(math.mod(hue + 1 * d, 1));
+            hues.push(math.mod(hue + 2 * d, 1));
+            hues.push(math.mod(hue - 1 * d, 1));
+            hues.push(math.mod(hue - 2 * d, 1));
+
+            // calc how many palette entries each color will have, and set a random color for this gap
+            var gaps = fp.map(function(n)
+            {
+                var gap = {
+                    gap: math.max(1, math.round(n / sum * size)), // number of palette entries
+                    color:
+                    {
+                        h: math.pickRandom(hues),
+                        s: math.random(1),
+                        l: math.random(1)
+                    }
                 };
 
-                palette.push(rgb);
-            });
-        }, gaps);
+                return gap;
 
-        // fill if necessary (rounding)
-        fp.range(0, size - palette.length).forEach(function()
-        {
-            palette.push(
+            }, weights);
+
+            // adj last one so that sum is exactly size
+            fp.last(gaps).gap += (size - fp.reduce(function(sum, n)
             {
-                r: 0,
-                g: 0,
-                b: 0
-            });
-        });
+                return sum + n;
+            }, 0, fp.pluck('gap', gaps)));
+
+            fp.forEach(function(g, k)
+            {
+                // color in the gap is a gradient from one color to the next, wrapping at the end
+                var rgb1 = clr.hsl2rgb(g.color);
+                var rgb2 = clr.hsl2rgb(gaps[(k + 1) % gaps.length].color);
+
+                fp.range(0, g.gap).forEach(function(i)
+                {
+                    // calc gradient between 2 colors
+                    var rgb = {
+                        r: math.round(rgb1.r + (rgb2.r - rgb1.r) / g.gap * i),
+                        g: math.round(rgb1.g + (rgb2.g - rgb1.g) / g.gap * i),
+                        b: math.round(rgb1.b + (rgb2.b - rgb1.b) / g.gap * i)
+                    };
+
+                    palette.colors.push(rgb);
+                });
+            }, gaps);
+
+            // calc lightness std dev
+            palette.stdDevL = math.std(fp.map(function(p)
+            {
+                return clr.rgb2hsl(p).l;
+            }, palette.colors));
+
+            ok = palette.stdDevL > 0.2;
+
+        }
+        while (!ok);
 
         return palette;
     };
@@ -478,7 +514,7 @@
                     twit.tweet(msg, functal.file + '.png');
                 }
             },
-            function(functal, data)
+            function(functal)
             {
                 console.log('--- rejected');
                 console.log(JSON.stringify(functal, null, 4));
