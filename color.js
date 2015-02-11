@@ -9,10 +9,14 @@
         var rgb = f1;
 
         if (h < 0)
+        {
             h += 1.0;
+        }
 
         if (h > 1)
+        {
             h -= 1.0;
+        }
 
         if (6.0 * h < 1)
         {
@@ -39,10 +43,14 @@
         var l = hsl.l;
 
         if (h < 0)
+        {
             h += 1.0;
+        }
 
         if (h > 1.0)
+        {
             h -= 1.0;
+        }
 
         h = Math.min(1.0, Math.max(0.0, h));
         s = Math.min(1.0, Math.max(0.0, s));
@@ -59,9 +67,13 @@
             var f2;
 
             if (l <= 0.5)
+            {
                 f2 = l * (1.0 + s);
+            }
             else
+            {
                 f2 = l + s - l * s;
+            }
 
             var f1 = 2.0 * l - f2;
 
@@ -87,14 +99,14 @@
         var g = rgb.g / 255.0;
         var b = rgb.b / 255.0;
 
-        var fMax = max(r, max(g, b));
-        var fMin = min(r, min(g, b));
+        var fMax = math.max(r, math.max(g, b));
+        var fMin = math.min(r, math.min(g, b));
 
         var h = 0;
         var s = 0;
         var l = (fMax + fMin) / 2.0;
 
-        if (fMax == fMin)
+        if (fMax === fMin)
         {
             s = 0.0;
             h = 0.0;
@@ -112,11 +124,11 @@
 
             var fDelta = fMax - fMin;
 
-            if (r == fMax)
+            if (r === fMax)
             {
                 h = (g - b) / fDelta;
             }
-            else if (g == fMax)
+            else if (g === fMax)
             {
                 h = 2.0 + (b - r) / fDelta;
             }
@@ -128,7 +140,9 @@
             h /= 6.0;
 
             if (h < 0.0)
+            {
                 h += 1.0;
+            }
         }
 
         var hsl = {
