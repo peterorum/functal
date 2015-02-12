@@ -40,8 +40,6 @@
         var z = f.z(x, y);
         var c = f.c(x, y);
 
-        z = math.complex(1, 0) / z;
-
         zs.push(z);
 
         var maxCount = f.maxCount;
