@@ -566,7 +566,7 @@
 
     // kick off
 
-    var devCount = 1;
+    var devCount = 4;
 
     var functals = isDev ? devCount : 1;
 
