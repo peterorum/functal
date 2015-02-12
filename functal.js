@@ -32,6 +32,33 @@
 
     var ff = {};
 
+    ff.test = {
+        norm: function(z, limit)
+        {
+            return math.norm(z) > limit;
+        },
+        sum: function(z, limit)
+        {
+            return math.abs(z.re) + math.abs(z.im) > limit;
+        },
+        diff: function(z, limit)
+        {
+            return math.abs(z.re) - math.abs(z.im) > limit;
+        },
+        maxabs: function(z, limit)
+        {
+            return math.max(math.abs(z.re), math.abs(z.im)) > limit;
+        },
+        minabs: function(z, limit)
+        {
+            return math.min(math.abs(z.re), math.abs(z.im)) > limit;
+        },
+        max: function(z, limit)
+        {
+            return math.max(z.re, z.im) > limit;
+        }
+    };
+
     ff.escapeCount = function(f, x, y)
     {
         var count = 0;
@@ -56,7 +83,9 @@
 
             zs.push(z);
 
-            if (math.norm(z) > limit)
+            var done = f.test(z, limit);
+
+            if (done)
             {
                 break;
             }
@@ -183,6 +212,9 @@
         f.hue = options.hue();
         f.saturation = options.saturation();
 
+        f.test = fp.pickRandom(ff.test);
+        f.testName = f.test.key;
+
         f.modify = ff.modifiers.angle;
 
         // sample
@@ -206,7 +238,7 @@
 
             var palette = ff.setPalette();
 
-            fp.extend( fp.omit('colors', palette), f);
+            fp.extend(fp.omit('colors', palette), f);
 
             // save
             if (options.file())
@@ -258,7 +290,7 @@
             {
                 var idx = (image.width * y + x) << 2;
 
-                var index = Math.floor(data[x][y] * paletteLength );
+                var index = Math.floor(data[x][y] * paletteLength);
 
                 var rgb = palette.colors[index];
 
@@ -286,7 +318,7 @@
             {
                 // github branch
 
-                return "1.1.4";
+                return "1.1.5";
             },
 
             width: function()
