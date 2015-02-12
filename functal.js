@@ -32,7 +32,7 @@
 
     var ff = {};
 
-    ff.test = {
+    ff.tests = {
         norm: function(z, limit)
         {
             return math.norm(z) > limit;
@@ -212,8 +212,8 @@
         f.hue = options.hue();
         f.saturation = options.saturation();
 
-        f.test = fp.pickRandom(ff.test);
-        f.testName = f.test.key;
+        f.testName = fp.pickRandomKey(ff.tests);
+        f.test = ff.tests[f.testName];
 
         f.modify = ff.modifiers.angle;
 
