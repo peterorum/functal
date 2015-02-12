@@ -115,6 +115,7 @@
             {
                 var fy = f.range.y1 + fyincr * y;
 
+                // all inputs & outputs are 0..1
                 var result = ff.escapeCount(f, fx, fy);
 
                 var adj = f.modify(f, result);
@@ -146,7 +147,7 @@
 
         var lastz = fp.last(result.zs);
 
-        var val = (math.atan2(lastz.re, lastz.im) / math.pi + 1.0) / 2.0 * functal.maxCount;
+        var val = (math.atan2(lastz.re, lastz.im) / math.pi + 1.0) / 2.0;
 
         return val;
     };
@@ -169,6 +170,8 @@
         f.maxCount = options.maxCount();
         f.limit = options.limit();
         f.range = options.range();
+        f.rangeWidth = f.range.x2 - f.range.x1;
+
         f.set = {
             name: options.set.name,
             params: options.set.params()
@@ -201,7 +204,7 @@
             // store time taken
             f.time = ((new Date()).getTime() - startTime);
 
-            var palette = ff.setPalette(f.maxCount);
+            var palette = ff.setPalette();
 
             fp.extend( fp.omit('colors', palette), f);
 
@@ -246,13 +249,17 @@
             filterType: -1
         });
 
+        // stretch results over full palette
+        var paletteLength = palette.colors.length;
+
         for (var y = 0; y < image.height; y++)
         {
             for (var x = 0; x < image.width; x++)
             {
                 var idx = (image.width * y + x) << 2;
 
-                var index = Math.floor(data[x][y]);
+                var index = Math.floor(data[x][y] * paletteLength );
+
                 var rgb = palette.colors[index];
 
                 image.data[idx] = rgb.r;
@@ -279,7 +286,7 @@
             {
                 // github branch
 
-                return "1.1.3";
+                return "1.1.4";
             },
 
             width: function()
@@ -292,7 +299,7 @@
             },
             maxCount: function()
             {
-                return 1024;
+                return 256;
             },
             limit: function()
             {
@@ -305,7 +312,7 @@
             },
             minStdDev: function()
             {
-                return 20;
+                return 0.1;
             },
             hue: function()
             {
@@ -394,9 +401,11 @@
 
     // ------------ make color palette
 
-    ff.setPalette = function(size)
+    ff.setPalette = function()
     {
         var palette = {};
+
+        var size = 4096;
 
         // keep trying until acceptable palette
 
@@ -525,7 +534,7 @@
 
     // kick off
 
-    var devCount = 4;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 
