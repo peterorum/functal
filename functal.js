@@ -33,30 +33,53 @@
     var ff = {};
 
     ff.tests = {
-        norm: function(z, limit)
+        norm: function(z)
         {
-            return math.norm(z) > limit;
+            return math.norm(z);
         },
-        sum: function(z, limit)
+        sum: function(z)
         {
-            return math.abs(z.re) + math.abs(z.im) > limit;
+            return math.abs(z.re) + math.abs(z.im);
         },
-        diff: function(z, limit)
+        product: function(z)
         {
-            return math.abs(z.re) - math.abs(z.im) > limit;
+            return math.abs(z.re) * math.abs(z.im);
         },
-        maxabs: function(z, limit)
+        diff: function(z)
         {
-            return math.max(math.abs(z.re), math.abs(z.im)) > limit;
+            return math.abs(z.re) - math.abs(z.im);
         },
-        minabs: function(z, limit)
+        maxabs: function(z)
         {
-            return math.min(math.abs(z.re), math.abs(z.im)) > limit;
+            return math.max(math.abs(z.re), math.abs(z.im));
         },
-        max: function(z, limit)
+        minabs: function(z)
         {
-            return math.max(z.re, z.im) > limit;
+            return math.min(math.abs(z.re), math.abs(z.im));
+        },
+        max: function(z)
+        {
+            return math.max(z.re, z.im);
         }
+    };
+
+    ff.processes = {
+        z2plusc: function(z, c)
+        {
+            return math.chain(z)
+                .pow(2)
+                .add(c)
+                .done();
+        },
+        z2nlusc: function(z, c)
+        {
+            return math.chain(z)
+                .pow(this.pow)
+                .add(c)
+                .done();
+        },
+
+
     };
 
     ff.escapeCount = function(f, x, y)
@@ -76,14 +99,11 @@
 
         while (count < maxCount - 1)
         {
-            z = math.chain(z)
-                .pow(2)
-                .add(c)
-                .done();
+            z = f.process(z, c);
 
             zs.push(z);
 
-            var done = f.test(z, limit);
+            var done = f.test(z) > limit;
 
             if (done)
             {
@@ -215,6 +235,10 @@
         f.testName = fp.pickRandomKey(ff.tests);
         f.test = ff.tests[f.testName];
 
+        f.processName = fp.pickRandomKey(ff.processes);
+        f.process = ff.processes[f.processName];
+        f.pow = options.pow();
+
         f.modify = ff.modifiers.angle;
 
         // sample
@@ -224,7 +248,7 @@
         f.stdDev = math.std(data);
 
         // fail if not enough variation in the image sample
-        if (f.stdDev < f.minStdDev)
+        if (f.stdDev < f.minStdDev )
         {
             deferred.reject(f, data);
         }
@@ -282,7 +306,7 @@
         });
 
         // stretch results over full palette
-        var paletteLength = palette.colors.length;
+        var paletteLength = palette.colors.length - 1;
 
         for (var y = 0; y < image.height; y++)
         {
@@ -318,7 +342,7 @@
             {
                 // github branch
 
-                return "1.1.5";
+                return "1.1.6";
             },
 
             width: function()
@@ -353,6 +377,9 @@
             saturation: function()
             {
                 return 1 - math.pow(math.random(1), 2);
+            },
+            pow: function(){
+                return math.randomInt(3, 10);
             }
         };
 
@@ -437,7 +464,7 @@
     {
         var palette = {};
 
-        var size = 4096;
+        var size = 256; // 4096
 
         // keep trying until acceptable palette
 
