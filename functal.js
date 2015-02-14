@@ -6,6 +6,7 @@
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
+
     // must be first
     seedrandom(randomSeed,
     {
@@ -61,7 +62,7 @@
         },
         max: function(z)
         {
-            return math.max(z.re, z.im);
+            return math.max(math.abs(z.re), math.abs(z.im));
         }
     };
 
@@ -78,6 +79,16 @@
             return math.chain(z)
                 .pow(this.pow)
                 .add(c)
+                .done();
+        },
+        coszc: function(z, c)
+        {
+            // convert to radians up to 2pi
+            var zr = math.complex( math.mod(z.re, math.pi * 2), math.mod(z.im, math.pi * 2));
+
+            return math.chain(zr)
+                .cos()
+                .multiply(c)
                 .done();
         },
 
@@ -246,14 +257,22 @@
         f.stdDev = math.std(data);
 
         // fail if not enough variation in the image sample
-        if (f.stdDev < f.minStdDev )
+        if (f.stdDev < f.minStdDev)
         {
             deferred.reject(f, data);
         }
         else
         {
-            // create fractal
-            data = ff.process(f);
+            try
+            {
+                // create fractal
+                data = ff.process(f);
+            }
+            catch (ex)
+            {
+                console.error(ex);
+                deferred.reject(f, data);
+            }
 
             // store time taken
             f.time = ((new Date()).getTime() - startTime);
@@ -376,7 +395,8 @@
             {
                 return 1 - math.pow(math.random(1), 2);
             },
-            pow: function(){
+            pow: function()
+            {
                 return math.random(2, 10);
             }
         };
