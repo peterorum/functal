@@ -19,12 +19,13 @@
     var fs = require('fs');
     var fsq = require('./fsq');
     var pal = require('./palette');
+    var tests = require('./limitTests');
     var PNG = require('node-png').PNG;
+    var Q = require('q');
 
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
-    var Q = require('q');
 
     var twit = require('./tweet-media');
 
@@ -35,64 +36,43 @@
 
     var ff = {};
 
-    ff.tests = {
-        norm: function(z)
-        {
-            return math.norm(z);
-        },
-        sum: function(z)
-        {
-            return math.abs(z.re) + math.abs(z.im);
-        },
-        product: function(z)
-        {
-            return math.abs(z.re) * math.abs(z.im);
-        },
-        diff: function(z)
-        {
-            return math.abs(z.re) - math.abs(z.im);
-        },
-        maxabs: function(z)
-        {
-            return math.max(math.abs(z.re), math.abs(z.im));
-        },
-        minabs: function(z)
-        {
-            return math.min(math.abs(z.re), math.abs(z.im));
-        },
-        max: function(z)
-        {
-            return math.max(math.abs(z.re), math.abs(z.im));
-        }
-    };
-
-    ff.processes = {
-        z2plusc: function(z, c)
+    ff.processes = [
+    {
+        name: 'z2plusc',
+        weight: 1,
+        fn: function(z, c)
         {
             return math.chain(z)
                 .pow(2)
                 .add(c)
                 .done();
-        },
-        znplusc: function(z, c)
+        }
+    },
+    {
+        name: 'znplusc',
+        weight: 1,
+        fn: function(z, c)
         {
             return math.chain(z)
                 .pow(this.pow)
                 .add(c)
                 .done();
-        },
-        coszc: function(z, c)
+        }
+    },
+    {
+        name: 'coszc',
+        weight: 1,
+        fn: function(z, c)
         {
             // convert to radians up to 2pi
-            var zr = math.complex( math.mod(z.re, math.pi * 2), math.mod(z.im, math.pi * 2));
+            var zr = math.complex(math.mod(z.re, math.pi * 2), math.mod(z.im, math.pi * 2));
 
             return math.chain(zr)
                 .cos()
                 .multiply(c)
                 .done();
-        },
-
-    };
+        }
+    }, ];
 
     ff.escapeCount = function(f, x, y)
     {
@@ -241,11 +221,13 @@
         f.z = options.set.z;
         f.c = options.set.c;
 
-        f.testName = fp.pickRandomKey(ff.tests);
-        f.test = ff.tests[f.testName];
+        var test = fp.wandom(tests.tests);
+        f.testName = test.name;
+        f.test = test.fn;
 
-        f.processName = fp.pickRandomKey(ff.processes);
-        f.process = ff.processes[f.processName];
+        var process = fp.wandom(ff.processes);
+        f.processName = process.name;
+        f.process = process.fn;
         f.pow = options.pow();
 
         f.modify = ff.modifiers.angle;

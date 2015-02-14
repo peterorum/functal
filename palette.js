@@ -24,17 +24,17 @@
         {
             // warm red
             hue: 0 / 12,
-            weight: 60
+            weight: 50
         },
         {
             // orange
             hue: 1 / 12,
-            weight: 400000
+            weight: 200
         },
         {
             // yellow
             hue: 2 / 12,
-            weight: 50
+            weight: 40
         },
         {
             // lime green
@@ -54,17 +54,17 @@
         {
             // cyan
             hue: 6 / 12,
-            weight: 10,
+            weight: 20,
         },
         {
             // cool blue
             hue: 7 / 12,
-            weight: 60
+            weight: 80
         },
         {
             // warm blue
             hue: 8 / 12,
-            weight: 60
+            weight: 40
         },
         {
             // violet
@@ -103,7 +103,7 @@
             var hue = fp.wandom(wues).hue;
             hue = math.mod(hue + math.random(-0.5, 0.5) / 12, 1);
 
-            palette.mainHue = hue;
+            palette.mainHue = hue * 12;
 
             // delta to next hue
             var d = 1 / 12;
