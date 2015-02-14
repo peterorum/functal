@@ -86,6 +86,14 @@
                 return applyFn.call(this, math.coth, z, c);
             }
         },
+        {
+            name: 'csczc',
+            weight: 10000,
+            fn: function(z, c)
+            {
+                return applyFn.call(this, math.csc, z, c);
+            }
+        },
 
     ];
 
