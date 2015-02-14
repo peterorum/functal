@@ -88,10 +88,26 @@
         },
         {
             name: 'csczc',
-            weight: 10000,
+            weight: 1,
             fn: function(z, c)
             {
                 return applyFn.call(this, math.csc, z, c);
+            }
+        },
+        {
+            name: 'cschzc',
+            weight: 1,
+            fn: function(z, c)
+            {
+                return applyFn.call(this, math.csch, z, c);
+            }
+        },
+        {
+            name: 'expzc',
+            weight: 1,
+            fn: function(z, c)
+            {
+                return applyFn.call(this, math.exp, z, c);
             }
         },
 

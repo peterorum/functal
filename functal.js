@@ -37,6 +37,23 @@
 
     var ff = {};
 
+    ff.zmod = function(f, z)
+    {
+        var zmod;
+
+        if (f.floorz)
+        {
+            // more blocky
+            zmod = math.complex(math.floor(z.re), math.floor(z.im));
+        }
+        else
+        {
+            zmod = z;
+        }
+
+        return zmod;
+    };
+
     ff.escapeCount = function(f, x, y)
     {
         var count = 0;
@@ -54,7 +71,7 @@
 
         while (count < maxCount - 1)
         {
-            z = f.process(z, c);
+            z = f.process(ff.zmod(f, z), c);
 
             zs.push(z);
 
@@ -195,14 +212,18 @@
 
         f.modify = ff.modifiers.angle;
 
+        f.floorz = options.floorz();
+
         // sample
-        var data = ff.process(f, 3);
+        var sampleCount = 3;
+        var data = ff.process(f, sampleCount);
 
         // calc std dev for the sample data
         f.stdDev = math.std(data);
+        f.uniques = fp.unique(fp.flatten(data)).length;
 
         // fail if not enough variation in the image sample
-        if (f.stdDev < f.minStdDev)
+        if (f.stdDev < f.minStdDev || f.uniques < sampleCount * sampleCount)
         {
             deferred.reject(f, data);
         }
@@ -210,6 +231,7 @@
         {
             try
             {
+
                 // create fractal
                 data = ff.process(f);
             }
@@ -330,7 +352,7 @@
             },
             minStdDev: function()
             {
-                return 0.1;
+                return 0.15;
             },
             hue: function()
             {
@@ -343,6 +365,10 @@
             pow: function()
             {
                 return math.random(2, 10);
+            },
+            floorz : function()
+            {
+                return math.random() < 0.5;
             }
         };
 
