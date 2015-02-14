@@ -368,7 +368,7 @@
             },
             floorz : function()
             {
-                return math.random() < 0.5;
+                return math.random() < 0.05;
             }
         };
 
