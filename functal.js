@@ -2,6 +2,8 @@
 {
     "use strict";
 
+    var version = '1.1.7';
+
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
     // must be first
@@ -16,6 +18,7 @@
     var fs = require('fs');
     var fsq = require('./fsq');
     var clr = require('./color');
+    var pal = require('./palette');
     var PNG = require('node-png').PNG;
 
     var fp = require('lodash-fp');
@@ -229,9 +232,6 @@
         f.z = options.set.z;
         f.c = options.set.c;
 
-        f.hue = options.hue();
-        f.saturation = options.saturation();
-
         f.testName = fp.pickRandomKey(ff.tests);
         f.test = ff.tests[f.testName];
 
@@ -260,7 +260,7 @@
             // store time taken
             f.time = ((new Date()).getTime() - startTime);
 
-            var palette = ff.setPalette();
+            var palette = pal.setPalette();
 
             fp.extend(fp.omit('colors', palette), f);
 
@@ -342,7 +342,7 @@
             {
                 // github branch
 
-                return "1.1.6";
+                return version;
             },
 
             width: function()
@@ -458,106 +458,6 @@
         return options;
     };
 
-    // ------------ make color palette
-
-    ff.setPalette = function()
-    {
-        var palette = {};
-
-        var size = 256; // 4096
-
-        // keep trying until acceptable palette
-
-        var ok = false;
-
-        do {
-            palette.colors = [];
-
-            // set the number of differnet colors to use
-            palette.numColors = math.randomInt(2, 16);
-
-            // allocate a different amount of each color
-            var weights = math.random([palette.numColors]);
-
-            // sum the weights to normalize them
-            var sum = fp.reduce(function(sum, n)
-            {
-                return sum + n;
-            }, 0, weights);
-
-            // analogous complementray color scheme (adjacents & complemt)
-            var hues = [];
-
-            var hue = math.random(1);
-
-            palette.mainHue = hue;
-
-            // delta to next hue
-            var d = 1 / 12;
-
-            hues.push(hue);
-            hues.push(math.mod(hue + 6 * d, 1));
-            hues.push(math.mod(hue + 1 * d, 1));
-            hues.push(math.mod(hue + 2 * d, 1));
-            hues.push(math.mod(hue - 1 * d, 1));
-            hues.push(math.mod(hue - 2 * d, 1));
-
-            // calc how many palette entries each color will have, and set a random color for this gap
-            var gaps = fp.map(function(n)
-            {
-                var gap = {
-                    gap: math.max(1, math.round(n / sum * size)), // number of palette entries
-                    color:
-                    {
-                        h: math.pickRandom(hues),
-                        s: math.random(1),
-                        l: math.random(1)
-                    }
-                };
-
-                return gap;
-
-            }, weights);
-
-            // adj last one so that sum is exactly size
-            fp.last(gaps).gap += (size - fp.reduce(function(sum, n)
-            {
-                return sum + n;
-            }, 0, fp.pluck('gap', gaps)));
-
-            fp.forEach(function(g, k)
-            {
-                // color in the gap is a gradient from one color to the next, wrapping at the end
-                var rgb1 = clr.hsl2rgb(g.color);
-                var rgb2 = clr.hsl2rgb(gaps[(k + 1) % gaps.length].color);
-
-                fp.range(0, g.gap).forEach(function(i)
-                {
-                    // calc gradient between 2 colors
-                    var rgb = {
-                        r: math.round(rgb1.r + (rgb2.r - rgb1.r) / g.gap * i),
-                        g: math.round(rgb1.g + (rgb2.g - rgb1.g) / g.gap * i),
-                        b: math.round(rgb1.b + (rgb2.b - rgb1.b) / g.gap * i)
-                    };
-
-                    palette.colors.push(rgb);
-                });
-            }, gaps);
-
-            // calc lightness std dev
-            palette.stdDevL = math.std(fp.map(function(p)
-            {
-                return clr.rgb2hsl(p).l;
-            }, palette.colors));
-
-            ok = palette.stdDevL > 0.2;
-
-        }
-        while (!ok);
-
-        return palette;
-    };
-
     // ------------ make a functal
 
     // use different options until a fractal with enough variety is found
@@ -593,7 +493,7 @@
 
     // kick off
 
-    var devCount = 4;
+    var devCount = 10;
 
     var functals = isDev ? devCount : 1;
 
