@@ -17,7 +17,6 @@
 
     var fs = require('fs');
     var fsq = require('./fsq');
-    var clr = require('./color');
     var pal = require('./palette');
     var PNG = require('node-png').PNG;
 
@@ -74,14 +73,13 @@
                 .add(c)
                 .done();
         },
-        z2nlusc: function(z, c)
+        znplusc: function(z, c)
         {
             return math.chain(z)
                 .pow(this.pow)
                 .add(c)
                 .done();
         },
-
 
     };
 
@@ -379,7 +377,7 @@
                 return 1 - math.pow(math.random(1), 2);
             },
             pow: function(){
-                return math.randomInt(3, 10);
+                return math.random(2, 10);
             }
         };
 
