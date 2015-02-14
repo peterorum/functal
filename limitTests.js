@@ -34,10 +34,11 @@
         },
         {
             name: 'diff',
-            weight: 1,
+            weight: 10000,
             fn: function(z)
             {
-                return math.abs(z.re) - math.abs(z.im);
+                return math.abs(z.re - z.im);
+                // return math.abs(z.re) - math.abs(z.im);
             }
         },
         {
@@ -57,6 +58,4 @@
             }
         }
     ];
-
-
 }());
