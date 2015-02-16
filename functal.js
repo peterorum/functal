@@ -27,7 +27,6 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
-
     var twit = require('./tweet-media');
 
     // smaller image, no tweet
@@ -231,7 +230,6 @@
         {
             try
             {
-
                 // create fractal
                 data = fractal.process(functal);
             }
@@ -320,7 +318,6 @@
 
     fractal.setOptions = function()
     {
-
         var options = {
             version: function()
             {
@@ -378,7 +375,7 @@
         {
             var aspect = options.width() / options.height();
 
-            // range is form -max to max
+            // range is from -max to max
             var max = 2;
 
             var width = fp.random(0.001, 2 * max);
@@ -400,7 +397,7 @@
             };
         };
 
-        // types of fractals with difractalerent initial z & c.
+        // types of fractals with different initial z & c.
         var sets = [
         {
             name: 'mandelbrot',
@@ -480,7 +477,7 @@
             });
     };
 
-    // kick ofractal
+    // kick off
 
     var devCount = 10;
 
