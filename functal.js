@@ -35,13 +35,13 @@
 
     //----------- fractal functions
 
-    var ff = {};
+    var fractal = {};
 
-    ff.zmod = function(f, z)
+    fractal.zmod = function(functal, z)
     {
         var zmod;
 
-        if (f.floorz)
+        if (functal.floorz)
         {
             // more blocky
             zmod = math.complex(math.floor(z.re), math.floor(z.im));
@@ -54,28 +54,28 @@
         return zmod;
     };
 
-    ff.escapeCount = function(f, x, y)
+    fractal.escapeCount = function(functal, x, y)
     {
         var count = 0;
         var zs = [];
 
-        var z = f.z(x, y);
-        var c = f.c(x, y);
+        var z = functal.z(x, y);
+        var c = functal.c(x, y);
 
         zs.push(z);
 
-        var maxCount = f.maxCount;
-        var limit = f.limit;
+        var maxCount = functal.maxCount;
+        var limit = functal.limit;
 
         // count how long the iteration takes to break the limit
 
         while (count < maxCount - 1)
         {
-            z = f.process(ff.zmod(f, z), c);
+            z = functal.process(fractal.zmod(functal, z), c);
 
             zs.push(z);
 
-            var done = f.test(z) > limit;
+            var done = functal.test(z) > limit;
 
             if (done)
             {
@@ -93,7 +93,7 @@
         return result;
     };
 
-    ff.process = function(f, sample)
+    fractal.process = function(functal, sample)
     {
         // sample is undefined for full resolution
         // use eg 3 to take points a third of the way in
@@ -108,13 +108,13 @@
         // if sample, only do a few
         if (sample)
         {
-            xincr = f.width / sample;
-            yincr = f.height / sample;
+            xincr = functal.width / sample;
+            yincr = functal.height / sample;
         }
 
         // scaled increment
-        var fxincr = (f.range.x2 - f.range.x1) / f.width;
-        var fyincr = (f.range.y2 - f.range.y1) / f.height;
+        var fxincr = (functal.range.x2 - functal.range.x1) / functal.width;
+        var fyincr = (functal.range.y2 - functal.range.y1) / functal.height;
 
         // x,y  pixel position
         var x = 0;
@@ -122,24 +122,24 @@
         // i,j index into data result matrix
         var i = 0;
 
-        while (x < f.width)
+        while (x < functal.width)
         {
             // translate to the sub-range
-            var fx = f.range.x1 + fxincr * x;
+            var fx = functal.range.x1 + fxincr * x;
 
             data[i] = [];
 
             var y = 0;
             var j = 0;
 
-            while (y < f.height)
+            while (y < functal.height)
             {
-                var fy = f.range.y1 + fyincr * y;
+                var fy = functal.range.y1 + fyincr * y;
 
                 // all inputs & outputs are 0..1
-                var result = ff.escapeCount(f, fx, fy);
+                var result = fractal.escapeCount(functal, fx, fy);
 
-                var adj = f.modify(f, result);
+                var adj = functal.modify(functal, result);
 
                 data[i][j] = adj;
 
@@ -156,13 +156,13 @@
 
     // ---------- post-escape modififiers
 
-    ff.modifiers = {};
+    fractal.modifiers = {};
 
     // no change
-    ff.modifiers.identity = fp.identity;
+    fractal.modifiers.identity = fp.identity;
 
     // treat final calc as an angle
-    ff.modifiers.angle = function(functal, result)
+    fractal.modifiers.angle = function(functal, result)
     {
         // return 0..1
 
@@ -175,57 +175,57 @@
 
     // ---------- make a functal
 
-    ff.make = function(options)
+    fractal.make = function(options)
     {
         // async file writing at end
         var deferred = Q.defer();
 
         var startTime = (new Date()).getTime();
 
-        var f = {};
+        var functal = {};
 
-        f.version = options.version();
-        f.seed = randomSeed;
-        f.width = options.width();
-        f.height = options.height();
-        f.maxCount = options.maxCount();
-        f.limit = options.limit();
-        f.range = options.range();
-        f.rangeWidth = f.range.x2 - f.range.x1;
+        functal.version = options.version();
+        functal.seed = randomSeed;
+        functal.width = options.width();
+        functal.height = options.height();
+        functal.maxCount = options.maxCount();
+        functal.limit = options.limit();
+        functal.range = options.range();
+        functal.rangeWidth = functal.range.x2 - functal.range.x1;
 
-        f.set = {
+        functal.set = {
             name: options.set.name,
             params: options.set.params()
         };
-        f.minStdDev = options.minStdDev();
-        f.z = options.set.z;
-        f.c = options.set.c;
+        functal.minStdDev = options.minStdDev();
+        functal.z = options.set.z;
+        functal.c = options.set.c;
 
         var test = fp.wandom(tests.tests);
-        f.testName = test.name;
-        f.test = test.fn;
+        functal.testName = test.name;
+        functal.test = test.fn;
 
         var process = fp.wandom(processes.processes);
-        f.processName = process.name;
-        f.process = process.fn;
-        f.pow = options.pow();
+        functal.processName = process.name;
+        functal.process = process.fn;
+        functal.pow = options.pow();
 
-        f.modify = ff.modifiers.angle;
+        functal.modify = fractal.modifiers.angle;
 
-        f.floorz = options.floorz();
+        functal.floorz = options.floorz();
 
         // sample
         var sampleCount = 3;
-        var data = ff.process(f, sampleCount);
+        var data = fractal.process(functal, sampleCount);
 
         // calc std dev for the sample data
-        f.stdDev = math.std(data);
-        f.uniques = fp.unique(fp.flatten(data)).length;
+        functal.stdDev = math.std(data);
+        functal.uniques = fp.unique(fp.flatten(data)).length;
 
         // fail if not enough variation in the image sample
-        if (f.stdDev < f.minStdDev || f.uniques < sampleCount * sampleCount)
+        if (functal.stdDev < functal.minStdDev || functal.uniques < sampleCount * sampleCount)
         {
-            deferred.reject(f, data);
+            deferred.reject(functal, data);
         }
         else
         {
@@ -233,43 +233,43 @@
             {
 
                 // create fractal
-                data = ff.process(f);
+                data = fractal.process(functal);
             }
             catch (ex)
             {
                 console.error(ex);
-                deferred.reject(f, data);
+                deferred.reject(functal, data);
             }
 
             // store time taken
-            f.time = ((new Date()).getTime() - startTime);
+            functal.time = ((new Date()).getTime() - startTime);
 
             var palette = pal.setPalette();
 
-            fp.extend(fp.omit('colors', palette), f);
+            fp.extend(fp.omit('colors', palette), functal);
 
             // save
             if (options.file())
             {
-                f.file = options.file();
+                functal.file = options.file();
 
                 // save options spec
-                fsq.writeFile(f.file + '.json', JSON.stringify(f, null, 4))
+                fsq.writeFile(functal.file + '.json', JSON.stringify(functal, null, 4))
                     .then(function()
                     {
                         // save png
-                        return ff.png(f, data, palette);
+                        return fractal.png(functal, data, palette);
 
                     }).then(function()
                     {
                         // exit
-                        deferred.resolve(f);
+                        deferred.resolve(functal);
                     });
             }
             else
             {
                 // no file required - just exit
-                deferred.resolve(f);
+                deferred.resolve(functal);
             }
         }
 
@@ -278,7 +278,7 @@
 
     // ------------ output to a png image
 
-    ff.png = function(functal, data, palette)
+    fractal.png = function(functal, data, palette)
     {
         var deferred = Q.defer();
 
@@ -318,7 +318,7 @@
 
     };
 
-    ff.setOptions = function()
+    fractal.setOptions = function()
     {
 
         var options = {
@@ -400,7 +400,7 @@
             };
         };
 
-        // types of fractals with different initial z & c.
+        // types of fractals with difractalerent initial z & c.
         var sets = [
         {
             name: 'mandelbrot',
@@ -449,15 +449,15 @@
 
     // ------------ make a functal
 
-    // use different options until a fractal with enough variety is found
+    // use difractalerent options until a fractal with enough variety is found
 
     // recurse until successful as it's async
 
-    ff.attempt = function()
+    fractal.attempt = function()
     {
-        var options = ff.setOptions();
+        var options = fractal.setOptions();
 
-        ff.make(options).then(function(functal)
+        fractal.make(options).then(function(functal)
             {
                 var msg = '#fractal #functal v' + functal.version + ' calc time ' + moment.duration(functal.time).humanize();
 
@@ -476,11 +476,11 @@
                 console.log('--- rejected');
                 console.log(JSON.stringify(functal, null, 4));
                 // retry
-                ff.attempt();
+                fractal.attempt();
             });
     };
 
-    // kick off
+    // kick ofractal
 
     var devCount = 10;
 
@@ -488,7 +488,7 @@
 
     fp.range(0, functals).forEach(function()
     {
-        ff.attempt();
+        fractal.attempt();
     });
 
 }());
