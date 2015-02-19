@@ -53,6 +53,11 @@
         return zmod;
     };
 
+    fractal.isDone = function(functal, z)
+    {
+        return functal.test(z) > functal.limit;
+    };
+
     fractal.escapeCount = function(functal, x, y)
     {
         var count = 0;
@@ -64,7 +69,6 @@
         zs.push(z);
 
         var maxCount = functal.maxCount;
-        var limit = functal.limit;
 
         // count how long the iteration takes to break the limit
 
@@ -74,7 +78,7 @@
 
             zs.push(z);
 
-            var done = functal.test(z) > limit;
+            var done = fractal.isDone(functal, z);
 
             if (done)
             {
@@ -214,7 +218,7 @@
         functal.floorz = options.floorz();
 
         // sample
-        var sampleCount = 3;
+        var sampleCount = 10;
         var data = fractal.process(functal, sampleCount);
 
         // calc std dev for the sample data
@@ -363,7 +367,7 @@
             {
                 return math.random(2, 10);
             },
-            floorz : function()
+            floorz: function()
             {
                 return math.random() < 0.05;
             }

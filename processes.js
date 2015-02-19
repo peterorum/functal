@@ -110,6 +110,14 @@
                 return applyFn.call(this, math.exp, z, c);
             }
         },
+        {
+            name: 'logzc',
+            weight: 1,
+            fn: function(z, c)
+            {
+                return applyFn.call(this, math.log, z, c);
+            }
+        },
 
     ];
 
