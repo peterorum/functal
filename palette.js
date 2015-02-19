@@ -113,9 +113,11 @@
             hues.push(math.mod(hue + 1 * d, 1)); // adjacent
             hues.push(math.mod(hue + 6 * d, 1)); // complement
 
-            // console.log(fp.map(function(h){ return h * 12;}, hues));
-
             // calc how many palette entries each color will have, and set a random color for this gap
+
+            // todo: map is supposed to get index
+            var index = 0;
+
             var gaps = fp.map(function(n)
             {
                 var gap = {
@@ -124,9 +126,11 @@
                     {
                         h: math.pickRandom(hues),
                         s: math.random(1),
-                        l: math.random(1)
+                        l: math.random(1) * (index % 2 ? 1 : 0.75) // make alternate bands darker
                     }
                 };
+
+                index++;
 
                 return gap;
 
