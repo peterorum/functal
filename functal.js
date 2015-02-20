@@ -53,11 +53,11 @@
         return zmod;
     };
 
-    fractal.isDone = function(functal, z)
+    fractal.isDone = function(functal, zs)
     {
         // return fp.flow.apply(functal, functal.tests)(z) > functal.limit;
 
-        return fp.flowAll(functal.tests, z) > functal.limit;
+        return fp.flowAll(functal.tests, _.last(zs) > functal.limit;
     };
 
     fractal.escapeCount = function(functal, x, y)
@@ -80,7 +80,7 @@
 
             zs.push(z);
 
-            var done = fractal.isDone(functal, z);
+            var done = fractal.isDone(functal, zs);
 
             if (done)
             {
