@@ -21,7 +21,7 @@
         var wues = [{
             // warm red
             hue: 0 / 12,
-            weight: 20
+            weight: 40
         }, {
             // orange
             hue: 1 / 12,
@@ -45,7 +45,7 @@
         }, {
             // cyan
             hue: 6 / 12,
-            weight: 20,
+            weight: 40,
         }, {
             // cool blue
             hue: 7 / 12,

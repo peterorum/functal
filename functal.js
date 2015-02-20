@@ -55,9 +55,7 @@
 
     fractal.isDone = function(functal, zs)
     {
-        // return fp.flow.apply(functal, functal.tests)(z) > functal.limit;
-
-        return fp.flowAll(functal.tests, _.last(zs) > functal.limit;
+        return functal.test(zs);
     };
 
     fractal.escapeCount = function(functal, x, y)
@@ -206,10 +204,9 @@
         functal.z = options.set.z;
         functal.c = options.set.c;
 
-        // tests reduce complex to real so can't be chained, so just use one
-        var tests = [fp.wandom(limitTests.tests)];
-        functal.testNames = fp.pluck('name', tests);
-        functal.tests = fp.pluck('fn', tests);
+        var test = fp.wandom(limitTests.tests);
+        functal.testName = test.name;
+        functal.test = test.fn;
 
         var process = fp.wandom(processes.processes);
         functal.processName = process.name;
