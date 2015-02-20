@@ -56,7 +56,7 @@
         }
     }, {
         name: 'converge',
-        weight: 100000,
+        weight: 1,
         fn: function(zs) {
             var done = false;
 
@@ -70,6 +70,36 @@
             }
 
             return done;
+        }
+    }, {
+        name: 'mean',
+        weight: 1,
+        fn: function(zs) {
+            return math.norm(math.mean(zs)) > this.limit;
+        }
+    }, {
+        name: 'stddev',
+        weight: 1,
+        fn: function(zs) {
+            return math.norm(math.std(zs)) > this.limit;
+        }
+    }, {
+        name: 'prod',
+        weight: 1,
+        fn: function(zs) {
+            return math.norm(math.prod(zs)) > this.limit;
+        }
+    }, {
+        name: 'meannorm',
+        weight: 1,
+        fn: function(zs) {
+            return math.mean(fp.map(math.norm, zs)) > this.limit;
+        }
+    }, {
+        name: 'stddevnorm',
+        weight: 1,
+        fn: function(zs) {
+            return math.std(fp.map(math.norm, zs)) > this.limit;
         }
     }];
 }());
