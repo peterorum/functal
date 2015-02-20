@@ -454,6 +454,8 @@
 
     // recurse until successful as it's async
 
+    debugger;
+
     fractal.attempt = function()
     {
         var options = fractal.setOptions();
