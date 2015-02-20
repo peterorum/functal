@@ -19,7 +19,7 @@
     var fs = require('fs');
     var fsq = require('./fsq');
     var pal = require('./palette');
-    var tests = require('./limitTests');
+    var limitTests = require('./limitTests');
     var processes = require('./processes');
     var PNG = require('node-png').PNG;
     var Q = require('q');
@@ -55,7 +55,9 @@
 
     fractal.isDone = function(functal, z)
     {
-        return functal.test(z) > functal.limit;
+        // return fp.flow.apply(functal, functal.tests)(z) > functal.limit;
+
+        return fp.flowAll(functal.tests, z) > functal.limit;
     };
 
     fractal.escapeCount = function(functal, x, y)
@@ -204,9 +206,10 @@
         functal.z = options.set.z;
         functal.c = options.set.c;
 
-        var test = fp.wandom(tests.tests);
-        functal.testName = test.name;
-        functal.test = test.fn;
+        // tests reduce complex to real so can't be chained, so just use one
+        var tests = [fp.wandom(limitTests.tests)];
+        functal.testNames = fp.pluck('name', tests);
+        functal.tests = fp.pluck('fn', tests);
 
         var process = fp.wandom(processes.processes);
         functal.processName = process.name;
