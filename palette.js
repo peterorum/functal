@@ -1,5 +1,4 @@
-(function()
-{
+(function() {
     "use strict";
 
     var math = require('mathjs');
@@ -9,8 +8,7 @@
 
     // ------------ make color palette
 
-    exports.setPalette = function()
-    {
+    exports.setPalette = function() {
         var palette = {};
 
         var size = 4096;
@@ -20,66 +18,54 @@
         var ok = false;
 
         // weighted hues giving emphasis on more orange, blue, less magenta
-        var wues = [
-        {
+        var wues = [{
             // warm red
             hue: 0 / 12,
-            weight: 50
-        },
-        {
+            weight: 20
+        }, {
             // orange
             hue: 1 / 12,
             weight: 200
-        },
-        {
+        }, {
             // yellow
             hue: 2 / 12,
             weight: 40
-        },
-        {
+        }, {
             // lime green
             hue: 3 / 12,
             weight: 0
-        },
-        {
+        }, {
             // bright green
             hue: 4 / 12,
             weight: 0
-        },
-        {
+        }, {
             // light green
             hue: 5 / 12,
             weight: 0
-        },
-        {
+        }, {
             // cyan
             hue: 6 / 12,
             weight: 20,
-        },
-        {
+        }, {
             // cool blue
             hue: 7 / 12,
             weight: 80
-        },
-        {
+        }, {
             // warm blue
             hue: 8 / 12,
             weight: 40
-        },
-        {
+        }, {
             // violet
             hue: 9 / 12,
             weight: 1
-        },
-        {
+        }, {
             // magenta
             hue: 10 / 12,
             weight: 0
-        },
-        {
+        }, {
             // cool red
             hue: 11 / 12,
-            weight: 1
+            weight: 0.5
         }];
 
         do {
@@ -92,8 +78,7 @@
             var weights = math.random([palette.numColors]);
 
             // sum the weights to normalize them
-            var sum = fp.reduce(function(sum, n)
-            {
+            var sum = fp.reduce(function(sum, n) {
                 return sum + n;
             }, 0, weights);
 
@@ -101,32 +86,46 @@
             var hues = [];
 
             var hue = fp.wandom(wues).hue;
-            hue = math.mod(hue + math.random(-0.5, 0.5) / 12, 1);
+            hue = math.mod(hue + math.random(-0.25, 0.25) / 12, 1);
 
             palette.mainHue = hue * 12;
 
             // delta to next hue
             var d = 1 / 12;
 
-            hues.push(hue);
-            hues.push(math.mod(hue - 1 * d, 1)); // adjacent
-            hues.push(math.mod(hue + 1 * d, 1)); // adjacent
-            hues.push(math.mod(hue + 6 * d, 1)); // complement
+            hues.push({
+                h: hue,
+                weight: 200
+            });
+            hues.push({
+                h: math.mod(hue - 1 * d, 1),
+                weight: 25
+            }); // adjacent
+            hues.push({
+                h: math.mod(hue + 1 * d, 1),
+                weight: 25
+            }); // adjacent
+            hues.push({
+                h: math.mod(hue + 6 * d, 1),
+                weight: 50
+            }); // complement
 
             // calc how many palette entries each color will have, and set a random color for this gap
 
             // todo: map is supposed to get index
             var index = 0;
 
-            var gaps = fp.map(function(n)
-            {
+            palette.contrast = fp.bandomInt(5, 2);
+
+            var gaps = fp.map(function(n) {
                 var gap = {
                     gap: math.max(1, math.round(n / sum * size)), // number of palette entries
-                    color:
-                    {
-                        h: math.pickRandom(hues),
-                        s: math.random(1),
-                        l: math.random(1) * (index % 2 ? 1 : 0.75) // make alternate bands darker
+                    color: {
+                        h: fp.wandom(hues).h,
+                        // brightish
+                        s: fp.bandom(1, -2),
+                        // bright/dark bands
+                        l: fp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
                     }
                 };
 
@@ -137,19 +136,16 @@
             }, weights);
 
             // adj last one so that sum is exactly size
-            fp.last(gaps).gap += (size - fp.reduce(function(sum, n)
-            {
+            fp.last(gaps).gap += (size - fp.reduce(function(sum, n) {
                 return sum + n;
             }, 0, fp.pluck('gap', gaps)));
 
-            fp.forEach(function(g, k)
-            {
+            fp.forEach(function(g, k) {
                 // color in the gap is a gradient from one color to the next, wrapping at the end
                 var rgb1 = clr.hsl2rgb(g.color);
                 var rgb2 = clr.hsl2rgb(gaps[(k + 1) % gaps.length].color);
 
-                fp.range(0, g.gap).forEach(function(i)
-                {
+                fp.range(0, g.gap).forEach(function(i) {
                     // calc gradient between 2 colors
                     var rgb = {
                         r: math.round(rgb1.r + (rgb2.r - rgb1.r) / g.gap * i),
@@ -162,8 +158,7 @@
             }, gaps);
 
             // calc lightness std dev
-            palette.stdDevL = math.std(fp.map(function(p)
-            {
+            palette.stdDevL = math.std(fp.map(function(p) {
                 return clr.rgb2hsl(p).l;
             }, palette.colors));
 
