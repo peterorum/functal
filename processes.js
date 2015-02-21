@@ -7,21 +7,6 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
-    var finite = function(z2, max)
-    {
-        if (!fp.isFinite(z2.re) || fp.isNaN(z2.re))
-        {
-            z2.re = max;
-        }
-
-        if (!fp.isFinite(z2.im) || fp.isNaN(z2.im))
-        {
-            z2.im = max;
-        }
-
-        return z2;
-    };
-
     // additional functions beyond the traditional z^2 + c
 
     var applyFnMultC = function(fn, z, c)
@@ -29,7 +14,7 @@
         var a = fn(z);
         var z2 = math.multiply(a, c);
 
-        return finite(z2, this.limit);
+        return this.finite(z2);
     };
 
     var applyFnMultZ = function(fn, z, zr, c)
@@ -37,7 +22,7 @@
         var a = fn(zr);
         var z2 = math.chain(a).multiply(z).add(c).done();
 
-        return finite(z2, this.limit);
+        return this.finite(z2);
 
     };
 
@@ -158,7 +143,7 @@
             fn: function(z, c)
             {
                 var zr = math.complex(math.mod(z.re, math.pi * 2), math.mod(z.im, math.pi * 2));
-                var szr = finite(math.sin(zr), this.limit);
+                var szr = this.finite(math.sin(zr));
 
                 return math.chain(z)
                     .pow(2)
@@ -204,7 +189,7 @@
 
                     var z2 = math.complex(z.re - fim, z.im - fre);
 
-                    return finite(z2, this.limit);
+                    return this.finite(z2);
                 };
             })()
         },
