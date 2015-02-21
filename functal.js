@@ -232,15 +232,21 @@
             return fp.wandom(options.z2zfns).fn;
         });
 
-        functal.adjzsNames = fp.map(fp.nameOf, functal.adjzs);
+        functal.adjzsNames = fp.map(function(fn)
+        {
+            var o = {name: fp.nameOf(fn)};
+
+            // params
+            fp.extend(fn, o);
+
+            return o;
+        }, functal.adjzs);
 
         // wrap with finite after getting names
         functal.adjzs = fp.map(function(f)
         {
             return fp.compose(functal.finite, f);
         }, functal.adjzs);
-
-        functal.extras = options.extras;
 
         var process = fp.wandom(processes.processes);
         functal.processName = process.name;
@@ -410,8 +416,7 @@
             floorz: function()
             {
                 return math.random() < 0.05;
-            },
-            extras: [] // misc data
+            }
         };
 
         // keep selected subarea the same aspect ratio as the image
@@ -538,16 +543,26 @@
                     name2: fp.nameOf(trig2)
                 };
 
-                options.extras.push({'trigxy' : fxy});
-
-                return function trigxy(z)
+                var fn = function trigxy(z)
                 {
                     return math.complex(fxy.trig1(math.mod(fxy.freq1 * z.re, math.pi * 2)), fxy.trig2(math.mod(fxy.freq2 * z.im, math.pi * 2)));
                 };
+
+                fn.params = fxy;
+
+                return fn;
             })(),
 
             weight: 1
-        }];
+        },
+        {
+            fn: function fraction(z)
+            {
+                return math.complex(z.re - math.floor(z.re), z.im - math.floor(z.im));
+            },
+
+            weight: 1
+        }, ];
 
         return options;
     };
@@ -582,7 +597,7 @@
 
     // kick off
 
-    var devCount = 1;
+    var devCount = 10;
 
     var functals = isDev ? devCount : 1;
 
