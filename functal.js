@@ -214,8 +214,6 @@
             return fp.wandom(options.z2zfns).fn;
         });
 
-        functal.adjzs = []; //////////////////////////////////////////////////////////////////////
-
         functal.adjzsNames = fp.map(function(fn)
         {
             var o = {
@@ -241,7 +239,17 @@
 
         var modifierChain = [fp.wandom(modifiers.modifiers)];
         functal.modifiers = fp.map('fn', modifierChain);
-        functal.modifierNames = fp.map(fp.nameOf, functal.modifiers);
+        functal.modifierNames = fp.map(function(m)
+        {
+            var o = {
+                name: fp.nameOf(m.fn),
+            };
+
+            fp.extend(m.fn, o);
+
+            return o;
+
+        }, modifierChain);
 
         functal.floorz = options.floorz();
 
