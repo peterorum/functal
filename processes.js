@@ -48,7 +48,7 @@
             fn: function(z, c)
             {
                 return math.chain(z)
-                    .pow(2)
+                    .square()
                     .add(c)
                     .done();
             }
@@ -144,7 +144,7 @@
         },
         {
             name: 'z2sinz',
-            weight: 100000,
+            weight: 1,
             fn: function(z, c)
             {
                 var zr = math.complex(math.mod(z.re, math.pi * 2), math.mod(z.im, math.pi * 2));

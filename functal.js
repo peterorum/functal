@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.1.8';
+    var version = '1.1.9';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -74,7 +74,7 @@
 
         var done = false;
 
-        while (! done && count < maxCount - 1)
+        while (!done && count < maxCount - 1)
         {
             z = functal.process(fractal.zmod(functal, z), c);
 
@@ -85,9 +85,12 @@
             count++;
         }
 
+        // var zsAdj = fp.map(fp.flow(math.sin, math.floor,math.sin), zs);
+        var zsAdj = fp.map(fp.flowAll(functal.adjzs), zs);
+
         var result = {
             count: count,
-            zs: zs
+            zs: zsAdj
         };
 
         return result;
@@ -204,6 +207,9 @@
         var test = fp.wandom(limitTests.tests);
         functal.testName = test.name;
         functal.test = test.fn;
+
+        functal.adjzs = fp.range(0, fp.bandomInt(4, 1)).map(function() { return fp.wandom(options.z2zfns).fn; });
+        functal.adjzsNames = fp.map(fp.nameOf, functal.adjzs);
 
         var process = fp.wandom(processes.processes);
         functal.processName = process.name;
@@ -443,6 +449,36 @@
         // pick a random set type
         options.set = sets[fp.random(0, sets.length - 1)];
 
+        options.z2zfns = [
+        {
+            fn: math.square,
+            weight: 1
+        },
+        {
+            fn: math.floor,
+            weight: 0.5
+        },
+        {
+            fn: math.ceil,
+            weight: 0.5
+        },
+        {
+            fn: math.sqrt,
+            weight: 1
+        },
+        {
+            fn: math.sin,
+            weight: 1
+        },
+        {
+            fn: math.cos,
+            weight: 1
+        },
+        {
+            fn: math.log,
+            weight: 1
+        } ];
+
         return options;
     };
 
@@ -479,7 +515,7 @@
 
     // kick off
 
-    var devCount = 1;
+    var devCount = 10;
 
     var functals = isDev ? devCount : 1;
 
