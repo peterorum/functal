@@ -174,21 +174,25 @@
             weight: 1,
             fn: (function()
             {
+                // options will be the same for the entire run
                 var trig = fp.wandom([math.sin, math.cos]);
 
+                // keep inside anon function so they are constant
                 var fxy = {
                     ampl1: math.random(0.2),
                     ampl2: math.random(0.2),
-                    freq1: math.random(30),
-                    freq2: math.random(30),
-                    fn : trig,
+                    freq1: math.random(20),
+                    freq2: math.random(20),
+                    fn: trig,
                     name: fp.nameOf(trig)
                 };
 
-                return function(z)
+                // the actual process function
+
+                return function(z /*, c */ )
                 {
-                    // store options
-                    if (! this.fxy)
+                    // store options on first call
+                    if (!this.fxy)
                     {
                         this.fxy = fxy;
                     }
@@ -201,6 +205,32 @@
                     var z2 = math.complex(z.re - fim, z.im - fre);
 
                     return finite(z2, this.limit);
+                };
+            })()
+        },
+        {
+            name: 'znplusxyplusc',
+            weight: 1,
+            fn: (function()
+            {
+                var znplusxyplusc = {
+                    xfactor: math.random(5),
+                    yfactor: math.random(5)
+                };
+
+                return function(z, c)
+                {
+                    if (!this.znplusxyplusc)
+                    {
+                        this.znplusxyplusc = znplusxyplusc;
+                    }
+
+                    return math.chain(z)
+                        .pow(this.pow)
+                        .add(znplusxyplusc.xfactor * z.re)
+                        .add(znplusxyplusc.yfactor * z.im)
+                        .add(c)
+                        .done();
                 };
             })()
         },
