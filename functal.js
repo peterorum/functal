@@ -21,6 +21,7 @@
     var pal = require('./palette');
     var limitTests = require('./limitTests');
     var processes = require('./processes');
+    var modifiers = require('./modifiers');
     var PNG = require('node-png').PNG;
     var Q = require('q');
 
@@ -157,7 +158,7 @@
                 // all inputs & outputs are 0..1
                 var result = fractal.escapeCount(functal, fx, fy);
 
-                var adj = functal.modify(functal, result);
+                var adj = functal.modifiers[0](functal, result);
 
                 data[i][j] = adj;
 
@@ -170,25 +171,6 @@
         }
 
         return data;
-    };
-
-    // ---------- post-escape modififiers
-
-    fractal.modifiers = {};
-
-    // no change
-    fractal.modifiers.identity = fp.identity;
-
-    // treat final calc as an angle
-    fractal.modifiers.angle = function(functal, result)
-    {
-        // return 0..1
-
-        var lastz = fp.last(result.zs);
-
-        var val = (math.atan2(lastz.re, lastz.im) / math.pi + 1.0) / 2.0;
-
-        return val;
     };
 
     // ---------- make a functal
@@ -232,9 +214,13 @@
             return fp.wandom(options.z2zfns).fn;
         });
 
+        functal.adjzs = []; //////////////////////////////////////////////////////////////////////
+
         functal.adjzsNames = fp.map(function(fn)
         {
-            var o = {name: fp.nameOf(fn)};
+            var o = {
+                name: fp.nameOf(fn)
+            };
 
             // params
             fp.extend(fn, o);
@@ -253,7 +239,9 @@
         functal.process = process.fn;
         functal.pow = options.pow();
 
-        functal.modify = fractal.modifiers.angle;
+        var modifierChain = [fp.wandom(modifiers.modifiers)];
+        functal.modifiers = fp.map('fn', modifierChain);
+        functal.modifierNames = fp.map(fp.nameOf, functal.modifiers);
 
         functal.floorz = options.floorz();
 
@@ -497,14 +485,6 @@
             weight: 1
         },
         {
-            fn: math.floor,
-            weight: 0.5
-        },
-        {
-            fn: math.ceil,
-            weight: 0.5
-        },
-        {
             fn: math.sqrt,
             weight: 1
         },
@@ -519,6 +499,18 @@
         {
             fn: math.log,
             weight: 1
+        },
+        {
+            fn: math.floor,
+            weight: 0.333
+        },
+        {
+            fn: math.ceil,
+            weight: 0.333
+        },
+        {
+            fn: math.round,
+            weight: 0.33
         },
         {
             fn: function reciprocal(z)
@@ -597,7 +589,7 @@
 
     // kick off
 
-    var devCount = 10;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 
