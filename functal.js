@@ -238,6 +238,15 @@
         functal.pow = options.pow();
 
         var modifierChain = [fp.wandom(modifiers.modifiers)];
+
+        fp.forEach(function(f)
+        {
+            if (f.fn.setParams)
+            {
+                f.fn.setParams();
+            }
+        }, modifierChain);
+
         functal.modifiers = fp.map('fn', modifierChain);
         functal.modifierNames = fp.map(function(m)
         {
