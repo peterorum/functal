@@ -72,18 +72,15 @@
 
         // count how long the iteration takes to break the limit
 
-        while (count < maxCount - 1)
+        var done = false;
+
+        while (! done && count < maxCount - 1)
         {
             z = functal.process(fractal.zmod(functal, z), c);
 
             zs.push(z);
 
-            var done = fractal.isDone(functal, zs);
-
-            if (done)
-            {
-                break;
-            }
+            done = fractal.isDone(functal, zs);
 
             count++;
         }

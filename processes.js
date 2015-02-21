@@ -169,7 +169,7 @@
         },
 
         {
-            //adjust real & imag parts with function of the opposite
+            // adjust real & imag parts with function of the opposite
             name: 'fxy',
             weight: 1,
             fn: (function()
