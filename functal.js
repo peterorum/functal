@@ -101,8 +101,7 @@
             count++;
         }
 
-        // var zsAdj = fp.map(fp.flow(math.sin, math.floor,math.sin), zs);
-        var zsAdj = fp.map(fp.flowAll(functal.adjzs), zs);
+        var zsAdj = functal.adjzs.length ? fp.map(fp.flow.apply(null, functal.adjzs), zs) : zs;
 
         var result = {
             count: count,
@@ -158,7 +157,11 @@
                 // all inputs & outputs are 0..1
                 var result = fractal.escapeCount(functal, fx, fy);
 
-                var adj = functal.modifiers[0](functal, result);
+                // sum adjustments
+                var adjSum = fp.reduce(function(n, fn) { return n + fn(functal, result); }, 0, functal.modifiers);
+
+                // to 0..1
+                var adj = adjSum / functal.modifiers.length;
 
                 data[i][j] = adj;
 
@@ -237,7 +240,12 @@
         functal.process = process.fn;
         functal.pow = options.pow();
 
-        var modifierChain = [fp.wandom(modifiers.modifiers)];
+        // var modifierChain = [fp.wandom(modifiers.modifiers)];
+
+        var modifierChain = fp.range(0, 1 + fp.bandomInt(4, 2)).map(function()
+        {
+            return fp.wandom(modifiers.modifiers);
+        });
 
         fp.forEach(function(f)
         {
@@ -248,6 +256,7 @@
         }, modifierChain);
 
         functal.modifiers = fp.map('fn', modifierChain);
+
         functal.modifierNames = fp.map(function(m)
         {
             var o = {
@@ -606,7 +615,7 @@
 
     // kick off
 
-    var devCount = 1;
+    var devCount = 10;
 
     var functals = isDev ? devCount : 1;
 
