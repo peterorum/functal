@@ -226,7 +226,7 @@
         functal.uniques = fp.unique(fp.flatten(data)).length;
 
         // fail if not enough variation in the image sample
-        if (functal.stdDev < functal.minStdDev || functal.uniques < sampleCount * sampleCount)
+        if (functal.stdDev < functal.minStdDev || functal.uniques < sampleCount * sampleCount / 2)
         {
             deferred.reject(functal, data);
         }
@@ -245,6 +245,7 @@
 
             // store time taken
             functal.time = ((new Date()).getTime() - startTime);
+            functal.duration = moment.duration(functal.time).humanize();
 
             var palette = pal.setPalette();
 
@@ -450,11 +451,9 @@
 
     // ------------ make a functal
 
-    // use difractalerent options until a fractal with enough variety is found
+    // use different options until a fractal with enough variety is found
 
     // recurse until successful as it's async
-
-    debugger;
 
     fractal.attempt = function()
     {
@@ -462,9 +461,7 @@
 
         fractal.make(options).then(function(functal)
             {
-                var msg = '#fractal #functal v' + functal.version + ' calc time ' + moment.duration(functal.time).humanize();
-
-                functal.message = msg;
+                var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.duration;
 
                 console.log('--- success');
                 console.log(JSON.stringify(functal, null, 4));
@@ -485,7 +482,7 @@
 
     // kick off
 
-    var devCount = 10;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 

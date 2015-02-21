@@ -12,7 +12,7 @@
         fn: function(zs) {
             var z = fp.last(zs);
 
-            return math.norm(z) > this.limit;
+            return math.norm(z) >= this.limit;
         }
     }, {
         name: 'sum',
@@ -20,7 +20,7 @@
         fn: function(zs) {
             var z = fp.last(zs);
 
-            return math.abs(z.re) + math.abs(z.im) > this.limit;
+            return math.abs(z.re) + math.abs(z.im) >= this.limit;
         }
     }, {
         name: 'product',
@@ -28,7 +28,7 @@
         fn: function(zs) {
             var z = fp.last(zs);
 
-            return math.abs(z.re) * math.abs(z.im) > this.limit;
+            return math.abs(z.re) * math.abs(z.im) >= this.limit;
         }
     }, {
         name: 'diff',
@@ -36,7 +36,7 @@
         fn: function(zs) {
             var z = fp.last(zs);
 
-            return math.abs(z.re - z.im) > this.limit;
+            return math.abs(z.re - z.im) >= this.limit;
         }
     }, {
         name: 'maxabs',
@@ -44,7 +44,7 @@
         fn: function(zs) {
             var z = fp.last(zs);
 
-            return math.max(math.abs(z.re), math.abs(z.im)) > this.limit;
+            return math.max(math.abs(z.re), math.abs(z.im)) >= this.limit;
         }
     }, {
         name: 'minabs',
@@ -52,7 +52,7 @@
         fn: function(zs) {
             var z = fp.last(zs);
 
-            return math.min(math.abs(z.re), math.abs(z.im)) > this.limit;
+            return math.min(math.abs(z.re), math.abs(z.im)) >= this.limit;
         }
     }, {
         name: 'converge',
@@ -75,31 +75,31 @@
         name: 'mean',
         weight: 1,
         fn: function(zs) {
-            return math.norm(math.mean(zs)) > this.limit;
+            return math.norm(math.mean(zs)) >= this.limit;
         }
     }, {
         name: 'stddev',
         weight: 1,
         fn: function(zs) {
-            return math.norm(math.std(zs)) > this.limit;
+            return math.norm(math.std(zs)) >= this.limit;
         }
     }, {
         name: 'prod',
         weight: 1,
         fn: function(zs) {
-            return math.norm(math.prod(zs)) > this.limit;
+            return math.norm(math.prod(zs)) >= this.limit;
         }
     }, {
         name: 'meannorm',
         weight: 1,
         fn: function(zs) {
-            return math.mean(fp.map(math.norm, zs)) > this.limit;
+            return math.mean(fp.map(math.norm, zs)) >= this.limit;
         }
     }, {
         name: 'stddevnorm',
         weight: 1,
         fn: function(zs) {
-            return math.std(fp.map(math.norm, zs)) > this.limit;
+            return math.std(fp.map(math.norm, zs)) >= this.limit;
         }
     }];
 }());
