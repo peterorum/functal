@@ -158,10 +158,13 @@
                 var result = fractal.escapeCount(functal, fx, fy);
 
                 // sum adjustments
-                var adjSum = fp.reduce(function(n, fn) { return n + fn(functal, result); }, 0, functal.modifiers);
+                var adjSum = fp.reduce(function(n, modifier)
+                {
+                    return n + modifier.fn(functal, result) * modifier.scale;
+                }, 0, functal.modifiers);
 
                 // to 0..1
-                var adj = adjSum / functal.modifiers.length;
+                var adj = adjSum / functal.modifiersSum;
 
                 data[i][j] = adj;
 
@@ -255,19 +258,24 @@
             }
         }, modifierChain);
 
-        functal.modifiers = fp.map('fn', modifierChain);
-
-        functal.modifierNames = fp.map(function(m)
+        functal.modifiers = fp.map(function(m)
         {
-            var o = {
+            var modifier = {
+                fn: m.fn,
                 name: fp.nameOf(m.fn),
+                scale: 0.5 + fp.bandom(2, 3)
             };
 
-            fp.extend(m.fn, o);
+            fp.extend(m.fn, modifier);
 
-            return o;
+            return modifier;
 
         }, modifierChain);
+
+        functal.modifiersSum = fp.reduce(function(sum, m)
+        {
+            return sum + m.scale;
+        }, 0, functal.modifiers);
 
         functal.floorz = options.floorz();
 
