@@ -53,6 +53,21 @@
         return zmod;
     };
 
+    fractal.finite = fp.curry(function(max, z)
+    {
+        if (!fp.isFinite(z.re) || fp.isNaN(z.re))
+        {
+            z.re = max;
+        }
+
+        if (!fp.isFinite(z.im) || fp.isNaN(z.im))
+        {
+            z.im = max;
+        }
+
+        return z;
+    });
+
     fractal.isDone = function(functal, zs)
     {
         return functal.test(zs);
@@ -189,12 +204,16 @@
 
         functal.version = options.version();
         functal.seed = randomSeed;
+
+        functal.limit = options.limit();
+        functal.finite = fractal.finite(functal.limit);
+
         functal.width = options.width();
         functal.height = options.height();
         functal.maxCount = options.maxCount();
-        functal.limit = options.limit();
         functal.range = options.range();
         functal.rangeWidth = functal.range.x2 - functal.range.x1;
+
 
         functal.set = {
             name: options.set.name,
@@ -208,8 +227,20 @@
         functal.testName = test.name;
         functal.test = test.fn;
 
-        functal.adjzs = fp.range(0, fp.bandomInt(4, 1)).map(function() { return fp.wandom(options.z2zfns).fn; });
+        functal.adjzs = fp.range(0, fp.bandomInt(4, 1)).map(function()
+        {
+            return fp.wandom(options.z2zfns).fn;
+        });
+
         functal.adjzsNames = fp.map(fp.nameOf, functal.adjzs);
+
+        // wrap with finite after getting names
+        functal.adjzs = fp.map(function(f)
+        {
+            return fp.compose(functal.finite, f);
+        }, functal.adjzs);
+
+        functal.extras = options.extras;
 
         var process = fp.wandom(processes.processes);
         functal.processName = process.name;
@@ -228,6 +259,7 @@
         functal.stdDev = math.std(data);
         functal.uniques = fp.unique(fp.flatten(data)).length;
 
+
         // fail if not enough variation in the image sample
         if (functal.stdDev < functal.minStdDev || functal.uniques < sampleCount * sampleCount / 2)
         {
@@ -238,6 +270,10 @@
             try
             {
                 // create fractal
+
+                console.log('--- creating');
+                console.log(JSON.stringify(functal, null, 4));
+
                 data = fractal.process(functal);
             }
             catch (ex)
@@ -374,7 +410,8 @@
             floorz: function()
             {
                 return math.random() < 0.05;
-            }
+            },
+            extras: [] // misc data
         };
 
         // keep selected subarea the same aspect ratio as the image
@@ -477,7 +514,40 @@
         {
             fn: math.log,
             weight: 1
-        } ];
+        },
+        {
+            fn: function reciprocal(z)
+            {
+                return math.divide(math.complex(1, 0), z);
+            },
+
+            weight: 1
+        },
+        {
+            fn: (function trigxy()
+            {
+                var trig1 = fp.wandom([math.sin, math.cos]);
+                var trig2 = fp.wandom([math.sin, math.cos]);
+
+                var fxy = {
+                    freq1: math.random(20),
+                    freq2: math.random(20),
+                    trig1: trig1,
+                    trig2: trig2,
+                    name1: fp.nameOf(trig1),
+                    name2: fp.nameOf(trig2)
+                };
+
+                options.extras.push({'trigxy' : fxy});
+
+                return function trigxy(z)
+                {
+                    return math.complex(fxy.trig1(math.mod(fxy.freq1 * z.re, math.pi * 2)), fxy.trig2(math.mod(fxy.freq2 * z.im, math.pi * 2)));
+                };
+            })(),
+
+            weight: 1
+        }];
 
         return options;
     };
@@ -496,9 +566,6 @@
             {
                 var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.duration;
 
-                console.log('--- success');
-                console.log(JSON.stringify(functal, null, 4));
-
                 if (!isDev)
                 {
                     twit.tweet(msg, functal.file + '.png');
@@ -515,7 +582,7 @@
 
     // kick off
 
-    var devCount = 10;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 
