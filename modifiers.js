@@ -34,33 +34,42 @@
     {
         // circle trap
 
-        fn: function circleTrap(functal, result)
+        fn: (function()
         {
-            var modified;
+            var params = {};
 
-            var diameter = 0.2;
-            var band = 1;
-            var outside = 0.5;
-            var centre = math.complex(0, 0);
+            params.diameter = fp.bandom(1, -2);
+            params.band = fp.bandom(1, -3);
+            params.outside = math.random(1);
+            params.centre = math.complex(fp.bandom(1, 2), fp.bandom(1, 2));
 
-            var lastz = fp.last(result.zs);
-
-
-            var z1 = math.subtract(lastz, centre);
-
-            var distance = math.sqrt(math.norm(z1));
-
-            if (math.abs(distance - diameter) < band)
+            var fn = function circleTrap(functal, result)
             {
-                modified = math.abs(distance - diameter);
-            }
-            else
-            {
-                modified = outside;
-            }
+                var modified;
 
-            return modified;
-        },
+                var lastz = fp.last(result.zs);
+
+                var z1 = math.subtract(lastz, params.centre);
+
+                var distance = math.sqrt(math.norm(z1));
+
+                if (math.abs(distance - params.diameter) < params.band)
+                {
+                    modified = math.abs(distance - params.diameter);
+                }
+                else
+                {
+                    modified = params.outside;
+                }
+
+                return modified;
+            };
+
+            fn.params = params;
+            return fn;
+        })(),
+
+
         weight: 10000,
     }];
 
