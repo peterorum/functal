@@ -70,7 +70,7 @@
                 params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
             };
 
-            fn.reset();
+            fn.setParams();
 
             return fn;
         })(),
