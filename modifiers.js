@@ -38,11 +38,6 @@
         {
             var params = {};
 
-            params.diameter = fp.bandom(1, -2);
-            params.band = fp.bandom(1, -3);
-            params.outside = math.random(1);
-            params.centre = math.complex(fp.bandom(1, 2), fp.bandom(1, 2));
-
             var fn = function circleTrap(functal, result)
             {
                 var modified;
@@ -66,6 +61,17 @@
             };
 
             fn.params = params;
+
+            fn.setParams = function()
+            {
+                params.diameter = fp.bandom(1, -2);
+                params.band = fp.bandom(1, -3);
+                params.outside = math.random(1);
+                params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
+            };
+
+            fn.reset();
+
             return fn;
         })(),
 
