@@ -171,7 +171,7 @@
         {
             //adjust real & imag parts with function of the opposite
             name: 'fxy',
-            weight: 10000000,
+            weight: 1,
             fn: (function()
             {
                 var trig = fp.wandom([math.sin, math.cos]);
