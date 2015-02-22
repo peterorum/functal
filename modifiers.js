@@ -10,24 +10,50 @@
     // modifying the final result
     // return -1..1
 
+    exports.reducers = [
+    {
+        fn: fp.last,
+        weight: 1
+    },
+    {
+        fn: math.min,
+        weight: 1
+    },
+    {
+        fn: math.max,
+        weight: 1
+    },
+    {
+        fn: math.mean,
+        weight: 1
+    },
+    {
+        fn: math.std,
+        weight: 1
+    }, ];
+
     exports.modifiers = [
     {
-        // identity
-
-        fn: function identity( /* functal, result */ )
+        fn: function angle(functal, result)
         {
-            return 0;
+            var vals = fp.map(function(z)
+            {
+                return math.atan2(z.re, z.im) / math.pi;
+            }, result.zs);
+
+            return functal.modifierReduce(vals);
         },
         weight: 1,
     },
     {
-        fn: function angle(functal, result)
+        fn: function norm(functal, result)
         {
-            var lastz = fp.last(result.zs);
+            var vals = fp.map(function(z)
+            {
+                return math.norm(z) / functal.limit;
+            }, result.zs);
 
-            var val = math.atan2(lastz.re, lastz.im) / math.pi;
-
-            return val;
+            return functal.modifierReduce(vals);
         },
         weight: 1,
     },
@@ -54,7 +80,7 @@
                 }
                 else
                 {
-                    modified = 0;//params.outside;
+                    modified = 0; //params.outside;
                 }
 
                 return modified;
