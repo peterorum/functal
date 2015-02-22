@@ -192,6 +192,45 @@
             },
             weight: 1,
         },
+        {
+            // box trap
+
+            fn: (function()
+            {
+                var params = {};
+
+                var fn = function boxTrap(functal, result)
+                {
+                    var vals = fp.map(function(z)
+                    {
+                        var z1 = math.subtract(z, params.centre);
+
+                        var x = math.abs(z1.re);
+                        var y = math.abs(z1.im);
+
+                        var dist = math.max(x, y);
+
+                        return math.mod(dist - params.diameter, 1);
+
+                    }, result.zs);
+
+                    return functal.modifierReduce(vals);
+                };
+
+                fn.params = params;
+
+                fn.setParams = function()
+                {
+                    params.diameter = fp.bandom(1, -2);
+                    params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
+                };
+
+                fn.setParams();
+
+                return fn;
+            })(),
+            weight: 1,
+        },
 
     ];
 
