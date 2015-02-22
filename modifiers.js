@@ -26,11 +26,7 @@
     {
         fn: math.mean,
         weight: 1
-    },
-    {
-        fn: math.std,
-        weight: 1
-    }, ];
+    }];
 
     exports.modifiers = [
         {
@@ -214,7 +210,7 @@
 
                     }, result.zs);
 
-                    return functal.modifierReduce(vals) / math.max(vals);
+                    return functal.modifierReduce(vals) / math.max(fp.map(math.abs, vals));
                 };
 
                 fn.params = params;
@@ -231,7 +227,75 @@
             })(),
             weight: 1,
         },
+        {
+            // sin trap
 
+            fn: (function()
+            {
+                var params = {};
+
+                var fn = function sinTrap(functal, result)
+                {
+                    var vals = fp.map(function(z)
+                    {
+                        var z1 = math.subtract(z, params.centre);
+
+                        return z1.im + params.ampl * math.sin(params.freq * z1.re) - params.diameter;
+
+                    }, result.zs);
+
+                    return functal.modifierReduce(vals) / math.max(fp.map(math.abs, vals));
+                };
+
+                fn.params = params;
+
+                fn.setParams = function()
+                {
+                    params.diameter = fp.bandom(1, -2);
+                    params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
+                    params.freq = fp.bandom(2, 4);
+                    params.ampl = math.random(0.5);
+                };
+
+                fn.setParams();
+
+                return fn;
+            })(),
+            weight: 1,
+        },
+        {
+            // real imag trap
+
+            fn: (function()
+            {
+                var params = {};
+
+                var fn = function reimTrap(functal, result)
+                {
+                    var vals = fp.map(function(z)
+                    {
+                        return z.im * z.re - params.diameter;
+
+                    }, result.zs);
+
+                    var y = functal.modifierReduce(vals) / math.max(fp.map(math.abs, vals));
+
+                    return y;
+                };
+
+                fn.params = params;
+
+                fn.setParams = function()
+                {
+                    params.diameter = fp.bandom(1, -2);
+                };
+
+                fn.setParams();
+
+                return fn;
+            })(),
+            weight: 1,
+        }
     ];
 
 }());
