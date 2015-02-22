@@ -87,22 +87,8 @@
             return hsl;
         },
         weight: 1
-    },
-    {
-        fn: function getColorAdjAsHue(functal, palette, escape, adj)
-        {
-            // returns hsl after adjusting index
-
-            var index = Math.floor(escape * palette.size);
-
-            var hsl = palette.colors[index % palette.size];
-
-            hsl.l = (adj + 1) / 2;
-
-            return hsl;
-        },
-        weight: 1
-    }];
+    }
+    ];
 
     // ------------ make color palette
 
