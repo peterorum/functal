@@ -66,24 +66,27 @@
 
             var fn = function circleTrap(functal, result)
             {
-                var modified;
+                var x;
 
-                var lastz = fp.last(result.zs);
-
-                var z1 = math.subtract(lastz, params.centre);
-
-                var distance = math.sqrt(math.norm(z1));
-
-                if (math.abs(distance - params.diameter) < params.band)
+                var vals = fp.map(function(z)
                 {
-                    modified = math.max(-1, math.min(1, distance - params.diameter));
-                }
-                else
-                {
-                    modified = 0; //params.outside;
-                }
+                    var z1 = math.subtract(z, params.centre);
 
-                return modified;
+                    var distance = math.sqrt(math.norm(z1));
+
+                    if (math.abs(distance - params.diameter) < params.band)
+                    {
+                        x = math.max(-1, math.min(1, distance - params.diameter));
+                    }
+                    else
+                    {
+                        x = 0;
+                    }
+
+                    return x;
+                }, result.zs);
+
+                return functal.modifierReduce(vals);
             };
 
             fn.params = params;
@@ -92,7 +95,6 @@
             {
                 params.diameter = fp.bandom(1, -2);
                 params.band = fp.bandom(1, -3);
-                params.outside = math.random(-1, 1);
                 params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
             };
 
@@ -100,8 +102,6 @@
 
             return fn;
         })(),
-
-
         weight: 1,
     }];
 
