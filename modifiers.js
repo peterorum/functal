@@ -46,6 +46,19 @@
         weight: 1,
     },
     {
+        fn: function real(functal, result)
+        {
+            var vals = fp.map(function(z)
+            {
+                return z.re;
+            }, result.zs);
+
+            return functal.modifierReduce(vals);
+        },
+        weight: 1000000,
+    },
+
+    {
         fn: function norm(functal, result)
         {
             var vals = fp.map(function(z)
