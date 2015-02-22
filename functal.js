@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.1.9';
+    var version = '1.2.1';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -22,6 +22,7 @@
     var limitTests = require('./limitTests');
     var processes = require('./processes');
     var modifiers = require('./modifiers');
+    var clr = require('./color');
     var PNG = require('node-png').PNG;
     var Q = require('q');
 
@@ -104,7 +105,7 @@
         var zsAdj = functal.adjzs.length ? fp.map(fp.flow.apply(null, functal.adjzs), zs) : zs;
 
         var result = {
-            count: count,
+            escape: count / maxCount,
             zs: zsAdj
         };
 
@@ -157,16 +158,24 @@
                 // all inputs & outputs are 0..1
                 var result = fractal.escapeCount(functal, fx, fy);
 
-                // sum adjustments
-                var adjSum = fp.reduce(function(n, modifier)
+                var adj = 0;
+
+                if (!fp.isEmpty(functal.modifiers))
                 {
-                    return n + modifier.fn(functal, result) * modifier.scale;
-                }, 0, functal.modifiers);
+                    // sum adjustments
+                    var adjSum = fp.reduce(function(n, modifier)
+                    {
+                        return n + modifier.fn(functal, result) * modifier.scale;
+                    }, 0, functal.modifiers);
 
-                // to 0..1
-                var adj = adjSum / functal.modifiersSum;
+                    adj = adjSum / functal.modifiersSum;
+                }
 
-                data[i][j] = adj;
+
+                data[i][j] = {
+                    escape: result.escape,
+                    adj: adj
+                };
 
                 y += yincr;
                 j++;
@@ -181,7 +190,7 @@
 
     // ---------- make a functal
 
-    fractal.make = function(options)
+    fractal.make = function(options, palette)
     {
         // async file writing at end
         var deferred = Q.defer();
@@ -245,7 +254,7 @@
 
         // var modifierChain = [fp.wandom(modifiers.modifiers)];
 
-        var modifierChain = fp.range(0, 1 + fp.bandomInt(4, 2)).map(function()
+        var modifierChain = fp.range(0, fp.bandomInt(4, 2)).map(function()
         {
             return fp.wandom(modifiers.modifiers);
         });
@@ -284,14 +293,27 @@
         var data = fractal.process(functal, sampleCount);
 
         // calc std dev for the sample data
-        functal.stdDev = math.std(data);
-        functal.uniques = fp.unique(fp.flatten(data)).length;
+        var escapes = fp.map(function(d)
+        {
+            return d.escape;
+        }, fp.flatten(data));
 
+        functal.stdDev = math.std(escapes);
+
+        var hsls = fp.map(function(d)
+        {
+            return pal.getColor(functal, palette, d.escape, d.adj);
+        }, fp.flatten(data));
+
+        var lightnessStddev = math.std(fp.map('l', hsls));
+
+        functal.lightnessStddev = lightnessStddev;
+        functal.uniques = fp.unique(fp.pluck('l', hsls)).length;
 
         // fail if not enough variation in the image sample
-        if (functal.stdDev < functal.minStdDev || functal.uniques < sampleCount * sampleCount / 2)
+        if (functal.lightnessStddev < functal.minStdDev || functal.stdDev < functal.minStdDev || functal.uniques < sampleCount * 2)
         {
-            deferred.reject(functal, data);
+            deferred.reject(functal);
         }
         else
         {
@@ -306,15 +328,13 @@
             }
             catch (ex)
             {
-                console.error(ex);
-                deferred.reject(functal, data);
+                functal.error = ex;
+                deferred.reject(functal);
             }
 
             // store time taken
             functal.time = ((new Date()).getTime() - startTime);
             functal.duration = moment.duration(functal.time).humanize();
-
-            var palette = pal.setPalette();
 
             fp.extend(fp.omit('colors', palette), functal);
 
@@ -334,6 +354,10 @@
                     {
                         // exit
                         deferred.resolve(functal);
+                    }, function(ex)
+                    {
+                        functal.error = ex;
+                        deferred.reject(functal);
                     });
             }
             else
@@ -359,18 +383,18 @@
             filterType: -1
         });
 
-        // stretch results over full palette
-        var paletteLength = palette.colors.length - 1;
-
         for (var y = 0; y < image.height; y++)
         {
             for (var x = 0; x < image.width; x++)
             {
                 var idx = (image.width * y + x) << 2;
 
-                var index = Math.floor(data[x][y] * paletteLength);
+                var escape = data[x][y].escape;
+                var adj = data[x][y].adj;
 
-                var rgb = palette.colors[index];
+                var hsl = pal.getColor(functal, palette, escape, adj);
+
+                var rgb = clr.hsl2rgb(hsl);
 
                 image.data[idx] = rgb.r;
                 image.data[idx + 1] = rgb.g;
@@ -385,7 +409,6 @@
         });
 
         return deferred.promise;
-
     };
 
     fractal.setOptions = function()
@@ -603,7 +626,9 @@
     {
         var options = fractal.setOptions();
 
-        fractal.make(options).then(function(functal)
+        var palette = pal.setPalette();
+
+        fractal.make(options, palette).then(function(functal)
             {
                 var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.duration;
 
@@ -614,10 +639,18 @@
             },
             function(functal)
             {
-                console.log('--- rejected');
                 console.log(JSON.stringify(functal, null, 4));
-                // retry
-                fractal.attempt();
+
+                if (functal.error)
+                {
+                    console.error('--- error');
+                }
+                else
+                {
+                    console.log('--- rejected');
+                    // retry
+                    fractal.attempt();
+                }
             });
     };
 
