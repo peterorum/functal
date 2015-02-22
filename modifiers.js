@@ -8,15 +8,15 @@
     fp.mixin(require('./plus-fp/plus-fp'));
 
     // modifying the final result
-    // return 0..1
+    // return -1..1
 
     exports.modifiers = [
     {
         // identity
 
-        fn: function identity(functal, result)
+        fn: function identity( /* functal, result */ )
         {
-            return result.zs.length / functal.maxCount;
+            return 0;
         },
         weight: 1,
     },
@@ -25,7 +25,7 @@
         {
             var lastz = fp.last(result.zs);
 
-            var val = (math.atan2(lastz.re, lastz.im) / math.pi + 1.0) / 2.0;
+            var val = math.atan2(lastz.re, lastz.im) / math.pi;
 
             return val;
         },
@@ -50,11 +50,11 @@
 
                 if (math.abs(distance - params.diameter) < params.band)
                 {
-                    modified = math.abs(distance - params.diameter);
+                    modified = math.max(-1, math.min(1, distance - params.diameter));
                 }
                 else
                 {
-                    modified = params.outside;
+                    modified = 0;//params.outside;
                 }
 
                 return modified;
@@ -66,7 +66,7 @@
             {
                 params.diameter = fp.bandom(1, -2);
                 params.band = fp.bandom(1, -3);
-                params.outside = math.random(1);
+                params.outside = math.random(-1, 1);
                 params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
             };
 
