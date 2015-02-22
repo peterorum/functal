@@ -46,6 +46,31 @@
             weight: 1,
         },
         {
+            fn: function angleChange(functal, result)
+            {
+                var vals = [];
+
+                fp.forEach(function(z, i, zs)
+                {
+                    var x = 0;
+
+                    if (i > 0)
+                    {
+                        var z1 = zs[i - 1];
+                        var z2 = math.subtract(zs[i], z1);
+
+                        x = math.atan2(z2.re, z2.im) / math.pi;
+                    }
+
+                    vals.push(x);
+
+                }, result.zs);
+
+                return functal.modifierReduce(vals);
+            },
+            weight: 1,
+        },
+        {
             fn: function real(functal, result)
             {
                 var max = math.max(fp.map(function(z)
@@ -121,7 +146,53 @@
                 return fn;
             })(),
             weight: 1,
-        }
+        },
+        {
+            // real circle trap
+
+            fn: (function()
+            {
+                var params = {};
+
+                var fn = function realCircleTrap(functal, result)
+                {
+                    var vals = fp.map(function(z)
+                    {
+                        var x = math.mod(z.re - params.centre, 1);
+
+                        return math.sqrt(math.max(0, 1.0 - x * x));
+
+                    }, result.zs);
+
+                    return functal.modifierReduce(vals);
+                };
+
+                fn.params = params;
+
+                fn.setParams = function()
+                {
+                    params.centre = math.random(-1, 1);
+                };
+
+                fn.setParams();
+
+                return fn;
+            })(),
+            weight: 1,
+        },
+        {
+            fn: function sinreal(functal, result)
+            {
+                var vals = fp.map(function(z)
+                {
+                    return math.sin(z.re * math.pi);
+                }, result.zs);
+
+                return functal.modifierReduce(vals);
+            },
+            weight: 1,
+        },
+
     ];
 
 }());
