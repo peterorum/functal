@@ -38,23 +38,6 @@
 
     var fractal = {};
 
-    fractal.zmod = function(functal, z)
-    {
-        var zmod;
-
-        if (functal.floorz)
-        {
-            // more blocky
-            zmod = math.complex(math.floor(z.re), math.floor(z.im));
-        }
-        else
-        {
-            zmod = z;
-        }
-
-        return zmod;
-    };
-
     fractal.finite = fp.curry(function(max, z)
     {
         if (!fp.isFinite(z.re) || fp.isNaN(z.re))
@@ -93,7 +76,7 @@
 
         while (!done && count < maxCount - 1)
         {
-            z = functal.process(fractal.zmod(functal, z), c);
+            z = functal.process(z, c);
 
             zs.push(z);
 
@@ -252,8 +235,6 @@
         functal.process = process.fn;
         functal.pow = options.pow();
 
-        // var modifierChain = [fp.wandom(modifiers.modifiers)];
-
         var modifierChain = fp.range(0, fp.bandomInt(4, 2)).map(function()
         {
             return fp.wandom(modifiers.modifiers);
@@ -272,7 +253,7 @@
             var modifier = {
                 fn: m.fn,
                 name: fp.nameOf(m.fn),
-                scale: 0.5 + fp.bandom(2, 3)
+                scale: math.random(1)
             };
 
             fp.extend(m.fn, modifier);
@@ -285,8 +266,6 @@
         {
             return sum + m.scale;
         }, 0, functal.modifiers);
-
-        functal.floorz = options.floorz();
 
         // sample
         var sampleCount = 10;
@@ -457,10 +436,6 @@
             pow: function()
             {
                 return math.random(2, 10);
-            },
-            floorz: function()
-            {
-                return math.random() < 0.05;
             }
         };
 
