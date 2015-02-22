@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.2.1';
+    var version = '1.2.2';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -235,7 +235,7 @@
         functal.process = process.fn;
         functal.pow = options.pow();
 
-        var modifierChain = fp.range(0, fp.bandomInt(4, 2)).map(function()
+        var modifierChain = fp.range(0, 1 + fp.bandomInt(4, 2)).map(function()
         {
             return fp.wandom(modifiers.modifiers);
         });
@@ -266,6 +266,9 @@
         {
             return sum + m.scale;
         }, 0, functal.modifiers);
+
+        functal.modifierReduce = fp.wandom(modifiers.reducers).fn;
+        functal.modifierReduceName = fp.nameOf(functal.modifierReduce);
 
         // sample
         var sampleCount = 10;
