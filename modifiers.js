@@ -214,7 +214,7 @@
 
                     }, result.zs);
 
-                    return functal.modifierReduce(vals);
+                    return functal.modifierReduce(vals) / math.max(vals);
                 };
 
                 fn.params = params;
