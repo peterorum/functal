@@ -129,6 +129,8 @@
             // translate to the sub-range
             var fx = functal.range.x1 + fxincr * x;
 
+            console.log('i', i);
+
             data[i] = [];
 
             var y = 0;
@@ -634,7 +636,7 @@
 
     // kick off
 
-    var devCount = 1;
+    var devCount = 4;
 
     var functals = isDev ? devCount : 1;
 
