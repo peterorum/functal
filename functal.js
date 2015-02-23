@@ -7,6 +7,8 @@
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
 
+    console.log(randomSeed);
+
     // must be first
     seedrandom(randomSeed,
     {
@@ -118,8 +120,11 @@
         var fxincr = (functal.range.x2 - functal.range.x1) / functal.width;
         var fyincr = (functal.range.y2 - functal.range.y1) / functal.height;
 
+        functal.startTime = (new Date()).getTime();
+
         // x,y  pixel position
         var x = 0;
+        var eta = '';
 
         // i,j index into data result matrix
         var i = 0;
@@ -167,10 +172,20 @@
             x += xincr;
             i++;
 
+            if (global.gc)
+            {
+                global.gc();
+            }
+
             if (!sample)
             {
-                var eta = moment.duration(((new Date()).getTime() - functal.startTime) / i * (functal.width - i)).humanize();
-                console.log(eta);
+                var neweta = moment.duration(((new Date()).getTime() - functal.startTime) / i * (functal.width - i)).humanize();
+
+                if (neweta !== eta)
+                {
+                    eta = neweta;
+                    console.log(eta);
+                }
             }
         }
 
@@ -184,10 +199,7 @@
         // async file writing at end
         var deferred = Q.defer();
 
-
         var functal = {};
-
-        functal.startTime = (new Date()).getTime();
 
         functal.version = options.version();
         functal.seed = randomSeed;
@@ -641,7 +653,7 @@
 
     // kick off
 
-    var devCount = 4;
+    var devCount = 10;
 
     var functals = isDev ? devCount : 1;
 
