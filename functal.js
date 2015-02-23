@@ -7,8 +7,6 @@
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
 
-    console.log(randomSeed);
-
     // must be first
     seedrandom(randomSeed,
     {
@@ -179,12 +177,19 @@
 
             if (!sample)
             {
-                var neweta = moment.duration(((new Date()).getTime() - functal.startTime) / i * (functal.width - i)).humanize();
+                var duration = moment.duration(((new Date()).getTime() - functal.startTime) / i * (functal.width - i));
+
+                var neweta = duration.humanize();
 
                 if (neweta !== eta)
                 {
                     eta = neweta;
                     console.log(eta);
+                }
+
+                if (duration.asHours() >= 8)
+                {
+                    throw "expected time overflow";
                 }
             }
         }
@@ -653,7 +658,7 @@
 
     // kick off
 
-    var devCount = 10;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 
