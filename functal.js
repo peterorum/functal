@@ -129,8 +129,6 @@
             // translate to the sub-range
             var fx = functal.range.x1 + fxincr * x;
 
-            console.log('i', i);
-
             data[i] = [];
 
             var y = 0;
@@ -168,6 +166,12 @@
 
             x += xincr;
             i++;
+
+            if (!sample)
+            {
+                var eta = moment.duration(((new Date()).getTime() - functal.startTime) / i * (functal.width - i)).humanize();
+                console.log(eta);
+            }
         }
 
         return data;
@@ -180,9 +184,10 @@
         // async file writing at end
         var deferred = Q.defer();
 
-        var startTime = (new Date()).getTime();
 
         var functal = {};
+
+        functal.startTime = (new Date()).getTime();
 
         functal.version = options.version();
         functal.seed = randomSeed;
@@ -317,7 +322,7 @@
             }
 
             // store time taken
-            functal.time = ((new Date()).getTime() - startTime);
+            functal.time = ((new Date()).getTime() - functal.startTime);
             functal.duration = moment.duration(functal.time).humanize();
 
             fp.extend(fp.omit('colors', palette), functal);
