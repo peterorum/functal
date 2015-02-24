@@ -76,7 +76,7 @@
 
                 var vals = fp.map(function(z)
                 {
-                    return z.re / max;
+                    return max ?  z.re / max : 1;
                 }, result.zs);
 
                 return functal.modifierReduce(vals);

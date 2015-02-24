@@ -95,7 +95,7 @@
         return result;
     };
 
-    fractal.process = function(functal, sample)
+    fractal.process = function(functal, palette, sample)
     {
         // sample is undefined for full resolution
         // use eg 3 to take points a third of the way in
@@ -146,22 +146,55 @@
 
                 var adj = 0;
 
+                var rgb, hsl;
+
                 if (!fp.isEmpty(functal.modifiers))
                 {
-                    // sum adjustments
-                    var adjSum = fp.reduce(function(n, modifier)
+                    var mods = fp.map(function(m)
                     {
-                        return n + modifier.fn(functal, result) * modifier.scale;
-                    }, 0, functal.modifiers);
+                        return m.fn(functal, result) * m.scale;
+                    }, functal.modifiers);
 
-                    adj = adjSum / functal.modifiersSum;
+                    if (0)
+                    {
+                        // blend modifiers onto base color
+                        // use [r, g, b]
+
+                        var base = fp.values(pal.getColor(functal, palette, result.escape, 0));
+
+                        var blended = fp.reduce(function(sum, mod)
+                        {
+                            var modColor = fp.values(pal.getColor(functal, palette, mod * 2 - 1, 0));
+
+                            return math.add(sum, modColor);
+
+                        }, base, mods);
+
+                        blended = math.chain(blended).divide(1 + mods.length).multiply(255).floor().done();
+
+                        rgb = fp.zipObject(blended, ['r', 'g', 'b']);
+                    }
+                    else
+                    {
+                        // sum adjustments
+                        var adjSum = fp.reduce(function(n, mod)
+                        {
+                            return n + mod;
+                        }, 0, mods);
+
+                        adj = adjSum / functal.modifiersSum;
+
+                        hsl = pal.getColor(functal, palette, result.escape, adj);
+                        rgb = clr.hsl2rgb(hsl);
+                    }
+                }
+                else
+                {
+                    hsl = pal.getColorAdjusted(functal, palette, result.escape, 0);
+                    rgb = clr.hsl2rgb(hsl);
                 }
 
-
-                data[i][j] = {
-                    escape: result.escape,
-                    adj: adj
-                };
+                data[i][j] = rgb;
 
                 y += yincr;
                 j++;
@@ -169,11 +202,6 @@
 
             x += xincr;
             i++;
-
-            if (global.gc)
-            {
-                global.gc();
-            }
 
             if (!sample)
             {
@@ -197,13 +225,8 @@
         return data;
     };
 
-    // ---------- make a functal
-
-    fractal.make = function(options, palette)
+    fractal.init = function(options)
     {
-        // async file writing at end
-        var deferred = Q.defer();
-
         var functal = {};
 
         functal.version = options.version();
@@ -294,30 +317,44 @@
         functal.modifierReduce = fp.wandom(modifiers.reducers).fn;
         functal.modifierReduceName = fp.nameOf(functal.modifierReduce);
 
+        return functal;
+    };
+
+    // ---------- make a functal
+
+    fractal.make = function(options, palette)
+    {
+        // async file writing at end
+        var deferred = Q.defer();
+
+        var functal = fractal.init(options);
+
+
         // sample
         var sampleCount = 10;
-        var data = fractal.process(functal, sampleCount);
+        var data = fractal.process(functal, palette, sampleCount);
 
-        // calc std dev for the sample data
-        var escapes = fp.map(function(d)
+        // // calc std dev for the sample data
+        // var escapes = fp.map(function(d)
+        // {
+        //     return d.escape;
+        // }, fp.flatten(data));
+
+        // functal.stdDev = math.std(escapes);
+
+        // analyze lightness
+        var ls = fp.map(function(d)
         {
-            return d.escape;
+            return clr.rgb2hsl(d).l;
         }, fp.flatten(data));
 
-        functal.stdDev = math.std(escapes);
-
-        var hsls = fp.map(function(d)
-        {
-            return pal.getColor(functal, palette, d.escape, d.adj);
-        }, fp.flatten(data));
-
-        var lightnessStddev = math.std(fp.map('l', hsls));
+        var lightnessStddev = math.std(ls);
 
         functal.lightnessStddev = lightnessStddev;
-        functal.uniques = fp.unique(fp.pluck('l', hsls)).length;
+        functal.uniques = fp.unique(ls).length;
 
         // fail if not enough variation in the image sample
-        if (functal.lightnessStddev < functal.minStdDev || functal.stdDev < functal.minStdDev || functal.uniques < sampleCount * 2)
+        if (functal.lightnessStddev < functal.minStdDev /*|| functal.stdDev < functal.minStdDev */ || functal.uniques < sampleCount * 2)
         {
             deferred.reject(functal);
         }
@@ -330,46 +367,46 @@
                 console.log('--- creating');
                 console.log(JSON.stringify(functal, null, 4));
 
-                data = fractal.process(functal);
+                data = fractal.process(functal, palette);
+
+                // store time taken
+                functal.time = ((new Date()).getTime() - functal.startTime);
+                functal.duration = moment.duration(functal.time).humanize();
+
+                fp.extend(fp.omit('colors', palette), functal);
+
+                // save
+                if (options.file())
+                {
+                    functal.file = options.file();
+
+                    // save options spec
+                    fsq.writeFile(functal.file + '.json', JSON.stringify(functal, null, 4))
+                        .then(function()
+                        {
+                            // save png
+                            return fractal.png(functal, data, palette);
+
+                        }).then(function()
+                        {
+                            // exit
+                            deferred.resolve(functal);
+                        }, function(ex)
+                        {
+                            functal.error = ex;
+                            deferred.reject(functal);
+                        });
+                }
+                else
+                {
+                    // no file required - just exit
+                    deferred.resolve(functal);
+                }
             }
             catch (ex)
             {
                 functal.error = ex;
                 deferred.reject(functal);
-            }
-
-            // store time taken
-            functal.time = ((new Date()).getTime() - functal.startTime);
-            functal.duration = moment.duration(functal.time).humanize();
-
-            fp.extend(fp.omit('colors', palette), functal);
-
-            // save
-            if (options.file())
-            {
-                functal.file = options.file();
-
-                // save options spec
-                fsq.writeFile(functal.file + '.json', JSON.stringify(functal, null, 4))
-                    .then(function()
-                    {
-                        // save png
-                        return fractal.png(functal, data, palette);
-
-                    }).then(function()
-                    {
-                        // exit
-                        deferred.resolve(functal);
-                    }, function(ex)
-                    {
-                        functal.error = ex;
-                        deferred.reject(functal);
-                    });
-            }
-            else
-            {
-                // no file required - just exit
-                deferred.resolve(functal);
             }
         }
 
@@ -378,7 +415,7 @@
 
     // ------------ output to a png image
 
-    fractal.png = function(functal, data, palette)
+    fractal.png = function(functal, data)
     {
         var deferred = Q.defer();
 
@@ -393,14 +430,9 @@
         {
             for (var x = 0; x < image.width; x++)
             {
+                var rgb = data[x][y];
+
                 var idx = (image.width * y + x) << 2;
-
-                var escape = data[x][y].escape;
-                var adj = data[x][y].adj;
-
-                var hsl = pal.getColor(functal, palette, escape, adj);
-
-                var rgb = clr.hsl2rgb(hsl);
 
                 image.data[idx] = rgb.r;
                 image.data[idx + 1] = rgb.g;
@@ -630,9 +662,11 @@
 
         var palette = pal.setPalette();
 
+
         fractal.make(options, palette).then(function(functal)
             {
                 var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.duration;
+
 
                 if (!isDev)
                 {
@@ -651,6 +685,7 @@
                 {
                     console.log('--- rejected');
                     // retry
+
                     fractal.attempt();
                 }
             });
@@ -658,7 +693,7 @@
 
     // kick off
 
-    var devCount = 1;
+    var devCount = 10;
 
     var functals = isDev ? devCount : 1;
 
