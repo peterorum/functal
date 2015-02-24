@@ -17,7 +17,7 @@
 
             var index = Math.floor(escape * palette.size);
 
-            var hsl = palette.colors[index % palette.size];
+            var hsl = palette.colors[math.mod(index, palette.size)];
 
             hsl.l = hsl.l + adj * 0.1;
 
@@ -45,7 +45,7 @@
 
             var index = Math.floor((adj + 1) / 2 * palette.size);
 
-            var hsl = palette.colors[index % palette.size];
+            var hsl = palette.colors[math.mod(index, palette.size)];
 
             return hsl;
         },
@@ -59,7 +59,7 @@
 
             var index = Math.floor(escape + (adj + 1) / 2 * palette.size);
 
-            var hsl = palette.colors[index % palette.size];
+            var hsl = palette.colors[math.mod(index, palette.size)];
 
             return hsl;
         },
@@ -73,8 +73,8 @@
             var index1 = Math.floor((adj + 1) / 2 * palette.size);
             var index2 = Math.floor(escape * palette.size);
 
-            var rgb1 = clr.hsl2rgb(palette.colors[index1 % palette.size]);
-            var rgb2 = clr.hsl2rgb(palette.colors[index2 % palette.size]);
+            var rgb1 = clr.hsl2rgb(palette.colors[math.mod(index1, palette.size)]);
+            var rgb2 = clr.hsl2rgb(palette.colors[math.mod(index2, palette.size)]);
 
             var rgb = {
                 r: (rgb1.r + rgb2.r) / 2,
