@@ -40,14 +40,21 @@
 
     fractal.finite = fp.curry(function(max, z)
     {
-        if (!fp.isFinite(z.re) || fp.isNaN(z.re))
+        if (fp.isNumber(z))
         {
-            z.re = max;
+            z = max;
         }
-
-        if (!fp.isFinite(z.im) || fp.isNaN(z.im))
+        else
         {
-            z.im = max;
+            if (!fp.isFinite(z.re) || fp.isNaN(z.re))
+            {
+                z.re = max;
+            }
+
+            if (!fp.isFinite(z.im) || fp.isNaN(z.im))
+            {
+                z.im = max;
+            }
         }
 
         return z;
@@ -84,7 +91,6 @@
 
             count++;
         }
-
 
         var zsAdj = functal.adjzs.length ? fp.map(fp.flow.apply(null, functal.adjzs), zs) : zs;
 
@@ -153,25 +159,37 @@
                 {
                     var mods = fp.map(function(m)
                     {
-                        return m.fn(functal, result) * m.scale;
+                        var x = m.fn(functal, result) * m.scale;
+
+                        return x;
                     }, functal.modifiers);
 
-                    if (0)
+                    if (functal.blend)
                     {
                         // blend modifiers onto base color
                         // use [r, g, b]
 
-                        var base = fp.values(pal.getColor(functal, palette, result.escape, 0));
+                        var base = fp.values(clr.hsl2rgb(pal.getColor(functal, palette, result.escape, 0)));
+                        base = math.multiply(base, functal.baseLayer);
+
+                        // not being passed as an argument for unknown reason. check with ramda
+                        var k = 0;
 
                         var blended = fp.reduce(function(sum, mod)
                         {
-                            var modColor = fp.values(pal.getColor(functal, palette, mod * 2 - 1, 0));
+                            var hsl = pal.getColor(functal, palette, mod * 2 - 1, 0);
+
+                            var modColor = fp.values(clr.hsl2rgb(hsl));
+
+                            modColor = math.multiply(modColor, functal.layers[k]);
+
+                            k++;
 
                             return math.add(sum, modColor);
 
                         }, base, mods);
 
-                        blended = math.chain(blended).divide(1 + mods.length).multiply(255).floor().done();
+                        blended = math.chain(blended).divide(functal.layerSum).floor().done();
 
                         rgb = fp.zipObject(blended, ['r', 'g', 'b']);
                     }
@@ -241,7 +259,6 @@
         functal.maxCount = options.maxCount();
         functal.range = options.range();
         functal.rangeWidth = functal.range.x2 - functal.range.x1;
-
 
         functal.set = {
             name: options.set.name,
@@ -314,6 +331,20 @@
         {
             return sum + m.scale;
         }, 0, functal.modifiers);
+
+        // make blend high as it's more often rejected
+        functal.blend = math.random(1) < 0.99;
+
+        // factors
+        functal.baseLayer = math.random(1);
+        functal.layers = [];
+
+        fp.times(function()
+        {
+            functal.layers.push(math.random(1));
+        }, functal.modifiers.length);
+
+        functal.layerSum = functal.baseLayer + math.sum(functal.layers);
 
         functal.modifierReduce = fp.wandom(modifiers.reducers).fn;
         functal.modifierReduceName = fp.nameOf(functal.modifierReduce);

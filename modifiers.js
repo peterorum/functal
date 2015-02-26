@@ -89,7 +89,9 @@
             {
                 var vals = fp.map(function(z)
                 {
-                    return math.norm(z) / functal.limit;
+                    var x =  functal.finite(math.norm(z)) / functal.limit;
+
+                    return x;
                 }, result.zs);
 
                 return functal.modifierReduce(vals);
@@ -111,7 +113,7 @@
                     {
                         var z1 = math.subtract(z, params.centre);
 
-                        var distance = math.sqrt(math.norm(z1));
+                        var distance = math.sqrt(functal.finite(math.norm(z1)));
 
                         if (math.abs(distance - params.diameter) < params.band)
                         {
@@ -274,7 +276,9 @@
                 {
                     var vals = fp.map(function(z)
                     {
-                        return z.im * z.re - params.diameter;
+                        var y = functal.finite(z.im * z.re) - params.diameter;
+
+                        return y;
 
                     }, result.zs);
 
@@ -294,7 +298,7 @@
 
                 return fn;
             })(),
-            weight: 1,
+            weight: 0,
         },
     ];
 
