@@ -55,23 +55,6 @@
             return math.min(math.abs(z.re), math.abs(z.im)) >= this.limit;
         }
     }, {
-        name: 'converge',
-        weight: 1,
-        fn: function(zs) {
-            var done = false;
-
-            if (zs.length > 1) {
-                var z2 = zs[zs.length - 2];
-                var z1 = zs[zs.length - 1];
-
-                var diff = math.abs(math.subtract(z1, z2));
-
-                return diff < 0.000001;
-            }
-
-            return done;
-        }
-    }, {
         name: 'mean',
         weight: 1,
         fn: function(zs) {

@@ -85,6 +85,7 @@
             count++;
         }
 
+
         var zsAdj = functal.adjzs.length ? fp.map(fp.flow.apply(null, functal.adjzs), zs) : zs;
 
         var result = {
