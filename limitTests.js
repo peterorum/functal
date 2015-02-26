@@ -70,7 +70,7 @@
         name: 'prod',
         weight: 1,
         fn: function(zs) {
-            return math.norm(math.prod(zs)) >= this.limit;
+            return this.finite(math.norm(math.prod(zs))) >= this.limit;
         }
     }, {
         name: 'meannorm',
