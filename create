@@ -9,4 +9,4 @@ source $HOME/.bash_profile
 
 cd $HOME/functal
 
-node --expose-gc functal
+node functal
