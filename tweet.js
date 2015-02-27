@@ -17,7 +17,7 @@
 
     fsq.readdir(folder).then(function(files)
     {
-        var file = fp.find(function(f)
+        var file = folder + fp.find(function(f)
         {
             return fp.endsWith('.png', f);
         }, files);
@@ -28,10 +28,14 @@
 
             twit.tweet(msg, file);
 
-            fsq.unlink(folder + file).then(function()
+            fsq.unlink(file).then(function()
             {
-                fsq.unlink(folder + file.replace(/\.png/, '.json'));
+                fsq.unlink(file.replace(/\.png/, '.json'));
             });
+        }
+        else
+        {
+            console.log('no file');
         }
     });
 
