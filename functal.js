@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.3.1';
+    var version = '1.3.2';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -419,7 +419,7 @@
                             // save png
                             return fractal.png(functal, data, palette);
 
-                        }).then(function()
+                        }).done(function()
                         {
                             // exit
                             deferred.resolve(functal);
@@ -715,7 +715,7 @@
 
         var palette = pal.setPalette();
 
-        fractal.make(options, palette).then(function(functal)
+        fractal.make(options, palette).done(function(functal)
             {
                 var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.duration;
 
@@ -741,6 +741,7 @@
                     {
                         console.log('--- rejected');
                     }
+
                     // retry
 
                     fractal.attempt();
@@ -752,7 +753,7 @@
 
     var devCount = 10;
 
-    var functals = isDev ? devCount : 10;
+    var functals = isDev ? devCount : 1;
 
     fp.times(function()
     {
