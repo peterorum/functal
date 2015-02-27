@@ -29,7 +29,7 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
-    var twit = require('./tweet-media');
+    // var twit = require('./tweet-media');
 
     // smaller image, no tweet
     var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
@@ -333,7 +333,7 @@
         }, 0, functal.modifiers);
 
         // make blend high as it's more often rejected
-        functal.blend = math.random(1) < 0.99;
+        functal.blend = math.random(1) < 0.95;
 
         // factors
         functal.baseLayer = math.random(1);
@@ -386,7 +386,7 @@
         functal.uniques = fp.unique(ls).length;
 
         // fail if not enough variation in the image sample
-        if (functal.lightnessStddev < functal.minStdDev /*|| functal.stdDev < functal.minStdDev */ || functal.uniques < sampleCount * 2)
+        if (functal.lightnessStddev < functal.minStdDev || functal.uniques <= sampleCount)
         {
             deferred.reject(functal);
         }
@@ -481,8 +481,27 @@
         return deferred.promise;
     };
 
-    fractal.setOptions = function()
+    fractal.setOptions = function(size)
     {
+        // size: small, medium, large
+        var sizes = {
+            small:
+            {
+                width: 100,
+                height: 100
+            },
+            medium:
+            {
+                width: 768,
+                height: 1024
+            },
+            large:
+            {
+                width: 1920,
+                height: 1080
+            }
+        };
+
         var options = {
             version: function()
             {
@@ -493,11 +512,11 @@
 
             width: function()
             {
-                return (isDev ? 100 : 1024);
+                return sizes[size].width;
             },
             height: function()
             {
-                return (isDev ? 100 : 768);
+                return sizes[size].height;
             },
             maxCount: function()
             {
@@ -510,7 +529,7 @@
             file: function()
             {
                 // filename with utc time
-                return 'functals/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
+                return 'functals/' + size + '/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
             },
             minStdDev: function()
             {
@@ -690,24 +709,27 @@
 
     fractal.attempt = function()
     {
-        var options = fractal.setOptions();
+        var size = (isDev ? 'small' : 'medium');
+
+        var options = fractal.setOptions(size);
 
         var palette = pal.setPalette();
-
 
         fractal.make(options, palette).then(function(functal)
             {
                 var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.duration;
 
-
                 if (!isDev)
                 {
-                    twit.tweet(msg, functal.file + '.png');
+                    // twit.tweet(msg, functal.file + '.png');
                 }
             },
             function(functal)
             {
-                console.log(JSON.stringify(functal, null, 4));
+                if (isDev)
+                {
+                    console.log(JSON.stringify(functal, null, 4));
+                }
 
                 if (functal.error)
                 {
@@ -715,7 +737,10 @@
                 }
                 else
                 {
-                    console.log('--- rejected');
+                    if (isDev)
+                    {
+                        console.log('--- rejected');
+                    }
                     // retry
 
                     fractal.attempt();
@@ -727,11 +752,11 @@
 
     var devCount = 10;
 
-    var functals = isDev ? devCount : 1;
+    var functals = isDev ? devCount : 10;
 
-    fp.range(0, functals).forEach(function()
+    fp.times(function()
     {
         fractal.attempt();
-    });
+    }, functals);
 
 }());
