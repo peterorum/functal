@@ -17,20 +17,22 @@
 
     fsq.readdir(folder).then(function(files)
     {
-        var file = folder + fp.find(function(f)
+        var file = fp.find(function(f)
         {
             return fp.endsWith('.png', f);
         }, files);
 
         if (file)
         {
+            file = folder + file;
+
             console.log(file);
 
             twit.tweet(msg, file);
 
-            fsq.unlink(file).then(function()
+            fsq.unlink(folder + file).then(function()
             {
-                fsq.unlink(file.replace(/\.png/, '.json'));
+                fsq.unlink(folder + file.replace(/\.png/, '.json'));
             });
         }
         else
