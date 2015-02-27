@@ -213,7 +213,10 @@
                     rgb = clr.hsl2rgb(hsl);
                 }
 
-                data[i][j] = rgb;
+                data[i][j] = {
+                    rgb: rgb,
+                    escape: result.escape
+                };
 
                 y += yincr;
                 j++;
@@ -265,6 +268,7 @@
             params: options.set.params()
         };
         functal.minStdDev = options.minStdDev();
+        functal.minLightnessStdDev = options.minLightnessStdDev();
         functal.z = options.set.z;
         functal.c = options.set.c;
 
@@ -300,7 +304,7 @@
         functal.process = process.fn;
         functal.pow = options.pow();
 
-        var modifierChain = fp.range(0, 1 + fp.bandomInt(4, 2)).map(function()
+        var modifierChain = fp.range(0, 1 + fp.bandomInt(8, 1)).map(function()
         {
             return fp.wandom(modifiers.modifiers);
         });
@@ -366,19 +370,21 @@
         var sampleCount = 10;
         var data = fractal.process(functal, palette, sampleCount);
 
-        // // calc std dev for the sample data
-        // var escapes = fp.map(function(d)
-        // {
-        //     return d.escape;
-        // }, fp.flatten(data));
+        var flatData = fp.flatten(data);
 
-        // functal.stdDev = math.std(escapes);
+        // // calc std dev for the sample data
+        var escapes = fp.map(function(d)
+        {
+            return d.escape;
+        }, flatData);
+
+        functal.stdDev = math.std(escapes);
 
         // analyze lightness
         var ls = fp.map(function(d)
         {
-            return clr.rgb2hsl(d).l;
-        }, fp.flatten(data));
+            return clr.rgb2hsl(d.rgb).l;
+        }, flatData);
 
         var lightnessStddev = math.std(ls);
 
@@ -386,7 +392,7 @@
         functal.uniques = fp.unique(ls).length;
 
         // fail if not enough variation in the image sample
-        if (functal.lightnessStddev < functal.minStdDev || functal.uniques <= sampleCount)
+        if (functal.stdDev < functal.minStdDev || functal.lightnessStddev < functal.minLightnessStdDev || functal.uniques <= sampleCount)
         {
             deferred.reject(functal);
         }
@@ -462,7 +468,7 @@
         {
             for (var x = 0; x < image.width; x++)
             {
-                var rgb = data[x][y];
+                var rgb = data[x][y].rgb;
 
                 var idx = (image.width * y + x) << 2;
 
@@ -532,6 +538,10 @@
                 return 'functals/' + size + '/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
             },
             minStdDev: function()
+            {
+                return 0.01;
+            },
+            minLightnessStdDev: function()
             {
                 return 0.15;
             },
@@ -715,9 +725,8 @@
 
         var palette = pal.setPalette();
 
-        fractal.make(options, palette).done(function(functal)
+        fractal.make(options, palette).done(function(/*functal*/)
             {
-                console.log(' calc time ' + functal.duration);
             },
             function(functal)
             {
@@ -746,7 +755,7 @@
 
     // kick off
 
-    var devCount = 10;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 
