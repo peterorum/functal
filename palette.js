@@ -68,7 +68,7 @@
     {
         fn: function getColorMerge(functal, palette, escape, adj)
         {
-            // returns hsl after mergimg the two colors
+            // returns hsl after merging the two colors
 
             var index1 = Math.floor((adj + 1) / 2 * palette.size);
             var index2 = Math.floor(escape * palette.size);
