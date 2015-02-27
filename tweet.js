@@ -22,15 +22,17 @@
             return fp.endsWith('.png', f);
         }, files);
 
-        console.log(file);
-
-        twit.tweet(msg, file);
-
-        fsq.unlink(folder + file).then(function()
+        if (file)
         {
-            fsq.unlink(folder + file.replace(/\.png/ , '.json'));
-        });
+            console.log(file);
 
+            twit.tweet(msg, file);
+
+            fsq.unlink(folder + file).then(function()
+            {
+                fsq.unlink(folder + file.replace(/\.png/, '.json'));
+            });
+        }
     });
 
 
