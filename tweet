@@ -4,4 +4,4 @@ source $HOME/.bash_profile
 
 cd $HOME/functal
 
-node tweet
+node tweet.js
