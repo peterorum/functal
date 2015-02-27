@@ -717,12 +717,7 @@
 
         fractal.make(options, palette).done(function(functal)
             {
-                var msg = '#fractal #functal v' + functal.version + ' calc time ' + functal.duration;
-
-                if (!isDev)
-                {
-                    // twit.tweet(msg, functal.file + '.png');
-                }
+                console.log(' calc time ' + functal.duration);
             },
             function(functal)
             {
