@@ -30,9 +30,9 @@
 
             twit.tweet(msg, file);
 
-            fsq.unlink(folder + file).then(function()
+            fsq.unlink(file).then(function()
             {
-                fsq.unlink(folder + file.replace(/\.png/, '.json'));
+                fsq.unlink(file.replace(/\.png/, '.json'));
             });
         }
         else
