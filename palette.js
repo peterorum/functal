@@ -7,6 +7,20 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
+    // find the index of the lightest color
+
+    var findLighestIndex = function(palette)
+    {
+        var lightest = math.max(fp.map(function(p)
+        {
+            return p.l;
+        }, palette));
+
+        var lightestIndex = fp.findIndex(function(p) { return p.l === lightest; }, palette);
+
+        return lightestIndex;
+    };
+
     //---------------- convert fractal result to a color
 
     var adjusters = [
@@ -87,8 +101,7 @@
             return hsl;
         },
         weight: 1
-    }
-    ];
+    }];
 
     // ------------ make color palette
 
@@ -281,6 +294,8 @@
         exports.getColor = fp.wandom(adjusters).fn;
 
         palette.adjuster = fp.nameOf(exports.getColor);
+
+        palette.lighestIndex = findLighestIndex(palette.colors);
 
         return palette;
     };
