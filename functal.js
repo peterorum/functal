@@ -109,7 +109,7 @@
     {
         var mods = fp.map(function(m)
         {
-            var x = m.fn(functal, result) * m.scale;
+            var x = m.fn(functal, result);
 
             return x;
         }, functal.modifiers);
@@ -194,6 +194,7 @@
                 if (!fp.isEmpty(functal.modifiers))
                 {
                     var mods = fractal.getModifierValues(functal, result);
+                    var k;
 
                     if (functal.blend)
                     {
@@ -204,7 +205,7 @@
                         var base = math.multiply(baseColor, functal.baseLayer);
 
                         // not being passed as an argument for unknown reason. check with ramda
-                        var k = 0;
+                        k = 0;
 
                         var blended = fp.reduce(function(sum, mod)
                         {
@@ -226,6 +227,8 @@
                     }
                     else
                     {
+                        // sum the values & use as index
+
                         k = 0;
 
                         var total = fp.reduce(function(sum, mod)
@@ -352,8 +355,7 @@
         {
             var modifier = {
                 fn: m.fn,
-                name: fp.nameOf(m.fn),
-                scale: math.random(1)
+                name: fp.nameOf(m.fn)
             };
 
             fp.extend(m.fn, modifier);
@@ -361,11 +363,6 @@
             return modifier;
 
         }, modifierChain);
-
-        functal.modifiersSum = fp.reduce(function(sum, m)
-        {
-            return sum + m.scale;
-        }, 0, functal.modifiers);
 
         functal.blend = math.random(1) < 0.5;
 
