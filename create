@@ -9,4 +9,4 @@ source $HOME/.bash_profile
 
 cd $HOME/functal
 
-node --max-stack-size=512000 functal
+node --stack-size=512000 functal
