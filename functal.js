@@ -394,6 +394,8 @@
             {
                 // create fractal
 
+                fp.extend(fp.omit('colors', palette), functal);
+
                 console.log('--- creating');
                 console.log(JSON.stringify(functal, null, 4));
 
@@ -402,8 +404,6 @@
                 // store time taken
                 functal.time = ((new Date()).getTime() - functal.startTime);
                 functal.duration = moment.duration(functal.time).humanize();
-
-                fp.extend(fp.omit('colors', palette), functal);
 
                 // save
                 if (options.file())
@@ -745,7 +745,7 @@
 
     // kick off
 
-    var devCount = 10;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 
