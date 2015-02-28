@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.3.2';
+    var version = '1.3.3';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -191,7 +191,7 @@
 
                         }, base, mods);
 
-                        blended = math.chain(blended).divide(functal.layerSum).floor().done();
+                        blended = math.floor(blended);
 
                         rgb = fp.zipObject(blended, ['r', 'g', 'b']);
                     }
@@ -306,7 +306,7 @@
         functal.process = process.fn;
         functal.pow = options.pow();
 
-        var modifierChain = fp.range(0, 1 + fp.bandomInt(8, 1)).map(function()
+        var modifierChain = fp.range(0, 1 + fp.bandomInt(8, 2)).map(function()
         {
             return fp.wandom(modifiers.modifiers);
         });
@@ -342,15 +342,24 @@
         functal.blend = math.random(1) < 0.95;
 
         // factors
-        functal.baseLayer = math.random(1);
         functal.layers = [];
+
+        // must sum to 1
+        var layerRemaining = 1;
 
         fp.times(function()
         {
-            functal.layers.push(math.random(1));
+            var factor = math.random(layerRemaining);
+            layerRemaining -= factor;
+
+            functal.layers.push(factor);
+
         }, functal.modifiers.length);
 
-        functal.layerSum = functal.baseLayer + math.sum(functal.layers);
+        var layerSum = math.sum(functal.layers);
+
+        // dregs to original escape
+        functal.baseLayer = 1.0 - layerSum;
 
         functal.modifierReduce = fp.wandom(modifiers.reducers).fn;
         functal.modifierReduceName = fp.nameOf(functal.modifierReduce);
