@@ -13,7 +13,11 @@
 
     var msg = '#fractal #functal';
 
-    var folder = 'functals/medium/';
+    var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
+
+    var functalsFolder = isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
+
+    var folder = functalsFolder + '/medium/';
 
     fsq.readdir(folder).then(function(files)
     {
@@ -40,7 +44,4 @@
             console.log('no file');
         }
     });
-
-
-
 }());
