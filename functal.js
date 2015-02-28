@@ -121,7 +121,7 @@
         // determine palette offstes for each layer such that th elighest point is always at the golden mean position.
         // at this point, want index + offset = lightest
 
-        var goldenMeanx = functal.range.x1 +(1 - 0.618033989) * (functal.range.x2 - functal.range.x1);
+        var goldenMeanx = functal.range.x1 + (1 - 0.618033989) * (functal.range.x2 - functal.range.x1);
 
         var aspect = functal.width / functal.height;
         var goldenMeany = goldenMeanx / aspect;
@@ -194,37 +194,48 @@
                 {
                     var mods = fractal.getModifierValues(functal, result);
 
-                    // blend modifiers onto base color
-                    // use [r, g, b]
-
-                    var base = fp.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
-                    base = math.multiply(base, functal.baseLayer);
-
-                    if (i * j === 0)
+                    if (functal.blend)
                     {
-                        // console.log('actual', result, pal.getColorIndex(palette, result.escape, functal.baseOffset));
+                        // blend modifiers onto base color
+                        // use [r, g, b]
+
+                        var baseColor = fp.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
+                        var base = math.multiply(baseColor, functal.baseLayer);
+
+                        // not being passed as an argument for unknown reason. check with ramda
+                        var k = 0;
+
+                        var blended = fp.reduce(function(sum, mod)
+                        {
+                            var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
+
+                            var modColor = fp.values(clr.hsl2rgb(hsl));
+
+                            modColor = math.multiply(modColor, functal.layers[k]);
+
+                            k++;
+
+                            return math.add(sum, modColor);
+
+                        }, base, mods);
+
+                        blended = math.floor(blended);
+
+                        rgb = fp.zipObject(blended, ['r', 'g', 'b']);
                     }
-
-                    // not being passed as an argument for unknown reason. check with ramda
-                    var k = 0;
-
-                    var blended = fp.reduce(function(sum, mod)
+                    else
                     {
-                        var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
+                        k = 0;
 
-                        var modColor = fp.values(clr.hsl2rgb(hsl));
+                        var total = fp.reduce(function(sum, mod)
+                        {
+                            return sum + mod * functal.layers[k++];
 
-                        modColor = math.multiply(modColor, functal.layers[k]);
+                        }, result.escape * functal.baseLayer, mods);
 
-                        k++;
-
-                        return math.add(sum, modColor);
-
-                    }, base, mods);
-
-                    blended = math.floor(blended);
-
-                    rgb = fp.zipObject(blended, ['r', 'g', 'b']);
+                        hsl = pal.getColor(palette, total, 0);
+                        rgb = clr.hsl2rgb(hsl);
+                    }
                 }
                 else
                 {
@@ -354,6 +365,8 @@
         {
             return sum + m.scale;
         }, 0, functal.modifiers);
+
+        functal.blend = math.random(1) < 0.5;
 
         // weight factors
         functal.layers = [];
