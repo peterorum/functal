@@ -9,4 +9,4 @@ source $HOME/.bash_profile
 
 cd $HOME/functal
 
-node --stack-size=100000 --max_executable_size=100 --max_old_space_size=100 --max_new_space_size=100 functal
+node --max_old_space_size=512 functal

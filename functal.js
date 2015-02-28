@@ -569,7 +569,7 @@
             },
             minLightnessStdDev: function()
             {
-                return 0.15;
+                return 0.25;
             },
             hue: function()
             {
