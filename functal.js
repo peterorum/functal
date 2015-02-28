@@ -107,14 +107,13 @@
 
     fractal.getModifierValues = function(functal, result)
     {
-        var mods = fp.map(function(m)
+        fp.forEach(function(m, i)
         {
-            var x = m.fn(functal, result);
+            functal.modifierValues[i] = m.fn(functal, result);
 
-            return x;
         }, functal.modifiers);
 
-        return mods;
+        return functal.modifierValues;
     };
 
     fractal.setLayerOffsets = function(functal, palette)
@@ -363,6 +362,9 @@
             return modifier;
 
         }, modifierChain);
+
+        // presize results array
+        functal.modifierValues = new Array(functal.modifiers.length);
 
         functal.blend = math.random(1) < 0.5;
 
@@ -790,7 +792,7 @@
 
     // kick off
 
-    var devCount = 10;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 
