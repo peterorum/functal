@@ -727,9 +727,7 @@
 
         var palette = pal.setPalette();
 
-        fractal.make(options, palette).done(function(/*functal*/)
-            {
-            },
+        fractal.make(options, palette).done(function( /*functal*/ ) {},
             function(functal)
             {
                 if (isDev)
@@ -761,9 +759,28 @@
 
     var functals = isDev ? devCount : 1;
 
-    fp.times(function()
+    var proceed = true;
+
+    if (!isDev)
     {
-        fractal.attempt();
-    }, functals);
+        // only proceed if less than 100 fractals already stored
+
+        var files = fsq.readdirSync(functalsFolder + '/medium');
+
+        var pngs = fp.filter(function(f)
+        {
+            return fp.endsWith('.png', f);
+        }, files);
+
+        proceed = pngs.length < 100;
+    }
+
+    if (proceed)
+    {
+        fp.times(function()
+        {
+            fractal.attempt();
+        }, functals);
+    }
 
 }());
