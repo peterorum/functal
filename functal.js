@@ -166,48 +166,32 @@
                         return x;
                     }, functal.modifiers);
 
-                    if (functal.blend)
+                    // blend modifiers onto base color
+                    // use [r, g, b]
+
+                    var base = fp.values(clr.hsl2rgb(pal.getColor(functal, palette, result.escape, 0)));
+                    base = math.multiply(base, functal.baseLayer);
+
+                    // not being passed as an argument for unknown reason. check with ramda
+                    var k = 0;
+
+                    var blended = fp.reduce(function(sum, mod)
                     {
-                        // blend modifiers onto base color
-                        // use [r, g, b]
+                        var hsl = pal.getColor(functal, palette, mod * 2 - 1, 0);
 
-                        var base = fp.values(clr.hsl2rgb(pal.getColor(functal, palette, result.escape, 0)));
-                        base = math.multiply(base, functal.baseLayer);
+                        var modColor = fp.values(clr.hsl2rgb(hsl));
 
-                        // not being passed as an argument for unknown reason. check with ramda
-                        var k = 0;
+                        modColor = math.multiply(modColor, functal.layers[k]);
 
-                        var blended = fp.reduce(function(sum, mod)
-                        {
-                            var hsl = pal.getColor(functal, palette, mod * 2 - 1, 0);
+                        k++;
 
-                            var modColor = fp.values(clr.hsl2rgb(hsl));
+                        return math.add(sum, modColor);
 
-                            modColor = math.multiply(modColor, functal.layers[k]);
+                    }, base, mods);
 
-                            k++;
+                    blended = math.floor(blended);
 
-                            return math.add(sum, modColor);
-
-                        }, base, mods);
-
-                        blended = math.floor(blended);
-
-                        rgb = fp.zipObject(blended, ['r', 'g', 'b']);
-                    }
-                    else
-                    {
-                        // sum adjustments
-                        var adjSum = fp.reduce(function(n, mod)
-                        {
-                            return n + mod;
-                        }, 0, mods);
-
-                        adj = adjSum / functal.modifiersSum;
-
-                        hsl = pal.getColor(functal, palette, result.escape, adj);
-                        rgb = clr.hsl2rgb(hsl);
-                    }
+                    rgb = fp.zipObject(blended, ['r', 'g', 'b']);
                 }
                 else
                 {
@@ -338,10 +322,7 @@
             return sum + m.scale;
         }, 0, functal.modifiers);
 
-        // make blend high as it's more often rejected
-        functal.blend = math.random(1) < 0.95;
-
-        // factors
+        // weight factors
         functal.layers = [];
 
         // must sum to 1
@@ -764,7 +745,7 @@
 
     // kick off
 
-    var devCount = 1;
+    var devCount = 10;
 
     var functals = isDev ? devCount : 1;
 
