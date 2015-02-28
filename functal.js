@@ -29,8 +29,6 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
-    // var twit = require('./tweet-media');
-
     // smaller image, no tweet
     var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
 
@@ -44,7 +42,10 @@
     {
         if (fp.isNumber(z))
         {
-            z = max;
+            if (!fp.isFinite(z) || fp.isNaN(z))
+            {
+                z = max;
+            }
         }
         else
         {
