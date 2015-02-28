@@ -34,6 +34,8 @@
     // smaller image, no tweet
     var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
 
+    var functalsFolder = isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
+
     //----------- fractal functions
 
     var fractal = {};
@@ -535,7 +537,7 @@
             file: function()
             {
                 // filename with utc time
-                return 'functals/' + size + '/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
+                return functalsFolder + '/' + size + '/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
             },
             minStdDev: function()
             {
