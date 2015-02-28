@@ -16,92 +16,14 @@
             return p.l;
         }, palette));
 
-        var lightestIndex = fp.findIndex(function(p) { return p.l === lightest; }, palette);
+        var lightestIndex = fp.findIndex(function(p)
+        {
+            return p.l === lightest;
+        }, palette);
 
         return lightestIndex;
     };
 
-    //---------------- convert fractal result to a color
-
-    var adjusters = [
-    {
-        fn: function getColorAdjLightness(functal, palette, escape, adj)
-        {
-            // returns hsl after adjusting
-
-            var index = Math.floor(escape * palette.size);
-
-            var hsl = palette.colors[math.mod(index, palette.size)];
-
-            hsl.l = hsl.l + adj * 0.1;
-
-            if (hsl.l > 1)
-            {
-                // wrap so not sudden white to black
-                hsl.l = 2 - hsl.l;
-            }
-
-            if (hsl.l < 0)
-            {
-                hsl.l = -hsl.l;
-            }
-
-            hsl.l = math.mod(hsl.l, 1);
-
-            return hsl;
-        },
-        weight: 1
-    },
-    {
-        fn: function getColorAdjItself(functal, palette, escape, adj)
-        {
-            // returns hsl after adjusting
-
-            var index = Math.floor((adj + 1) / 2 * palette.size);
-
-            var hsl = palette.colors[math.mod(index, palette.size)];
-
-            return hsl;
-        },
-        weight: 1
-    },
-    {
-
-        fn: function getColorAdjIndex(functal, palette, escape, adj)
-        {
-            // returns hsl after adjusting index
-
-            var index = Math.floor(escape + (adj + 1) / 2 * palette.size);
-
-            var hsl = palette.colors[math.mod(index, palette.size)];
-
-            return hsl;
-        },
-        weight: 1
-    },
-    {
-        fn: function getColorMerge(functal, palette, escape, adj)
-        {
-            // returns hsl after merging the two colors
-
-            var index1 = Math.floor((adj + 1) / 2 * palette.size);
-            var index2 = Math.floor(escape * palette.size);
-
-            var rgb1 = clr.hsl2rgb(palette.colors[math.mod(index1, palette.size)]);
-            var rgb2 = clr.hsl2rgb(palette.colors[math.mod(index2, palette.size)]);
-
-            var rgb = {
-                r: (rgb1.r + rgb2.r) / 2,
-                g: (rgb1.g + rgb2.g) / 2,
-                b: (rgb1.b + rgb2.b) / 2
-            };
-
-            var hsl = clr.rgb2hsl(rgb);
-
-            return hsl;
-        },
-        weight: 1
-    }];
 
     // ------------ make color palette
 
@@ -291,11 +213,21 @@
 
         palette.size = palette.colors.length - 1;
 
-        exports.getColor = fp.wandom(adjusters).fn;
+        exports.getColorIndex = function(size, color)
+        {
+            return Math.floor(color * size);
+        };
 
-        palette.adjuster = fp.nameOf(exports.getColor);
+        exports.getColor = function(palette, color, offset)
+        {
+            // color 0..1
 
-        palette.lighestIndex = findLighestIndex(palette.colors);
+            var index = exports.getColorIndex(palette.size, color) + offset;
+
+            return palette.colors[math.mod(index, palette.size)];
+        };
+
+        palette.lightestIndex = findLighestIndex(palette.colors);
 
         return palette;
     };
