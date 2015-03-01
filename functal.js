@@ -25,6 +25,7 @@
     var clr = require('./color');
     var PNG = require('node-png').PNG;
     var Q = require('q');
+    var mem = require('./memory');
 
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
@@ -63,20 +64,21 @@
         return z;
     });
 
-    fractal.isDone = function(functal, zs)
+    fractal.isDone = function(functal, z)
     {
-        return functal.test(zs);
+        return functal.test(z);
     };
 
     fractal.escapeCount = function(functal, x, y)
     {
         var count = 0;
-        var zs = [];
+
+        var zs = functal.zs; // presized
 
         var z = functal.z(x, y);
         var c = functal.c(x, y);
 
-        zs.push(z);
+        zs[0] = z;
 
         var maxCount = functal.maxCount;
 
@@ -86,20 +88,33 @@
 
         while (!done && count < maxCount - 1)
         {
+            count++;
+
             z = functal.process(z, c);
 
-            zs.push(z);
+            zs[count] = z;
 
-            done = fractal.isDone(functal, zs);
-
-            count++;
+            done = fractal.isDone(functal, z);
         }
 
-        var zsAdj = functal.adjzs.length ? fp.map(fp.flow.apply(null, functal.adjzs), zs) : zs;
+        // copy to array of exact size
+        var zs2 = mem.getArray(count);
+
+        fp.times(function(i)
+        {
+            zs2[i] = zs[i];
+        }, count);
+
+        if (functal.adjzs.length)
+        {
+            fp.forEach(function(z, i){
+                zs2[i] = fp.flow.apply(functal, functal.adjzs)(z);
+            }, zs2);
+        }
 
         var result = {
             escape: count / maxCount,
-            zs: zsAdj
+            zs: zs2
         };
 
         return result;
@@ -295,6 +310,8 @@
         functal.maxCount = options.maxCount();
         functal.range = options.range();
         functal.rangeWidth = functal.range.x2 - functal.range.x1;
+
+        functal.zs = new Array(functal.maxCount);
 
         functal.set = {
             name: options.set.name,
@@ -747,6 +764,9 @@
             weight: 1
         }, ];
 
+        // runs once - assumes maxCount always the same
+        mem.createArrays(options.maxCount());
+
         return options;
     };
 
@@ -792,7 +812,7 @@
 
     // kick off
 
-    var devCount = 1;
+    var devCount = 10;
 
     var functals = isDev ? devCount : 1;
 
