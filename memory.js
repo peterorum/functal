@@ -7,23 +7,25 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
-    var vecs = [];
+    var vecs = {};
 
-    exports.createArrays = function(maxLength)
+    exports.createArrays = function(key, maxLength)
     {
-        if (fp.isEmpty(vecs))
+        if (! vecs[key])
         {
+            vecs[key] = [];
+
             fp.times(function(i)
             {
 
-                vecs[i] = new Array(i);
+                vecs[key][i] = new Array(i);
             }, maxLength + 1);
         }
     };
 
-    exports.getArray = function(size)
+    exports.getArray = function(key, size)
     {
-        return vecs[size];
+        return vecs[key][size];
     };
 
 }());

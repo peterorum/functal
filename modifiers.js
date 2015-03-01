@@ -6,9 +6,15 @@
 
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
+    var mem = require('./memory');
 
     // modifying the final result
     // return -1..1
+
+    exports.init = function(maxLength)
+    {
+        mem.createArrays('modifiers', maxLength);
+    };
 
     exports.reducers = [
     {
@@ -32,9 +38,11 @@
         {
             fn: function angle(functal, result)
             {
-                var vals = fp.map(function(z)
+                var vals = mem.getArray('modifiers', result.zs.length);
+
+                fp.forEach(function(z, i)
                 {
-                    return math.atan2(z.re, z.im) / math.pi;
+                    vals[i] = math.atan2(z.re, z.im) / math.pi;
                 }, result.zs);
 
                 return functal.modifierReduce(vals);
@@ -44,7 +52,7 @@
         {
             fn: function angleChange(functal, result)
             {
-                var vals = [];
+                var vals = mem.getArray('modifiers', result.zs.length);
 
                 fp.forEach(function(z, i, zs)
                 {
@@ -58,7 +66,7 @@
                         x = math.atan2(z2.re, z2.im) / math.pi;
                     }
 
-                    vals.push(x);
+                    vals[i] = x;
 
                 }, result.zs);
 
@@ -74,9 +82,11 @@
                     return math.abs(z.re);
                 }, result.zs));
 
-                var vals = fp.map(function(z)
+                var vals = mem.getArray('modifiers', result.zs.length);
+
+                fp.forEach(function(z, i)
                 {
-                    return max ?  z.re / max : 1;
+                    vals[i] = max ?  z.re / max : 1;
                 }, result.zs);
 
                 return functal.modifierReduce(vals);
@@ -87,11 +97,13 @@
         {
             fn: function norm(functal, result)
             {
-                var vals = fp.map(function(z)
+                var vals = mem.getArray('modifiers', result.zs.length);
+
+                fp.forEach(function(z, i)
                 {
                     var x =  functal.finite(math.norm(z)) / functal.limit;
 
-                    return x;
+                    vals[i] = x;
                 }, result.zs);
 
                 return functal.modifierReduce(vals);
@@ -109,7 +121,9 @@
                 {
                     var x;
 
-                    var vals = fp.map(function(z)
+                    var vals = mem.getArray('modifiers', result.zs.length);
+
+                    fp.forEach(function(z, i)
                     {
                         var z1 = math.subtract(z, params.centre);
 
@@ -124,7 +138,7 @@
                             x = 0;
                         }
 
-                        return x;
+                        vals[i] = x;
                     }, result.zs);
 
                     return functal.modifierReduce(vals);
@@ -154,11 +168,13 @@
 
                 var fn = function realCircleTrap(functal, result)
                 {
-                    var vals = fp.map(function(z)
+                    var vals = mem.getArray('modifiers', result.zs.length);
+
+                    fp.forEach(function(z, i)
                     {
                         var x = math.mod(z.re - params.centre, 1);
 
-                        return math.sqrt(math.max(0, 1.0 - x * x));
+                        vals[i] = math.sqrt(math.max(0, 1.0 - x * x));
 
                     }, result.zs);
 
@@ -181,9 +197,11 @@
         {
             fn: function sinreal(functal, result)
             {
-                var vals = fp.map(function(z)
+                var vals = mem.getArray('modifiers', result.zs.length);
+
+                fp.forEach(function(z, i)
                 {
-                    return math.sin(z.re * math.pi);
+                    vals[i] = math.sin(z.re * math.pi);
                 }, result.zs);
 
                 return functal.modifierReduce(vals);
@@ -199,7 +217,9 @@
 
                 var fn = function boxTrap(functal, result)
                 {
-                    var vals = fp.map(function(z)
+                    var vals = mem.getArray('modifiers', result.zs.length);
+
+                    fp.forEach(function(z, i)
                     {
                         var z1 = math.subtract(z, params.centre);
 
@@ -208,7 +228,7 @@
 
                         var dist = math.max(x, y);
 
-                        return math.mod(dist - params.diameter, 1);
+                        vals[i] = math.mod(dist - params.diameter, 1);
 
                     }, result.zs);
 
@@ -238,11 +258,13 @@
 
                 var fn = function sinTrap(functal, result)
                 {
-                    var vals = fp.map(function(z)
+                    var vals = mem.getArray('modifiers', result.zs.length);
+
+                    fp.forEach(function(z, i)
                     {
                         var z1 = math.subtract(z, params.centre);
 
-                        return z1.im + params.ampl * math.sin(params.freq * z1.re) - params.diameter;
+                        vals[i] = z1.im + params.ampl * math.sin(params.freq * z1.re) - params.diameter;
 
                     }, result.zs);
 
@@ -274,11 +296,13 @@
 
                 var fn = function reimTrap(functal, result)
                 {
-                    var vals = fp.map(function(z)
+                    var vals = mem.getArray('modifiers', result.zs.length);
+
+                    fp.forEach(function(z, i)
                     {
                         var y = functal.finite(z.im * z.re) - params.diameter;
 
-                        return y;
+                        vals[i] = y;
 
                     }, result.zs);
 
