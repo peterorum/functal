@@ -477,7 +477,7 @@
                 fp.extend(fp.omit('colors', palette), functal);
 
                 console.log('--- creating');
-                console.log(JSON.stringify(functal, null, 4));
+                console.log(JSON.stringify(fp.omit('zs', functal), null, 4));
 
                 data = fractal.process(functal, palette);
 
@@ -491,7 +491,7 @@
                     functal.file = options.file();
 
                     // save options spec
-                    fsq.writeFile(functal.file + '.json', JSON.stringify(functal, null, 4))
+                    fsq.writeFile(functal.file + '.json', JSON.stringify(fp.omit('zs', functal), null, 4))
                         .then(function()
                         {
                             // save png
@@ -809,7 +809,7 @@
             {
                 if (isDev)
                 {
-                    console.log(JSON.stringify(functal, null, 4));
+                    console.log(JSON.stringify(fp.omit('zs', functal), null, 4));
                 }
 
                 if (functal.error)
