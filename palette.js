@@ -42,7 +42,7 @@
         {
             // warm red
             hue: 0 / 12,
-            weight: 40
+            weight: 100
         },
         {
             // orange
