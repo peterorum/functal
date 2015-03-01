@@ -6,6 +6,8 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
+    // just tests on the las z rather than all zs due to speed & memory
+
     exports.tests = [{
         name: 'norm',
         weight: 1,
