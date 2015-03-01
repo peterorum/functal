@@ -107,7 +107,8 @@
 
         if (functal.adjzs.length)
         {
-            fp.forEach(function(z, i){
+            fp.forEach(function(z, i)
+            {
                 zs2[i] = fp.flow.apply(functal, functal.adjzs)(z);
             }, zs2);
         }
@@ -133,7 +134,7 @@
 
     fractal.setLayerOffsets = function(functal, palette)
     {
-        // determine palette offstes for each layer such that th elighest point is always at the golden mean position.
+        // determine palette offsets for each layer such that th elighest point is always at the golden mean position.
         // at this point, want index + offset = lightest
 
         var goldenMeanx = functal.range.x1 + (1 - 0.618033989) * (functal.range.x2 - functal.range.x1);
@@ -143,15 +144,30 @@
 
         var result = fractal.escapeCount(functal, goldenMeanx, goldenMeany);
 
-        functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, result.escape);
-
         var mods = fractal.getModifierValues(functal, result);
 
-        functal.layerOffsets = fp.map(function(m)
+        if (functal.blend)
         {
-            return palette.lightestIndex - pal.getColorIndex(palette.size, m);
+            functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, result.escape);
 
-        }, mods);
+            functal.layerOffsets = fp.map(function(m)
+            {
+                return palette.lightestIndex - pal.getColorIndex(palette.size, m);
+
+            }, mods);
+        }
+        else
+        {
+            var k = 0;
+
+            var total = fp.reduce(function(sum, mod)
+            {
+                return sum + mod * functal.layers[k++];
+
+            }, result.escape * functal.baseLayer, mods);
+
+            functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, total);
+        }
     };
 
     fractal.process = function(functal, palette, sample)
@@ -251,7 +267,7 @@
 
                         }, result.escape * functal.baseLayer, mods);
 
-                        hsl = pal.getColor(palette, total, 0);
+                        hsl = pal.getColor(palette, total, functal.baseOffset);
                         rgb = clr.hsl2rgb(hsl);
                     }
                 }
@@ -784,7 +800,10 @@
 
         var palette = pal.setPalette();
 
-        fractal.make(options, palette).done(function( /*functal*/ ) {},
+        fractal.make(options, palette).done(function(functal)
+            {
+                functal = null;
+            },
             function(functal)
             {
                 if (isDev)
@@ -794,6 +813,7 @@
 
                 if (functal.error)
                 {
+                    functal = null;
                     console.error('--- error');
                 }
                 else
@@ -802,6 +822,8 @@
                     {
                         console.log('--- rejected');
                     }
+
+                    functal = null;
 
                     // retry
 
