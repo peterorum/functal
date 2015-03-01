@@ -30,6 +30,8 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
+    var heapdump = require('heapdump')
+
     // smaller image, no tweet
     var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
 
@@ -807,6 +809,8 @@
         fractal.make(options, palette).done(function(functal)
             {
                 functal = null;
+
+                // heapdump.writeSnapshot();
             },
             function(functal)
             {
@@ -838,7 +842,7 @@
 
     // kick off
 
-    var devCount = 10;
+    var devCount = 1;
 
     var functals = isDev ? devCount : 1;
 
