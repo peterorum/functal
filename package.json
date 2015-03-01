@@ -28,5 +28,8 @@
     "request": "^2.52.0",
     "seedrandom": "^2.3.11",
     "twit": "^1.1.19"
+  },
+  "devDependencies": {
+    "heapdump": "^0.3.5"
   }
 }
