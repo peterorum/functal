@@ -25,7 +25,6 @@
     var clr = require('./color');
     var PNG = require('node-png').PNG;
     var Q = require('q');
-    var mem = require('./memory');
 
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
@@ -75,7 +74,7 @@
     {
         var count = 0;
 
-        var zs = functal.zs; // presized
+        var zs = [];
 
         var z = functal.z(x, y);
         var c = functal.c(x, y);
@@ -90,48 +89,23 @@
 
         while (!done && count < maxCount - 1)
         {
-            count++;
-
             z = functal.process(z, c);
 
-            zs[count] = z;
+            zs.push(z);
 
-            done = fractal.isDone(functal, z);
+            done = fractal.isDone(functal, zs);
+
+            count++;
         }
 
-        // copy to array of exact size
-        var zs2 = mem.getArray('functal', count);
-
-        fp.times(function(i)
-        {
-            zs2[i] = zs[i];
-        }, count);
-
-        if (functal.adjzs.length)
-        {
-            fp.forEach(function(z, i)
-            {
-                zs2[i] = fp.flow.apply(functal, functal.adjzs)(z);
-            }, zs2);
-        }
+        var zsAdj = functal.adjzs.length ? fp.map(fp.flow.apply(null, functal.adjzs), zs) : zs;
 
         var result = {
             escape: count / maxCount,
-            zs: zs2
+            zs: zsAdj
         };
 
         return result;
-    };
-
-    fractal.getModifierValues = function(functal, result)
-    {
-        fp.forEach(function(m, i)
-        {
-            functal.modifierValues[i] = m.fn(functal, result);
-
-        }, functal.modifiers);
-
-        return functal.modifierValues;
     };
 
     fractal.setLayerOffsets = function(functal, palette)
@@ -234,31 +208,31 @@
                     if (functal.blend)
                     {
                         // blend modifiers onto base color
-                        // use [r, g, b] & try to reuse memory
+                        // use [r, g, b]
 
-                        var baseRgb = clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset));
+                        var base = fp.values(clr.hsl2rgb(pal.getColor(functal, palette, result.escape, functal.baseOffet)));
+                        base = math.multiply(base, functal.baseLayer);
 
-                        color[0] = baseRgb.r * functal.baseLayer;
-                        color[1] = baseRgb.g * functal.baseLayer;
-                        color[2] = baseRgb.b * functal.baseLayer;
+                        // not being passed as an argument for unknown reason. check with ramda
+                        k = 0;
 
-                        fp.forEach(function(mod, k)
+                        var blended = fp.reduce(function(sum, mod)
                         {
                             var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
 
-                            var modRgb = clr.hsl2rgb(hsl);
+                            var modColor = fp.values(clr.hsl2rgb(hsl));
 
-                            color[0] += modRgb.r * functal.layers[k];
-                            color[1] += modRgb.g * functal.layers[k];
-                            color[2] += modRgb.b * functal.layers[k];
+                            modColor = math.multiply(modColor, functal.layers[k]);
 
-                        }, mods);
+                            k++;
 
-                        rgb = {
-                            r: math.floor(color[0]),
-                            g: math.floor(color[1]),
-                            b: math.floor(color[2])
-                        };
+                            return math.add(sum, modColor);
+
+                        }, base, mods);
+
+                        blended = math.chain(blended).divide(functal.layerSum).floor().done();
+
+                        rgb = fp.zipObject(blended, ['r', 'g', 'b']);
                     }
                     else
                     {
@@ -331,8 +305,6 @@
         functal.maxCount = options.maxCount();
         functal.range = options.range();
         functal.rangeWidth = functal.range.x2 - functal.range.x1;
-
-        functal.zs = new Array(functal.maxCount);
 
         functal.set = {
             name: options.set.name,
@@ -784,10 +756,6 @@
 
             weight: 1
         }, ];
-
-        // runs once - assumes maxCount always the same
-        mem.createArrays('functal', options.maxCount());
-        modifiers.init(options.maxCount());
 
         return options;
     };
