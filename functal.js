@@ -98,7 +98,7 @@
         }
 
         // copy to array of exact size
-        var zs2 = mem.getArray(count);
+        var zs2 = mem.getArray('functal', count);
 
         fp.times(function(i)
         {
@@ -342,10 +342,10 @@
         functal.testName = test.name;
         functal.test = test.fn;
 
-        functal.adjzs = fp.range(0, fp.bandomInt(4, 1)).map(function()
+        functal.adjzs = fp.times(function()
         {
             return fp.wandom(options.z2zfns).fn;
-        });
+        }, fp.bandomInt(4, 1));
 
         functal.adjzsNames = fp.map(function(fn)
         {
@@ -781,7 +781,8 @@
         }, ];
 
         // runs once - assumes maxCount always the same
-        mem.createArrays(options.maxCount());
+        mem.createArrays('functal', options.maxCount());
+        modifiers.init(options.maxCount());
 
         return options;
     };
