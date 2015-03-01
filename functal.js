@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.3.3';
+    var version = '1.3.4';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -202,6 +202,9 @@
         // i,j index into data result matrix
         var i = 0;
 
+        // preassign array to build up color
+        var color = [0, 0, 0];
+
         while (x < functal.width)
         {
             // translate to the sub-range
@@ -229,31 +232,31 @@
                     if (functal.blend)
                     {
                         // blend modifiers onto base color
-                        // use [r, g, b]
+                        // use [r, g, b] & try to reuse memory
 
-                        var baseColor = fp.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
-                        var base = math.multiply(baseColor, functal.baseLayer);
+                        var baseRgb = clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset));
 
-                        // not being passed as an argument for unknown reason. check with ramda
-                        k = 0;
+                        color[0] = baseRgb.r * functal.baseLayer;
+                        color[1] = baseRgb.g * functal.baseLayer;
+                        color[2] = baseRgb.b * functal.baseLayer;
 
-                        var blended = fp.reduce(function(sum, mod)
+                        fp.forEach(function(mod, k)
                         {
                             var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
 
-                            var modColor = fp.values(clr.hsl2rgb(hsl));
+                            var modRgb = clr.hsl2rgb(hsl);
 
-                            modColor = math.multiply(modColor, functal.layers[k]);
+                            color[0] += modRgb.r * functal.layers[k];
+                            color[1] += modRgb.g * functal.layers[k];
+                            color[2] += modRgb.b * functal.layers[k];
 
-                            k++;
+                        }, mods);
 
-                            return math.add(sum, modColor);
-
-                        }, base, mods);
-
-                        blended = math.floor(blended);
-
-                        rgb = fp.zipObject(blended, ['r', 'g', 'b']);
+                        rgb = {
+                            r: math.floor(color[0]),
+                            g: math.floor(color[1]),
+                            b: math.floor(color[2])
+                        };
                     }
                     else
                     {
@@ -303,7 +306,7 @@
 
                 if (duration.asHours() >= 8)
                 {
-                    throw "expected time overflow";
+                    throw "time overflow";
                 }
             }
         }
