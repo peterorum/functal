@@ -33,4 +33,6 @@ node_modules
 *.sublime-project
 *.sublime-workspace
 
+*. heapsnapshot
+
 nohup.out
