@@ -831,7 +831,7 @@
         setTimeout(function()
         {
             console.log('slept');
-        }, 60 * 60);
+        }, 60 * 60 * 1000);
     }
     else
     {
