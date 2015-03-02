@@ -215,7 +215,7 @@
 
         exports.getColorIndex = function(size, color)
         {
-            return Math.floor(color * size);
+            return math.floor(color * size);
         };
 
         exports.getColor = function(palette, color, offset)

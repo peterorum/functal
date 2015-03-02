@@ -29,7 +29,7 @@
     var fp = require('lodash-fp');
     fp.mixin(require('./plus-fp/plus-fp'));
 
-    var heapdump = require('heapdump')
+    // var heapdump = require('heapdump')
 
     // smaller image, no tweet
     var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
@@ -106,6 +106,18 @@
         };
 
         return result;
+    };
+
+    fractal.getModifierValues = function(functal, result)
+    {
+        var mods = fp.map(function(m)
+        {
+            var x = m.fn(functal, result);
+
+            return x;
+        }, functal.modifiers);
+
+        return mods;
     };
 
     fractal.setLayerOffsets = function(functal, palette)
@@ -210,7 +222,8 @@
                         // blend modifiers onto base color
                         // use [r, g, b]
 
-                        var base = fp.values(clr.hsl2rgb(pal.getColor(functal, palette, result.escape, functal.baseOffet)));
+                        debugger;
+                        var base = fp.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
                         base = math.multiply(base, functal.baseLayer);
 
                         // not being passed as an argument for unknown reason. check with ramda
@@ -230,7 +243,7 @@
 
                         }, base, mods);
 
-                        blended = math.chain(blended).divide(functal.layerSum).floor().done();
+                        blended = math.floor(blended);
 
                         rgb = fp.zipObject(blended, ['r', 'g', 'b']);
                     }
