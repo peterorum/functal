@@ -791,7 +791,7 @@
             // fail if not enough variation in the image sample
             ok = (functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
 
-            if (!ok)
+            if (isDev && !ok)
             {
                 fractal.dump(functal);
                 console.log('--- rejected');
@@ -803,7 +803,7 @@
 
         fractal.make(functal, palette);
 
-        console.log(functal.duration);
+        console.log('=== total duration: ', functal.duration);
 
         // save options spec
         fsq.writeFile(functal.file + '.json', JSON.stringify(fp.omit(['zs', 'data'], functal), null, 4))
@@ -814,8 +814,6 @@
 
             }).done(function()
             {
-                functal = null;
-
                 deferred.resolve();
             });
 

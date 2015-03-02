@@ -210,12 +210,12 @@
                         this.znplusxyplusc = znplusxyplusc;
                     }
 
-                    return math.chain(z)
+                    return this.finite(math.chain(z)
                         .pow(this.pow)
                         .add(znplusxyplusc.xfactor * z.re)
                         .add(znplusxyplusc.yfactor * z.im)
                         .add(c)
-                        .done();
+                        .done());
                 };
             })()
         },
