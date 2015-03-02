@@ -9,4 +9,9 @@ source $HOME/.bash_profile
 
 cd $HOME/functal
 
-node --max_old_space_size=512 functal
+while :
+do
+    node --max_old_space_size=512 functal
+    sleep 1
+done
+
