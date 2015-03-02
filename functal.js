@@ -30,6 +30,7 @@
     fp.mixin(require('./plus-fp/plus-fp'));
 
     // var heapdump = require('heapdump')
+    // heapdump.writeSnapshot();
 
     // smaller image, no tweet
     var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
@@ -64,6 +65,24 @@
 
         return z;
     });
+
+    fractal.isOkToMake = function()
+    {
+        var ok = true;
+
+        // only proceed if less than 100 fractals already stored
+
+        var files = fsq.readdirSync(functalsFolder + '/medium');
+
+        var pngs = fp.filter(function(f)
+        {
+            return fp.endsWith('.png', f);
+        }, files);
+
+        ok = pngs.length < 100;
+
+        return ok;
+    };
 
     fractal.isDone = function(functal, z)
     {
@@ -190,9 +209,6 @@
         // i,j index into data result matrix
         var i = 0;
 
-        // preassign array to build up color
-        var color = [0, 0, 0];
-
         while (x < functal.width)
         {
             // translate to the sub-range
@@ -222,7 +238,6 @@
                         // blend modifiers onto base color
                         // use [r, g, b]
 
-                        debugger;
                         var base = fp.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
                         base = math.multiply(base, functal.baseLayer);
 
@@ -319,6 +334,8 @@
         functal.range = options.range();
         functal.rangeWidth = functal.range.x2 - functal.range.x1;
 
+        functal.sampleCount = 10;
+
         functal.set = {
             name: options.set.name,
             params: options.set.params()
@@ -327,6 +344,8 @@
         functal.minLightnessStdDev = options.minLightnessStdDev();
         functal.z = options.set.z;
         functal.c = options.set.c;
+
+        functal.file = options.file();
 
         var test = fp.wandom(limitTests.tests);
         functal.testName = test.name;
@@ -417,21 +436,18 @@
         return functal;
     };
 
-    // ---------- make a functal
+    // ---------- sample a functal
 
-    fractal.make = function(options, palette)
+    fractal.calcVariation = function(options, palette)
     {
-        // async file writing at end
-        var deferred = Q.defer();
-
         var functal = fractal.init(options);
 
         fractal.setLayerOffsets(functal, palette);
 
-        // sample
-        var sampleCount = 10;
-        var data = fractal.process(functal, palette, sampleCount);
+        // get sampled data
+        var data = fractal.process(functal, palette, functal.sampleCount);
 
+        // make easier to analyze
         var flatData = fp.flatten(data);
 
         // // calc std dev for the sample data
@@ -440,6 +456,7 @@
             return d.escape;
         }, flatData);
 
+        // store in object to facilitate dumping
         functal.stdDev = math.std(escapes);
 
         // analyze lightness
@@ -453,69 +470,43 @@
         functal.lightnessStddev = lightnessStddev;
         functal.uniques = fp.unique(ls).length;
 
-        // fail if not enough variation in the image sample
-        if (functal.stdDev < functal.minStdDev || functal.lightnessStddev < functal.minLightnessStdDev || functal.uniques <= sampleCount)
+        return functal;
+    };
+
+    // ---------- make a functal
+
+    fractal.make = function(functal, palette)
+    {
+        try
         {
-            deferred.reject(functal);
+            // create fractal
+
+            fp.extend(fp.omit('colors', palette), functal);
+
+            console.log('--- creating');
+            fractal.dump(functal);
+
+            functal.data = fractal.process(functal, palette);
+
+            // store time taken
+            functal.time = ((new Date()).getTime() - functal.startTime);
+            functal.duration = moment.duration(functal.time).humanize();
         }
-        else
+        catch (ex)
         {
-            try
-            {
-                // create fractal
-
-                fp.extend(fp.omit('colors', palette), functal);
-
-                console.log('--- creating');
-                console.log(JSON.stringify(fp.omit('zs', functal), null, 4));
-
-                data = fractal.process(functal, palette);
-
-                // store time taken
-                functal.time = ((new Date()).getTime() - functal.startTime);
-                functal.duration = moment.duration(functal.time).humanize();
-
-                // save
-                if (options.file())
-                {
-                    functal.file = options.file();
-
-                    // save options spec
-                    fsq.writeFile(functal.file + '.json', JSON.stringify(fp.omit('zs', functal), null, 4))
-                        .then(function()
-                        {
-                            // save png
-                            return fractal.png(functal, data, palette);
-
-                        }).done(function()
-                        {
-                            // exit
-                            deferred.resolve(functal);
-                        }, function(ex)
-                        {
-                            functal.error = ex;
-                            deferred.reject(functal);
-                        });
-                }
-                else
-                {
-                    // no file required - just exit
-                    deferred.resolve(functal);
-                }
-            }
-            catch (ex)
-            {
-                functal.error = ex;
-                deferred.reject(functal);
-            }
+            functal.error = ex;
         }
+    };
 
-        return deferred.promise;
+    // ------------ dump for debugging
+    fractal.dump = function(functal)
+    {
+        console.log(JSON.stringify(fp.omit(['zs', 'data'], functal), null, 4));
     };
 
     // ------------ output to a png image
 
-    fractal.png = function(functal, data)
+    fractal.png = function(functal)
     {
         var deferred = Q.defer();
 
@@ -525,6 +516,8 @@
             height: functal.height,
             filterType: -1
         });
+
+        var data = functal.data;
 
         for (var y = 0; y < image.height; y++)
         {
@@ -775,80 +768,79 @@
 
     // ------------ make a functal
 
-    // use different options until a fractal with enough variety is found
 
-    // recurse until successful as it's async
-
-    fractal.attempt = function()
+    fractal.create = function()
     {
+        var deferred = Q.defer();
+
+        var options, palette, functal;
+
         var size = (isDev ? 'small' : 'medium');
 
-        var options = fractal.setOptions(size);
+        // use different options until a fractal with enough variety is found
 
-        var palette = pal.setPalette();
+        var ok = false;
 
-        fractal.make(options, palette).done(function(functal)
+        do {
+            options = fractal.setOptions(size);
+
+            palette = pal.setPalette();
+
+            functal = fractal.calcVariation(options, palette);
+
+            // fail if not enough variation in the image sample
+            ok = (functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
+
+            if (!ok)
+            {
+                fractal.dump(functal);
+                console.log('--- rejected');
+            }
+
+        } while (!ok);
+
+        // make full fractal
+
+        fractal.make(functal, palette);
+
+        console.log(functal.duration);
+
+        // save options spec
+        fsq.writeFile(functal.file + '.json', JSON.stringify(fp.omit(['zs', 'data'], functal), null, 4))
+            .then(function()
+            {
+                // save png
+                return fractal.png(functal);
+
+            }).done(function()
             {
                 functal = null;
 
-                // heapdump.writeSnapshot();
-            },
-            function(functal)
-            {
-                if (isDev)
-                {
-                    console.log(JSON.stringify(fp.omit('zs', functal), null, 4));
-                }
-
-                if (functal.error)
-                {
-                    functal = null;
-                    console.error('--- error');
-                }
-                else
-                {
-                    if (isDev)
-                    {
-                        console.log('--- rejected');
-                    }
-
-                    functal = null;
-
-                    // retry
-
-                    fractal.attempt();
-                }
+                deferred.resolve();
             });
+
+        return deferred.promise;
+
     };
 
     // kick off
 
-    var devCount = 1;
-
-    var functals = isDev ? devCount : 1;
-
-    var proceed = true;
-
-    if (!isDev)
+    if (!isDev && !fractal.isOkToMake())
     {
-        // only proceed if less than 100 fractals already stored
+        // sleep for an hour if enogu files already
+        console.log('sleeping');
 
-        var files = fsq.readdirSync(functalsFolder + '/medium');
-
-        var pngs = fp.filter(function(f)
+        setTimeout(function()
         {
-            return fp.endsWith('.png', f);
-        }, files);
-
-        proceed = pngs.length < 100;
+            console.log('slept');
+        }, 60 * 60);
     }
-
-    if (proceed)
+    else
     {
         fp.times(function()
         {
-            fractal.attempt();
-        }, functals);
+            fractal.create();
+        }, isDev ? 10 : 1);
     }
 
 }());
