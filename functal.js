@@ -281,7 +281,7 @@
                 }
                 else
                 {
-                    hsl = pal.getColor(palette, result.escape, 0);
+                    hsl = pal.getColor(palette, result.escape, functal.baseOffset);
                     rgb = clr.hsl2rgb(hsl);
                 }
 
@@ -830,7 +830,7 @@
 
     if (!isDev && !fractal.isOkToMake())
     {
-        // sleep for an hour if enogu files already
+        // sleep for an hour if enough files already & then exit for shell script to restart
         console.log('sleeping');
 
         setTimeout(function()
