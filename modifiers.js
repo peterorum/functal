@@ -244,9 +244,10 @@
 
                         return z1.im + params.ampl * math.sin(params.freq * z1.re) - params.diameter;
 
+
                     }, result.zs);
 
-                    return functal.modifierReduce(vals) / math.max(fp.map(math.abs, vals));
+                    return functal.finite(functal.modifierReduce(vals)) / math.max(fp.map(math.abs, vals));
                 };
 
                 fn.params = params;
