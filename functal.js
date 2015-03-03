@@ -122,7 +122,7 @@
         var result = {
             escape: count / maxCount,
             zs: zsAdj,
-            escaped: (count >= maxCount - 1)
+            unescaped: (count >= maxCount - 1)
         };
 
         return result;
@@ -210,7 +210,9 @@
         // i,j index into data result matrix
         var i = 0;
 
-        while (x < functal.width)
+        functal.accept = true;
+
+        while (x < functal.width && functal.accept)
         {
             // translate to the sub-range
             var fx = functal.range.x1 + fxincr * x;
@@ -220,18 +222,25 @@
             var y = 0;
             var j = 0;
 
-            while (y < functal.height)
+            while (y < functal.height && functal.accept)
             {
                 var fy = functal.range.y1 + fyincr * y;
 
                 // all inputs & outputs are 0..1
                 var result = fractal.escapeCount(functal, fx, fy);
 
+                if (result.unescaped)
+                {
+                    functal.accept = false;
+                    break;
+                }
+
                 var rgb, hsl;
 
                 if (!fp.isEmpty(functal.modifiers))
                 {
                     var mods = fractal.getModifierValues(functal, result);
+
                     var k;
 
                     if (functal.blend)
@@ -287,8 +296,7 @@
 
                 data[i][j] = {
                     rgb: rgb,
-                    escape: result.escape,
-                    escaped : result.escaped
+                    escape: result.escape
                 };
 
                 y += yincr;
@@ -312,6 +320,8 @@
 
                 if (duration.asHours() >= 8)
                 {
+                    functal.accept = false;
+
                     throw "time overflow";
                 }
             }
@@ -449,31 +459,31 @@
         // get sampled data
         var data = fractal.process(functal, palette, functal.sampleCount);
 
-        // make easier to analyze
-        var flatData = fp.flatten(data);
-
-        // // calc std dev for the sample data
-        var escapes = fp.map(function(d)
+        if (functal.accept)
         {
-            return d.escape;
-        }, flatData);
+            // make easier to analyze
+            var flatData = fp.flatten(data);
 
-        // store in object to facilitate dumping
-        functal.stdDev = math.std(escapes);
+            // // calc std dev for the sample data
+            var escapes = fp.map(function(d)
+            {
+                return d.escape;
+            }, flatData);
 
-        // analyze lightness
-        var ls = fp.map(function(d)
-        {
-            return clr.rgb2hsl(d.rgb).l;
-        }, flatData);
+            // store in object to facilitate dumping
+            functal.stdDev = math.std(escapes);
 
-        var lightnessStddev = math.std(ls);
+            // analyze lightness
+            var ls = fp.map(function(d)
+            {
+                return clr.rgb2hsl(d.rgb).l;
+            }, flatData);
 
-        functal.lightnessStddev = lightnessStddev;
-        functal.uniques = fp.unique(ls).length;
+            var lightnessStddev = math.std(ls);
 
-        // count how many went over the limit
-    	functal.escaped = fp.reduce(function(n, e) { return e.escaped ? n + 1 : n; }, 0, flatData);
+            functal.lightnessStddev = lightnessStddev;
+            functal.uniques = fp.unique(ls).length;
+        }
 
         return functal;
     };
@@ -794,7 +804,7 @@
             functal = fractal.calcVariation(options, palette);
 
             // fail if not enough variation in the image sample
-            ok = (functal.escaped === 0 && functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
+            ok = (functal.accept && functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
 
             if (isDev && !ok)
             {
@@ -810,6 +820,8 @@
 
         console.log('=== total duration: ', functal.duration);
 
+        if (functal.accept)
+        {
         // save options spec
         fsq.writeFile(functal.file + '.json', JSON.stringify(fp.omit(['zs', 'data'], functal), null, 4))
             .then(function()
@@ -821,6 +833,11 @@
             {
                 deferred.resolve();
             });
+        }
+        else
+        {
+                deferred.reject();
+        }
 
         return deferred.promise;
 
