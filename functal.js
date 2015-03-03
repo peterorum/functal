@@ -121,7 +121,8 @@
 
         var result = {
             escape: count / maxCount,
-            zs: zsAdj
+            zs: zsAdj,
+            escaped: (count >= maxCount - 1)
         };
 
         return result;
@@ -286,7 +287,8 @@
 
                 data[i][j] = {
                     rgb: rgb,
-                    escape: result.escape
+                    escape: result.escape,
+                    escaped : result.escaped
                 };
 
                 y += yincr;
@@ -469,6 +471,9 @@
 
         functal.lightnessStddev = lightnessStddev;
         functal.uniques = fp.unique(ls).length;
+
+        // count how many went over the limit
+    	functal.escaped = fp.reduce(function(n, e) { return e.escaped ? n + 1 : n; }, 0, flatData);
 
         return functal;
     };
@@ -789,7 +794,7 @@
             functal = fractal.calcVariation(options, palette);
 
             // fail if not enough variation in the image sample
-            ok = (functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
+            ok = (functal.escaped === 0 && functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
 
             if (isDev && !ok)
             {
