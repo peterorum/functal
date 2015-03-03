@@ -5,7 +5,7 @@
     var version = '1.3.4';
 
     var seedrandom = require('seedrandom');
-    var randomSeed = (new Date()).getTime();
+    var randomSeed = 1425387883205;//(new Date()).getTime();
 
     // must be first
     seedrandom(randomSeed,
@@ -108,7 +108,7 @@
 
         while (!done && count < maxCount - 1)
         {
-            z = functal.process(z, c);
+            z = functal.finite(functal.process(z, c));
 
             zs.push(z);
 
@@ -240,6 +240,13 @@
                 if (!fp.isEmpty(functal.modifiers))
                 {
                     var mods = fractal.getModifierValues(functal, result);
+
+                    // if(i + j === 0)
+                    // {
+                    //     console.log(functal);
+                    // }
+                    // console.log(result);
+                    // console.log(mods);
 
                     var k;
 
