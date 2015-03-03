@@ -5,7 +5,7 @@
     var version = '1.3.4';
 
     var seedrandom = require('seedrandom');
-    var randomSeed = 1425387883205;//(new Date()).getTime();
+    var randomSeed = (new Date()).getTime();
 
     // must be first
     seedrandom(randomSeed,
