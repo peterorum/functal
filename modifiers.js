@@ -186,7 +186,7 @@
                     return math.sin(z.re * math.pi);
                 }, result.zs);
 
-                return functal.modifierReduce(vals);
+                return functal.finite(functal.modifierReduce(vals));
             },
             weight: 1,
         },
