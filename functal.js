@@ -616,7 +616,7 @@
             },
             minStdDev: function()
             {
-                return 0.01;
+                return 0.02;
             },
             minLightnessStdDev: function()
             {
