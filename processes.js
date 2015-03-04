@@ -156,7 +156,7 @@
         {
             // adjust real & imag parts with function of the opposite
             name: 'fxy',
-            weight: 1,
+            weight: 0.25, // good, but too easily chosen, so reduce weight
             fn: (function()
             {
                 // options will be the same for the entire run
