@@ -229,7 +229,7 @@
                 // all inputs & outputs are 0..1
                 var result = fractal.escapeCount(functal, fx, fy);
 
-                if (result.unescaped)
+                if (sample && result.unescaped)
                 {
                     functal.accept = false;
                     break;
