@@ -509,15 +509,15 @@
             fractal.dump(functal);
 
             functal.data = fractal.process(functal, palette);
-
-            // store time taken
-            functal.time = ((new Date()).getTime() - functal.startTime);
-            functal.duration = moment.duration(functal.time).humanize();
         }
         catch (ex)
         {
             functal.error = ex;
         }
+
+        // store time taken
+        functal.time = ((new Date()).getTime() - functal.startTime);
+        functal.duration = moment.duration(functal.time).humanize();
     };
 
     // ------------ dump for debugging
@@ -829,21 +829,21 @@
 
         if (functal.accept)
         {
-        // save options spec
-        fsq.writeFile(functal.file + '.json', JSON.stringify(fp.omit(['zs', 'data'], functal), null, 4))
-            .then(function()
-            {
-                // save png
-                return fractal.png(functal);
+            // save options spec
+            fsq.writeFile(functal.file + '.json', JSON.stringify(fp.omit(['zs', 'data'], functal), null, 4))
+                .then(function()
+                {
+                    // save png
+                    return fractal.png(functal);
 
-            }).done(function()
-            {
-                deferred.resolve();
-            });
+                }).done(function()
+                {
+                    deferred.resolve();
+                });
         }
         else
         {
-                deferred.reject();
+            deferred.reject();
         }
 
         return deferred.promise;
@@ -867,7 +867,7 @@
         fp.times(function()
         {
             fractal.create();
-        }, isDev ? 10 : 1);
+        }, isDev ? 12 : 1);
     }
 
 }());
