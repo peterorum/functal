@@ -502,7 +502,7 @@
         {
             // create fractal
 
-            functal.palette = R.omit('colors', palette);
+            functal.palette = R.omit(['colors'], palette);
 
             console.log('--- creating');
             fractal.dump(functal);
