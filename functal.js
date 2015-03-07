@@ -117,7 +117,7 @@
             count++;
         }
 
-        var zsAdj = zs;//////////////functal.adjzs.length ? R.map(R.compose.apply(functal, functal.adjzs), zs) : zs;
+        var zsAdj = functal.adjzs.length ? R.map(R.compose.apply(functal, functal.adjzs), zs) : zs;
 
         var result = {
             escape: count / maxCount,
@@ -858,7 +858,7 @@
         R.times(function()
         {
             fractal.create();
-        }, isDev ? 12 : 1);
+        }, isDev ? 1 : 1);
     }
 
 }());
