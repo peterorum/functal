@@ -176,10 +176,10 @@
             }, weights);
 
             // adj last one so that sum is exactly size
-            R.last(gaps).gap += (size - R.reduce(function(sum, n)
+            R.last(gaps).gap += math.max(0, (size - R.reduce(function(sum, n)
             {
                 return sum + n;
-            }, 0, R.pluck('gap', gaps)));
+            }, 0, R.pluck('gap', gaps))));
 
             R.forEachIndexed(function(g, k)
             {

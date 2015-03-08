@@ -154,8 +154,34 @@
         },
 
         {
+            name: 'znplusxyplusc',
+            weight: 1,
+            fn: (function()
+            {
+                var znplusxyplusc = {
+                    xfactor: math.random(5),
+                    yfactor: math.random(5)
+                };
+
+                return function(z, c)
+                {
+                    if (!this.znplusxyplusc)
+                    {
+                        this.znplusxyplusc = znplusxyplusc;
+                    }
+
+                    return this.finite(math.chain(z)
+                        .pow(this.pow)
+                        .add(znplusxyplusc.xfactor * z.re)
+                        .add(znplusxyplusc.yfactor * z.im)
+                        .add(c)
+                        .done());
+                };
+            })()
+        },
+        {
             // adjust real & imag parts with function of the opposite
-            name: 'fxy',
+            name: 'fxtrigy',
             weight: 0.25, // good, but too easily chosen, so reduce weight
             fn: (function()
             {
@@ -193,32 +219,22 @@
                 };
             })()
         },
-        {
-            name: 'znplusxyplusc',
-            weight: 1,
-            fn: (function()
-            {
-                var znplusxyplusc = {
-                    xfactor: math.random(5),
-                    yfactor: math.random(5)
-                };
+        // {
+        //     // adjust real & imag parts with function of the opposite
+        //     name: 'fxplusy',
+        //     weight: 1000000.25, // good, but too easily chosen, so reduce weight
+        //     fn: (function()
+        //     {
+        //         // the actual process function
 
-                return function(z, c)
-                {
-                    if (!this.znplusxyplusc)
-                    {
-                        this.znplusxyplusc = znplusxyplusc;
-                    }
+        //         return function(z /*, c */ )
+        //         {
+        //             var z2 = math.complex(z.re + z.im, z.im - z.re);
 
-                    return this.finite(math.chain(z)
-                        .pow(this.pow)
-                        .add(znplusxyplusc.xfactor * z.re)
-                        .add(znplusxyplusc.yfactor * z.im)
-                        .add(c)
-                        .done());
-                };
-            })()
-        },
-    ];
+        //             return this.finite(z2);
+        //         };
+        //     })()
+        // },
+            ];
 
 }());
