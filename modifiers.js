@@ -44,9 +44,7 @@
         {
             fn: function angleChange(functal, result)
             {
-                var vals = [];
-
-                R.forEachIndexed(function(z, i, zs)
+                var vals = R.mapIndexed(function(z, i, zs)
                 {
                     var x = 0;
 
@@ -58,7 +56,7 @@
                         x = math.atan2(z2.re, z2.im) / math.pi;
                     }
 
-                    vals.push(x);
+                    return x;
 
                 }, result.zs);
 
