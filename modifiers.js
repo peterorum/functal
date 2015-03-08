@@ -4,15 +4,15 @@
 
     var math = require('mathjs');
 
-    var fp = require('lodash-fp');
-    fp.mixin(require('./plus-fp/plus-fp'));
+    var R = require('ramda');
+    var Rp = require('./plus-fp/plus-fp');
 
     // modifying the final result
     // return -1..1
 
     exports.reducers = [
     {
-        fn: fp.last,
+        fn: R.last,
         weight: 1
     },
     {
@@ -32,7 +32,7 @@
         {
             fn: function angle(functal, result)
             {
-                var vals = fp.map(function(z)
+                var vals = R.map(function(z)
                 {
                     return math.atan2(z.re, z.im) / math.pi;
                 }, result.zs);
@@ -46,7 +46,7 @@
             {
                 var vals = [];
 
-                fp.forEach(function(z, i, zs)
+                R.forEachIndexed(function(z, i, zs)
                 {
                     var x = 0;
 
@@ -69,12 +69,12 @@
         {
             fn: function real(functal, result)
             {
-                var max = math.max(fp.map(function(z)
+                var max = math.max(R.map(function(z)
                 {
                     return math.abs(z.re);
                 }, result.zs));
 
-                var vals = fp.map(function(z)
+                var vals = R.map(function(z)
                 {
                     return max ?  z.re / max : 1;
                 }, result.zs);
@@ -87,7 +87,7 @@
         {
             fn: function norm(functal, result)
             {
-                var vals = fp.map(function(z)
+                var vals = R.map(function(z)
                 {
                     var x =  functal.finite(math.norm(z)) / functal.limit;
 
@@ -109,7 +109,7 @@
                 {
                     var x;
 
-                    var vals = fp.map(function(z)
+                    var vals = R.map(function(z)
                     {
                         var z1 = math.subtract(z, params.centre);
 
@@ -134,9 +134,9 @@
 
                 fn.setParams = function()
                 {
-                    params.diameter = fp.bandom(1, -2);
-                    params.band = fp.bandom(1, -3);
-                    params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
+                    params.diameter = Rp.bandom(1, -2);
+                    params.band = Rp.bandom(1, -3);
+                    params.centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
                 };
 
                 fn.setParams();
@@ -154,7 +154,7 @@
 
                 var fn = function realCircleTrap(functal, result)
                 {
-                    var vals = fp.map(function(z)
+                    var vals = R.map(function(z)
                     {
                         var x = math.mod(z.re - params.centre, 1);
 
@@ -181,7 +181,7 @@
         {
             fn: function sinreal(functal, result)
             {
-                var vals = fp.map(function(z)
+                var vals = R.map(function(z)
                 {
                     return math.sin(z.re * math.pi);
                 }, result.zs);
@@ -199,7 +199,7 @@
 
                 var fn = function boxTrap(functal, result)
                 {
-                    var vals = fp.map(function(z)
+                    var vals = R.map(function(z)
                     {
                         var z1 = math.subtract(z, params.centre);
 
@@ -212,15 +212,15 @@
 
                     }, result.zs);
 
-                    return functal.modifierReduce(vals) / math.max(fp.map(math.abs, vals));
+                    return functal.modifierReduce(vals) / math.max(R.map(math.abs, vals));
                 };
 
                 fn.params = params;
 
                 fn.setParams = function()
                 {
-                    params.diameter = fp.bandom(1, -2);
-                    params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
+                    params.diameter = Rp.bandom(1, -2);
+                    params.centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
                 };
 
                 fn.setParams();
@@ -238,7 +238,7 @@
 
                 var fn = function sinTrap(functal, result)
                 {
-                    var vals = fp.map(function(z)
+                    var vals = R.map(function(z)
                     {
                         var z1 = math.subtract(z, params.centre);
 
@@ -247,16 +247,16 @@
 
                     }, result.zs);
 
-                    return functal.finite(functal.modifierReduce(vals)) / math.max(fp.map(math.abs, vals));
+                    return functal.finite(functal.modifierReduce(vals)) / math.max(R.map(math.abs, vals));
                 };
 
                 fn.params = params;
 
                 fn.setParams = function()
                 {
-                    params.diameter = fp.bandom(1, -2);
-                    params.centre = math.complex(fp.bandom(1, 2) * fp.randomSign() - 1, fp.bandom(1, 2) * fp.randomSign());
-                    params.freq = fp.bandom(2, 4);
+                    params.diameter = Rp.bandom(1, -2);
+                    params.centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
+                    params.freq = Rp.bandom(2, 4);
                     params.ampl = math.random(0.5);
                 };
 
@@ -275,7 +275,7 @@
 
                 var fn = function reimTrap(functal, result)
                 {
-                    var vals = fp.map(function(z)
+                    var vals = R.map(function(z)
                     {
                         var y = functal.finite(z.im * z.re) - params.diameter;
 
@@ -283,7 +283,7 @@
 
                     }, result.zs);
 
-                    var y = functal.modifierReduce(vals) / math.max(fp.map(math.abs, vals));
+                    var y = functal.modifierReduce(vals) / math.max(R.map(math.abs, vals));
 
                     return y;
                 };
@@ -292,7 +292,7 @@
 
                 fn.setParams = function()
                 {
-                    params.diameter = fp.bandom(1, -2);
+                    params.diameter = Rp.bandom(1, -2);
                 };
 
                 fn.setParams();

@@ -27,7 +27,7 @@
     var Q = require('q');
 
     var R = require('ramda');
-    R = R.merge(R, require('./plus-fp/plus-fp'));
+    var Rp = require('./plus-fp/plus-fp');
 
     // var heapdump = require('heapdump')
     // heapdump.writeSnapshot();
@@ -366,19 +366,19 @@
 
         functal.file = options.file();
 
-        var test = R.wandom(limitTests.tests);
+        var test = Rp.wandom(limitTests.tests);
         functal.testName = test.name;
         functal.test = test.fn;
 
         functal.adjzs = R.times(function()
         {
-            return R.wandom(options.z2zfns).fn;
-        }, R.bandomInt(4, 1));
+            return Rp.wandom(options.z2zfns).fn;
+        }, Rp.bandomInt(4, 1));
 
         functal.adjzsNames = R.map(function(fn)
         {
             var o = {
-                name: R.nameOf(fn)
+                name: Rp.nameOf(fn)
             };
 
             // params
@@ -393,15 +393,15 @@
             return R.compose(functal.finite, f);
         }, functal.adjzs);
 
-        var process = R.wandom(processes.processes);
+        var process = Rp.wandom(processes.processes);
         functal.processName = process.name;
         functal.process = process.fn;
         functal.pow = options.pow();
 
         var modifierChain = R.times(function()
         {
-            return R.wandom(modifiers.modifiers);
-        }, 1 + R.bandomInt(8, 2));
+            return Rp.wandom(modifiers.modifiers);
+        }, 1 + Rp.bandomInt(8, 2));
 
         R.forEach(function(f)
         {
@@ -416,7 +416,7 @@
             var modifier = R.merge(m.fn,
             {
                 fn: m.fn,
-                name: R.nameOf(m.fn)
+                name: Rp.nameOf(m.fn)
             });
 
             return modifier;
@@ -448,8 +448,8 @@
         // dregs to original escape
         functal.baseLayer = 1.0 - layerSum;
 
-        functal.modifierReduce = R.wandom(modifiers.reducers).fn;
-        functal.modifierReduceName = R.nameOf(functal.modifierReduce);
+        functal.modifierReduce = Rp.wandom(modifiers.reducers).fn;
+        functal.modifierReduceName = Rp.nameOf(functal.modifierReduce);
 
         return functal;
     };
@@ -743,16 +743,16 @@
         {
             fn: (function trigxy()
             {
-                var trig1 = R.wandom([math.sin, math.cos]);
-                var trig2 = R.wandom([math.sin, math.cos]);
+                var trig1 = Rp.wandom([math.sin, math.cos]);
+                var trig2 = Rp.wandom([math.sin, math.cos]);
 
                 var fxy = {
                     freq1: math.random(20),
                     freq2: math.random(20),
                     trig1: trig1,
                     trig2: trig2,
-                    name1: R.nameOf(trig1),
-                    name2: R.nameOf(trig2)
+                    name1: Rp.nameOf(trig1),
+                    name2: Rp.nameOf(trig2)
                 };
 
                 var fn = function trigxy(z)
@@ -858,7 +858,7 @@
         R.times(function()
         {
             fractal.create();
-        }, isDev ? 1 : 1);
+        }, isDev ? 12 : 1);
     }
 
 }());

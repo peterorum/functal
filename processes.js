@@ -4,8 +4,8 @@
 
     var math = require('mathjs');
 
-    var fp = require('lodash-fp');
-    fp.mixin(require('./plus-fp/plus-fp'));
+    var R = require('ramda');
+    var Rp = require('./plus-fp/plus-fp');
 
     // additional functions beyond the traditional z^2 + c
 
@@ -160,7 +160,7 @@
             fn: (function()
             {
                 // options will be the same for the entire run
-                var trig = fp.wandom([math.sin, math.cos]);
+                var trig = Rp.wandom([math.sin, math.cos]);
 
                 // keep inside anon function so they are constant
                 var fxy = {
@@ -169,7 +169,7 @@
                     freq1: math.random(20),
                     freq2: math.random(20),
                     fn: trig,
-                    name: fp.nameOf(trig)
+                    name: Rp.nameOf(trig)
                 };
 
                 // the actual process function
