@@ -2,10 +2,10 @@
 {
     "use strict";
 
-    var version = '1.4.1';
+    var version = '1.4.2';
 
     var seedrandom = require('seedrandom');
-    var randomSeed = (new Date()).getTime();
+    var randomSeed = 1425773744471;//(new Date()).getTime();
 
     // must be first
     seedrandom(randomSeed,
@@ -858,7 +858,7 @@
         R.times(function()
         {
             fractal.create();
-        }, isDev ? 12 : 1);
+        }, isDev ? 1 : 1);
     }
 
 }());
