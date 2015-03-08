@@ -189,7 +189,7 @@
                 var trig = Rp.wandom([math.sin, math.cos]);
 
                 // keep inside anon function so they are constant
-                var fxy = {
+                var fxtrigy = {
                     ampl1: math.random(0.2),
                     ampl2: math.random(0.2),
                     freq1: math.random(20),
@@ -203,15 +203,15 @@
                 return function(z /*, c */ )
                 {
                     // store options on first call
-                    if (!this.fxy)
+                    if (!this.fxtrigy)
                     {
-                        this.fxy = fxy;
+                        this.fxtrigy = fxtrigy;
                     }
 
                     var zr = math.complex(math.mod(z.re, math.pi * 2), math.mod(z.im, math.pi * 2));
 
-                    var fim = fxy.ampl1 * fxy.fn(fxy.freq1 * zr.im);
-                    var fre = fxy.ampl2 * fxy.fn(fxy.freq2 * zr.re);
+                    var fim = fxtrigy.ampl1 * fxtrigy.fn(fxtrigy.freq1 * zr.im);
+                    var fre = fxtrigy.ampl2 * fxtrigy.fn(fxtrigy.freq2 * zr.re);
 
                     var z2 = math.complex(z.re - fim, z.im - fre);
 
@@ -219,22 +219,36 @@
                 };
             })()
         },
-        // {
-        //     // adjust real & imag parts with function of the opposite
-        //     name: 'fxplusy',
-        //     weight: 1000000.25, // good, but too easily chosen, so reduce weight
-        //     fn: (function()
-        //     {
-        //         // the actual process function
+        {
+            // adjust real & imag parts with function of the opposite
+            name: 'fxfny',
+            weight: 0.25, // good, but too easily chosen, so reduce weight
+            fn: (function()
+            {
+                var funcs = R.times(function()
+                {
+                    // todo: add ampl & freq to sin
+                    return Rp.wandom([math.square, math.sin, R.compose(math.log, math.abs)]);
+                }, 2);
 
-        //         return function(z /*, c */ )
-        //         {
-        //             var z2 = math.complex(z.re + z.im, z.im - z.re);
+                var fxfny = R.map(Rp.nameOf, funcs);
 
-        //             return this.finite(z2);
-        //         };
-        //     })()
-        // },
-            ];
+                // the actual process function
+
+                return function(z /*, c */ )
+                {
+                    // store options on first call
+                    if (!this.fxfny)
+                    {
+                        this.fxfny = fxfny;
+                    }
+
+                    var z2 = math.complex(this.finite(z.re + funcs[0](z.im)), this.finite(z.im + funcs[1](z.re)));
+
+                    return this.finite(z2);
+                };
+            })()
+        },
+    ];
 
 }());
