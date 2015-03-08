@@ -860,5 +860,4 @@
             fractal.create();
         }, isDev ? 1 : 1);
     }
-
 }());
