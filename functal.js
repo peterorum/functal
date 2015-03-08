@@ -277,7 +277,7 @@
 
                         blended = math.floor(blended);
 
-                        rgb = R.zipObj(blended, ['r', 'g', 'b']);
+                        rgb = R.zipObj(['r', 'g', 'b'], blended);
                     }
                     else
                     {
@@ -845,13 +845,13 @@
 
     if (!isDev && !fractal.isOkToMake())
     {
-        // sleep for an hour if enough files already & then exit for shell script to restart
+        // sleep for a little while if enough files already & then exit for shell script to restart
         console.log('sleeping');
 
         setTimeout(function()
         {
             console.log('slept');
-        }, 60 * 60 * 1000);
+        }, 60 * 1000);
     }
     else
     {
