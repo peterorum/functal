@@ -4,7 +4,7 @@
     var math = require('mathjs');
 
     var R = require('ramda');
-    R = R.merge(R, require('./plus-fp/plus-fp'));
+    var Rp = require('./plus-fp/plus-fp');
 
     exports.tests = [{
         name: 'norm',

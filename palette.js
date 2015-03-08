@@ -4,19 +4,20 @@
 
     var math = require('mathjs');
     var clr = require('./color');
-    var fp = require('lodash-fp');
-    fp.mixin(require('./plus-fp/plus-fp'));
+
+    var R = require('ramda');
+    var Rp = require('./plus-fp/plus-fp');
 
     // find the index of the lightest color
 
     var findLighestIndex = function(palette)
     {
-        var lightest = math.max(fp.map(function(p)
+        var lightest = math.max(R.map(function(p)
         {
             return p.l;
         }, palette));
 
-        var lightestIndex = fp.findIndex(function(p)
+        var lightestIndex = R.findIndex(function(p)
         {
             return p.l === lightest;
         }, palette);
@@ -110,7 +111,7 @@
             var weights = math.random([palette.numColors]);
 
             // sum the weights to normalize them
-            var sum = fp.reduce(function(sum, n)
+            var sum = R.reduce(function(sum, n)
             {
                 return sum + n;
             }, 0, weights);
@@ -118,7 +119,7 @@
             // analogous complementray color scheme (adjacents & complemt)
             var hues = [];
 
-            var hue = fp.wandom(wues).hue;
+            var hue = Rp.wandom(wues).hue;
             hue = math.mod(hue + math.random(-0.25, 0.25) / 12, 1);
 
             palette.mainHue = hue * 12;
@@ -152,19 +153,19 @@
             // todo: map is supposed to get index
             var index = 0;
 
-            palette.contrast = fp.bandomInt(5, 2);
+            palette.contrast = Rp.bandomInt(5, 2);
 
-            var gaps = fp.map(function(n)
+            var gaps = R.map(function(n)
             {
                 var gap = {
                     gap: math.max(1, math.round(n / sum * size)), // number of palette entries
                     color:
                     {
-                        h: fp.wandom(hues).h,
+                        h: Rp.wandom(hues).h,
                         // brightish
-                        s: fp.bandom(1, -2),
+                        s: Rp.bandom(1, -2),
                         // bright/dark bands
-                        l: fp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
+                        l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
                     }
                 };
 
@@ -175,18 +176,18 @@
             }, weights);
 
             // adj last one so that sum is exactly size
-            fp.last(gaps).gap += (size - fp.reduce(function(sum, n)
+            R.last(gaps).gap += (size - R.reduce(function(sum, n)
             {
                 return sum + n;
-            }, 0, fp.pluck('gap', gaps)));
+            }, 0, R.pluck('gap', gaps)));
 
-            fp.forEach(function(g, k)
+            R.forEachIndexed(function(g, k)
             {
                 // color in the gap is a gradient from one color to the next, wrapping at the end
                 var rgb1 = clr.hsl2rgb(g.color);
                 var rgb2 = clr.hsl2rgb(gaps[(k + 1) % gaps.length].color);
 
-                fp.range(0, g.gap).forEach(function(i)
+                R.times(function(i)
                 {
                     // calc gradient between 2 colors
                     var rgb = {
@@ -197,11 +198,12 @@
 
                     // store hsl for easuer later adjustment
                     palette.colors.push(clr.rgb2hsl(rgb));
-                });
+                }, g.gap);
+
             }, gaps);
 
             // calc lightness std dev
-            palette.stdDevL = math.std(fp.map(function(p)
+            palette.stdDevL = math.std(R.map(function(p)
             {
                 return p.l;
             }, palette.colors));

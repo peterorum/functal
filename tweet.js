@@ -6,8 +6,7 @@
 
     var fsq = require('./fsq');
 
-    var fp = require('lodash-fp');
-    fp.mixin(require('./plus-fp/plus-fp'));
+    var R = require('ramda');
 
     var twit = require('./tweet-media');
 
@@ -21,9 +20,9 @@
 
     fsq.readdir(folder).then(function(files)
     {
-        var file = fp.find(function(f)
+        var file = R.find(function(f)
         {
-            return fp.endsWith('.png', f);
+            return /\.png$/.test(f);
         }, files);
 
         if (file)
