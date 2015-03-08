@@ -858,7 +858,7 @@
         R.times(function()
         {
             fractal.create();
-        }, isDev ? 12 : 1);
+        }, isDev ? 1 : 1);
     }
 
 }());
