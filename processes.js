@@ -95,7 +95,7 @@
         },
         {
             name: 'cschzc',
-            weight: 1,
+            weight: 0.5,
             fn: function(z, c)
             {
                 return applyFnMultC.call(this, math.csch, z, c);
@@ -129,7 +129,7 @@
         },
         {
             name: 'z2sinz',
-            weight: 1,
+            weight: 0.5,
             fn: function(z, c)
             {
                 var zr = math.complex(math.mod(z.re, math.pi * 2), math.mod(z.im, math.pi * 2));
