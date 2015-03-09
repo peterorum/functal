@@ -56,13 +56,13 @@
         }
     }, {
         name: 'mean',
-        weight: 1,
+        weight: 0.25,
         fn: function(zs) {
             return math.norm(math.mean(zs)) >= this.limit;
         }
     }, {
         name: 'stddev',
-        weight: 1,
+        weight: 0.25,
         fn: function(zs) {
             return math.norm(math.std(zs)) >= this.limit;
         }
@@ -80,7 +80,7 @@
         }
     }, {
         name: 'stddevnorm',
-        weight: 1,
+        weight: 0.25,
         fn: function(zs) {
             return math.std(R.map(math.norm, zs)) >= this.limit;
         }

@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.4.2';
+    var version = '1.4.3';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -373,7 +373,7 @@
         functal.adjzs = R.times(function()
         {
             return Rp.wandom(options.z2zfns).fn;
-        }, Rp.bandomInt(4, 1));
+        }, Rp.bandomInt(4, 2));
 
         functal.adjzsNames = R.map(function(fn)
         {
