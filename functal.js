@@ -72,7 +72,7 @@
 
         // only proceed if less than 100 fractals already stored
 
-        var files = fsq.readdirSync(functalsFolder + '/medium');
+        var files = fs.readdirSync(functalsFolder + '/medium');
 
         var pngs = R.filter(function(f)
         {
