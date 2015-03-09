@@ -426,7 +426,7 @@
         // presize results array
         functal.modifierValues = new Array(functal.modifiers.length);
 
-        functal.blend = math.random(1) < 0.5;
+        functal.blend = math.random(1) < 0.75;
 
         // weight factors
         functal.layers = [];
