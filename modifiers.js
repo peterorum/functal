@@ -177,18 +177,6 @@
             weight: 1,
         },
         {
-            fn: function sinreal(functal, result)
-            {
-                var vals = R.map(function(z)
-                {
-                    return math.sin(z.re * math.pi);
-                }, result.zs);
-
-                return functal.finite(functal.modifierReduce(vals));
-            },
-            weight: 1,
-        },
-        {
             // box trap
 
             fn: (function()
