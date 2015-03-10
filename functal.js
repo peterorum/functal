@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.4.3';
+    var version = '1.4.4';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -132,7 +132,11 @@
     {
         var mods = R.map(function(m)
         {
-            var x = m.fn(functal, result);
+            var x = R.identity(m.fn(functal, result));
+            // var x = math.square(m.fn(functal, result));
+            // var x = math.abs(m.fn(functal, result));
+            // var x = math.round(m.fn(functal, result));
+            // var x = math.cos(math.pi * m.fn(functal, result));
 
             return x;
         }, functal.modifiers);
@@ -855,9 +859,20 @@
     }
     else
     {
-        R.times(function()
+        // make an array with the create function repeated
+        var creators = R.times(function()
         {
-            fractal.create();
+            return fractal.create;
         }, isDev ? 12 : 1);
+
+        // run sequentially
+
+        // initial promise
+        var result = Q(); // jshint ignore:line
+
+        R.forEach(function(f)
+        {
+            result = result.then(f);
+        }, creators);
     }
 }());
