@@ -426,23 +426,21 @@
             weight: 1
         },
         {
-            fn: R.curry(function cospi(x) { return math.cos(math.pi * x); }),
+            fn: R.curry(function cospi(x)
+            {
+                return math.cos(math.pi * x);
+            }),
             weight: 1
         }, ];
 
-        R.forEach(function(f)
+        R.times(function()
         {
-            if (f.fn.setParams)
-            {
-                f.fn.setParams();
-            }
-
             var mmfn = Rp.wandom(modifierModifierFns).fn;
 
             functal.modifierModifiers.push(mmfn);
             functal.modifierModifierNames.push(Rp.nameOf(mmfn));
 
-        }, modifierChain);
+        }, modifierChain.length);
 
         functal.modifiers = R.map(function(m)
         {
@@ -455,9 +453,6 @@
             return modifier;
 
         }, modifierChain);
-
-        // presize results array
-        functal.modifierValues = new Array(functal.modifiers.length);
 
         functal.blend = math.random(1) < 0.75;
 
@@ -893,7 +888,7 @@
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 1 : 1);
+        }, isDev ? 12 : 1);
 
         // run sequentially
 

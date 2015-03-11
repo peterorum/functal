@@ -74,7 +74,7 @@
 
                 var vals = R.map(function(z)
                 {
-                    return max ?  z.re / max : 1;
+                    return max ? z.re / max : 1;
                 }, result.zs);
 
                 return functal.modifierReduce(vals);
@@ -87,7 +87,7 @@
             {
                 var vals = R.map(function(z)
                 {
-                    var x =  functal.finite(math.norm(z)) / functal.limit;
+                    var x = functal.finite(math.norm(z)) / functal.limit;
 
                     return x;
                 }, result.zs);
@@ -101,21 +101,19 @@
 
             fn: (function()
             {
-                var params = {};
-
-                var fn = function circleTrap(functal, result)
+                var fn = R.curry(function circleTrap(diameter, band, centre, functal, result)
                 {
                     var x;
 
                     var vals = R.map(function(z)
                     {
-                        var z1 = math.subtract(z, params.centre);
+                        var z1 = math.subtract(z, centre);
 
                         var distance = math.sqrt(functal.finite(math.norm(z1)));
 
-                        if (math.abs(distance - params.diameter) < params.band)
+                        if (math.abs(distance - diameter) < band)
                         {
-                            x = math.max(-1, math.min(1, distance - params.diameter));
+                            x = math.max(-1, math.min(1, distance - diameter));
                         }
                         else
                         {
@@ -126,53 +124,39 @@
                     }, result.zs);
 
                     return functal.modifierReduce(vals);
-                };
+                });
 
-                fn.params = params;
+                var diameter = Rp.bandom(1, -2);
+                var band = Rp.bandom(1, -3);
+                var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
 
-                fn.setParams = function()
-                {
-                    params.diameter = Rp.bandom(1, -2);
-                    params.band = Rp.bandom(1, -3);
-                    params.centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
-                };
-
-                fn.setParams();
-
-                return fn;
+                // return curried function with constants,
+                return fn(diameter, band, centre);
             })(),
-            weight: 1,
+            weight: 1000000,
         },
         {
             // real circle trap
 
             fn: (function()
             {
-                var params = {};
-
-                var fn = function realCircleTrap(functal, result)
+                var fn = R.curry(function realCircleTrap(centre, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
-                        var x = math.mod(z.re - params.centre, 1);
+                        var x = math.mod(z.re - centre, 1);
 
                         return math.sqrt(math.max(0, 1.0 - x * x));
 
                     }, result.zs);
 
                     return functal.modifierReduce(vals);
-                };
+                });
 
-                fn.params = params;
+                var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
 
-                fn.setParams = function()
-                {
-                    params.centre = math.random(-1, 1);
-                };
+                return fn(centre);
 
-                fn.setParams();
-
-                return fn;
             })(),
             weight: 1,
         },
@@ -181,37 +165,28 @@
 
             fn: (function()
             {
-                var params = {};
-
-                var fn = function boxTrap(functal, result)
+                var fn = R.curry(function boxTrap(diameter, centre, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
-                        var z1 = math.subtract(z, params.centre);
+                        var z1 = math.subtract(z, centre);
 
                         var x = math.abs(z1.re);
                         var y = math.abs(z1.im);
 
                         var dist = math.max(x, y);
 
-                        return math.mod(dist - params.diameter, 1);
+                        return math.mod(dist - diameter, 1);
 
                     }, result.zs);
 
                     return functal.modifierReduce(vals) / math.max(R.map(math.abs, vals));
-                };
+                });
 
-                fn.params = params;
+                var diameter = Rp.bandom(1, -2);
+                var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
 
-                fn.setParams = function()
-                {
-                    params.diameter = Rp.bandom(1, -2);
-                    params.centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
-                };
-
-                fn.setParams();
-
-                return fn;
+                return fn(diameter, centre);
             })(),
             weight: 1,
         },
@@ -220,35 +195,26 @@
 
             fn: (function()
             {
-                var params = {};
-
-                var fn = function sinTrap(functal, result)
+                var fn = R.curry(function sinTrap(diameter, centre, ampl, freq, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
-                        var z1 = math.subtract(z, params.centre);
+                        var z1 = math.subtract(z, centre);
 
-                        return z1.im + params.ampl * math.sin(params.freq * z1.re) - params.diameter;
+                        return z1.im + ampl * math.sin(freq * z1.re) - diameter;
 
 
                     }, result.zs);
 
                     return functal.finite(functal.modifierReduce(vals)) / math.max(R.map(math.abs, vals));
-                };
+                });
 
-                fn.params = params;
+                var diameter = Rp.bandom(1, -2);
+                var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
+                var freq = Rp.bandom(2, 4);
+                var ampl = math.random(0.5);
 
-                fn.setParams = function()
-                {
-                    params.diameter = Rp.bandom(1, -2);
-                    params.centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
-                    params.freq = Rp.bandom(2, 4);
-                    params.ampl = math.random(0.5);
-                };
-
-                fn.setParams();
-
-                return fn;
+                return fn(diameter, centre, freq, ampl);
             })(),
             weight: 1,
         },
@@ -257,13 +223,11 @@
 
             fn: (function()
             {
-                var params = {};
-
-                var fn = function reimTrap(functal, result)
+                var fn = R.curry(function reimTrap(diameter, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
-                        var y = functal.finite(z.im * z.re) - params.diameter;
+                        var y = functal.finite(z.im * z.re) - diameter;
 
                         return y;
 
@@ -272,21 +236,13 @@
                     var y = functal.modifierReduce(vals) / math.max(R.map(math.abs, vals));
 
                     return y;
-                };
+                });
 
-                fn.params = params;
+                var diameter = Rp.bandom(1, -2);
 
-                fn.setParams = function()
-                {
-                    params.diameter = Rp.bandom(1, -2);
-                };
-
-                fn.setParams();
-
-                return fn;
+                return fn(diameter);
             })(),
             weight: 0,
         },
     ];
-
 }());
