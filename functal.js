@@ -130,13 +130,11 @@
 
     fractal.getModifierValues = function(functal, result)
     {
-        var mods = R.map(function(m)
+        var mods = R.mapIndexed(function(m, i)
         {
-            var x = R.identity(m.fn(functal, result));
-            // var x = math.square(m.fn(functal, result));
-            // var x = math.abs(m.fn(functal, result));
-            // var x = math.round(m.fn(functal, result));
-            // var x = math.cos(math.pi * m.fn(functal, result));
+            var x = m.fn(functal, result);
+
+            x = functal.modifierModifiers[i](x);
 
             return x;
         }, functal.modifiers);
@@ -407,12 +405,43 @@
             return Rp.wandom(modifiers.modifiers);
         }, 1 + Rp.bandomInt(8, 2));
 
+        functal.modifierModifiers = [];
+        functal.modifierModifierNames = [];
+
+        var modifierModifierFns = [
+        {
+            fn: R.identity,
+            weight: 1
+        },
+        {
+            fn: math.square,
+            weight: 1
+        },
+        {
+            fn: math.abs,
+            weight: 1
+        },
+        {
+            fn: math.round,
+            weight: 1
+        },
+        {
+            fn: R.curry(function cospi(x) { return math.cos(math.pi * x); }),
+            weight: 1
+        }, ];
+
         R.forEach(function(f)
         {
             if (f.fn.setParams)
             {
                 f.fn.setParams();
             }
+
+            var mmfn = Rp.wandom(modifierModifierFns).fn;
+
+            functal.modifierModifiers.push(mmfn);
+            functal.modifierModifierNames.push(Rp.nameOf(mmfn));
+
         }, modifierChain);
 
         functal.modifiers = R.map(function(m)
@@ -860,10 +889,11 @@
     else
     {
         // make an array with the create function repeated
+
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 12 : 1);
+        }, isDev ? 1 : 1);
 
         // run sequentially
 
