@@ -30,6 +30,7 @@
 
     exports.modifiers = [
         {
+            name: 'angle',
             fn: function angle(functal, result)
             {
                 var vals = R.map(function(z)
@@ -42,6 +43,7 @@
             weight: 1,
         },
         {
+            name: 'angleChange',
             fn: function angleChange(functal, result)
             {
                 var vals = R.mapIndexed(function(z, i, zs)
@@ -65,6 +67,7 @@
             weight: 1,
         },
         {
+            name: 'real',
             fn: function real(functal, result)
             {
                 var max = math.max(R.map(function(z)
@@ -83,6 +86,7 @@
         },
 
         {
+            name: 'norm',
             fn: function norm(functal, result)
             {
                 var vals = R.map(function(z)
@@ -99,6 +103,7 @@
         {
             // circle trap
 
+            name: 'circleTrap',
             fn: (function()
             {
                 var fn = R.curry(function circleTrap(diameter, band, centre, functal, result)
@@ -130,14 +135,15 @@
                 var band = Rp.bandom(1, -3);
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
 
-                // return curried function with constants,
+                // return curried function with constant params
                 return fn(diameter, band, centre);
             })(),
-            weight: 1000000,
+            weight: 1,
         },
         {
             // real circle trap
 
+            name: 'realCircleTrap',
             fn: (function()
             {
                 var fn = R.curry(function realCircleTrap(centre, functal, result)
@@ -163,6 +169,7 @@
         {
             // box trap
 
+            name: 'boxTrap',
             fn: (function()
             {
                 var fn = R.curry(function boxTrap(diameter, centre, functal, result)
@@ -193,6 +200,7 @@
         {
             // sin trap
 
+            name: 'sinTrap',
             fn: (function()
             {
                 var fn = R.curry(function sinTrap(diameter, centre, ampl, freq, functal, result)
@@ -221,6 +229,7 @@
         {
             // real imag trap
 
+            name: 'reimTrap',
             fn: (function()
             {
                 var fn = R.curry(function reimTrap(diameter, functal, result)
