@@ -50,6 +50,14 @@
             }
         },
         {
+            name: 'zc',
+            weight: 1,
+            fn: function(z, c)
+            {
+                return math.multiply(z, c);
+            }
+        },
+        {
             name: 'coszc',
             weight: 1,
             fn: function(z, c)
@@ -182,7 +190,7 @@
         {
             // adjust real & imag parts with function of the opposite
             name: 'fxtrigy',
-            weight: 0.1, // good, but too easily chosen, so reduce weight
+            weight: 0.05, // good, but too easily chosen, so reduce weight
             fn: (function()
             {
                 // options will be the same for the entire run
@@ -222,7 +230,7 @@
         {
             // adjust real & imag parts with function of the opposite
             name: 'fxfny',
-            weight: 0.1, // good, but too easily chosen, so reduce weight
+            weight: 0.05, // good, but too easily chosen, so reduce weight
             fn: (function()
             {
                 var funcs = R.times(function()

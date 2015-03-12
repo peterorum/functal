@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.4.4';
+    var version = '1.4.5';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -447,14 +447,14 @@
             var modifier = R.merge(m.fn,
             {
                 fn: m.fn,
-                name: Rp.nameOf(m.fn)
+                name: m.name
             });
 
             return modifier;
 
         }, modifierChain);
 
-        functal.blend = math.random(1) < 0.75;
+        functal.blend = math.random(1) < 0.9;
 
         // weight factors
         functal.layers = [];
@@ -470,6 +470,9 @@
             functal.layers.push(factor);
 
         }, functal.modifiers.length);
+
+        // functal.layers[0] = 0.25;
+        // functal.layers[1] = 0.5;
 
         var layerSum = math.sum(functal.layers);
 
