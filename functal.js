@@ -449,7 +449,7 @@
         {
             var modifier = R.merge(m.fn,
             {
-                fn: m.fn,
+                fn: m.fn(),
                 name: m.name
             });
 
