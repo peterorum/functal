@@ -12,18 +12,22 @@
 
     exports.reducers = [
     {
+        name: 'last',
         fn: R.last,
         weight: 1
     },
     {
+        name: 'min',
         fn: math.min,
         weight: 1
     },
     {
+        name: 'max',
         fn: math.max,
         weight: 1
     },
     {
+        name: 'mean',
         fn: math.mean,
         weight: 1
     }];
@@ -38,12 +42,12 @@
                     return math.atan2(z.re, z.im) / math.pi;
                 }, result.zs);
 
-                return functal.modifierReduce(vals);
+                return vals;
             },
             weight: 1,
         },
         {
-            name: 'angleChange',
+            name: 'agleChange',
             fn: function angleChange(functal, result)
             {
                 var vals = R.mapIndexed(function(z, i, zs)
@@ -62,7 +66,7 @@
 
                 }, result.zs);
 
-                return functal.modifierReduce(vals);
+                return vals;
             },
             weight: 1,
         },
@@ -80,7 +84,7 @@
                     return max ? z.re / max : 1;
                 }, result.zs);
 
-                return functal.modifierReduce(vals);
+                return vals;
             },
             weight: 1,
         },
@@ -96,7 +100,7 @@
                     return x;
                 }, result.zs);
 
-                return functal.modifierReduce(vals);
+                return vals;
             },
             weight: 1,
         },
@@ -128,7 +132,7 @@
                         return x;
                     }, result.zs);
 
-                    return functal.modifierReduce(vals);
+                    return vals;
                 });
 
                 var diameter = Rp.bandom(1, -2);
@@ -156,7 +160,7 @@
 
                     }, result.zs);
 
-                    return functal.modifierReduce(vals);
+                    return vals;
                 });
 
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
@@ -187,7 +191,9 @@
 
                     }, result.zs);
 
-                    return functal.modifierReduce(vals) / math.max(R.map(math.abs, vals));
+                    var max = math.max(R.map(math.abs, vals));
+
+                    return math.divide(vals, max);
                 });
 
                 var diameter = Rp.bandom(1, -2);
@@ -214,7 +220,9 @@
 
                     }, result.zs);
 
-                    return functal.finite(functal.modifierReduce(vals)) / math.max(R.map(math.abs, vals));
+                    var max = math.max(R.map(math.abs, vals));
+
+                    return math.divide(vals, max);
                 });
 
                 var diameter = Rp.bandom(1, -2);
@@ -242,9 +250,10 @@
 
                     }, result.zs);
 
-                    var y = functal.modifierReduce(vals) / math.max(R.map(math.abs, vals));
+                    var max = math.max(R.map(math.abs, vals));
 
-                    return y;
+                    return math.divide(vals, max);
+
                 });
 
                 var diameter = Rp.bandom(1, -2);
