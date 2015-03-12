@@ -133,7 +133,7 @@
         var mods = R.mapIndexed(function(m, i)
         {
             var x = m.fn(functal, result);
-
+            x = functal.finite(functal.reducers[i](x));
             x = functal.modifierModifiers[i](x);
 
             return x;
@@ -442,6 +442,9 @@
 
         }, modifierChain.length);
 
+        functal.reducers = [];
+        functal.reducerNames = [];
+
         functal.modifiers = R.map(function(m)
         {
             var modifier = R.merge(m.fn,
@@ -450,11 +453,15 @@
                 name: m.name
             });
 
+            var reducer = Rp.wandom(modifiers.reducers).fn;
+            functal.reducers.push(reducer);
+            functal.reducerNames.push(reducer.name);
+
             return modifier;
 
         }, modifierChain);
 
-        functal.blend = math.random(1) < 0.9;
+        functal.blend = math.random(1) < 0.8;
 
         // weight factors
         functal.layers = [];
@@ -478,9 +485,6 @@
 
         // dregs to original escape
         functal.baseLayer = 1.0 - layerSum;
-
-        functal.modifierReduce = Rp.wandom(modifiers.reducers).fn;
-        functal.modifierReduceName = Rp.nameOf(functal.modifierReduce);
 
         return functal;
     };
