@@ -856,7 +856,7 @@
         if (functal.accept)
         {
             // save options spec
-            fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data'], functal), null, 4))
+            fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'modifierModifiers', 'reducers', 'adjzs'], functal), null, 4))
                 .then(function()
                 {
                     // save png
