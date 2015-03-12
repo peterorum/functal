@@ -35,7 +35,7 @@
     exports.modifiers = [
         {
             name: 'angle',
-            fn: function angle(functal, result)
+            fn: function(){ return function angle(functal, result)
             {
                 var vals = R.map(function(z)
                 {
@@ -43,12 +43,12 @@
                 }, result.zs);
 
                 return vals;
-            },
+            };},
             weight: 1,
         },
         {
-            name: 'agleChange',
-            fn: function angleChange(functal, result)
+            name: 'angleChange',
+            fn: function(){ return function angleChange(functal, result)
             {
                 var vals = R.mapIndexed(function(z, i, zs)
                 {
@@ -67,12 +67,12 @@
                 }, result.zs);
 
                 return vals;
-            },
+            };},
             weight: 1,
         },
         {
             name: 'real',
-            fn: function real(functal, result)
+            fn:function(){ return  function real(functal, result)
             {
                 var max = math.max(R.map(function(z)
                 {
@@ -85,13 +85,13 @@
                 }, result.zs);
 
                 return vals;
-            },
+            };},
             weight: 1,
         },
 
         {
             name: 'norm',
-            fn: function norm(functal, result)
+            fn: function(){ return function norm(functal, result)
             {
                 var vals = R.map(function(z)
                 {
@@ -101,14 +101,14 @@
                 }, result.zs);
 
                 return vals;
-            },
+            };},
             weight: 1,
         },
         {
             // circle trap
 
             name: 'circleTrap',
-            fn: (function()
+            fn: function()
             {
                 var fn = R.curry(function circleTrap(diameter, band, centre, functal, result)
                 {
@@ -141,14 +141,14 @@
 
                 // return curried function with constant params
                 return fn(diameter, band, centre);
-            })(),
+            },
             weight: 1,
         },
         {
             // real circle trap
 
             name: 'realCircleTrap',
-            fn: (function()
+            fn: function()
             {
                 var fn = R.curry(function realCircleTrap(centre, functal, result)
                 {
@@ -167,14 +167,14 @@
 
                 return fn(centre);
 
-            })(),
+            },
             weight: 1,
         },
         {
             // box trap
 
             name: 'boxTrap',
-            fn: (function()
+            fn: function()
             {
                 var fn = R.curry(function boxTrap(diameter, centre, functal, result)
                 {
@@ -200,14 +200,14 @@
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
 
                 return fn(diameter, centre);
-            })(),
+            },
             weight: 1,
         },
         {
             // sin trap
 
             name: 'sinTrap',
-            fn: (function()
+            fn: function()
             {
                 var fn = R.curry(function sinTrap(diameter, centre, ampl, freq, functal, result)
                 {
@@ -231,14 +231,14 @@
                 var ampl = math.random(0.5);
 
                 return fn(diameter, centre, freq, ampl);
-            })(),
+            },
             weight: 1,
         },
         {
             // real imag trap
 
             name: 'reimTrap',
-            fn: (function()
+            fn: function()
             {
                 var fn = R.curry(function reimTrap(diameter, functal, result)
                 {
@@ -259,8 +259,8 @@
                 var diameter = Rp.bandom(1, -2);
 
                 return fn(diameter);
-            })(),
-            weight: 0,
+            },
+            weight: 1,
         },
     ];
 }());
