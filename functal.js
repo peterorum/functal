@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.4.5';
+    var version = '1.4.6';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -239,13 +239,6 @@
                 {
                     var mods = fractal.getModifierValues(functal, result);
 
-                    // if(i + j === 0)
-                    // {
-                    //     console.log(functal);
-                    // }
-                    // console.log(result);
-                    // console.log(mods);
-
                     var k;
 
                     if (functal.blend)
@@ -437,7 +430,7 @@
 
             return modfn;
 
-        },1 + Rp.bandomInt(10, 1));
+        }, 1 + Rp.bandomInt(10, 1));
 
         functal.blend = math.random(1) < 0.85;
 
@@ -806,14 +799,24 @@
         var ok = false;
 
         do {
-            options = fractal.setOptions(size);
+            try
+            {
+                options = fractal.setOptions(size);
 
-            palette = pal.setPalette();
+                palette = pal.setPalette();
 
-            functal = fractal.calcVariation(options, palette);
+                functal = fractal.calcVariation(options, palette);
 
-            // fail if not enough variation in the image sample
-            ok = (functal.accept && functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
+                // fail if not enough variation in the image sample
+                ok = (functal.accept && functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
+            }
+            catch (ex)
+            {
+                ok = false;
+                functal = {
+                    error: ex.toString()
+                };
+            }
 
             if (isDev && !ok)
             {
@@ -825,7 +828,16 @@
 
         // make full fractal
 
-        fractal.make(functal, palette);
+        try
+        {
+            fractal.make(functal, palette);
+        }
+        catch (ex)
+        {
+            ok = false;
+            functal.error = ex.toString();
+            functal.accept = false;
+        }
 
         console.log('=== total duration: ', functal.duration);
 
@@ -871,7 +883,7 @@
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 1 : 1);
+        }, isDev ? 12 : 1);
 
         // run sequentially
 
