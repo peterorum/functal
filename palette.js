@@ -197,7 +197,9 @@
                     };
 
                     // store hsl for easuer later adjustment
-                    palette.colors.push(clr.rgb2hsl(rgb));
+                    var hsl = clr.rgb2hsl(rgb);
+
+                    palette.colors.push(hsl);
                 }, g.gap);
 
             }, gaps);

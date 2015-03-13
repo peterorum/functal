@@ -410,5 +410,72 @@
             },
             weight: 1,
         },
+        {
+            // spiral trap
+
+            name: 'spiralTrap',
+            fn: function()
+            {
+                var fn = R.curry(function spiralTrap(freq, diameter, centre, functal, result)
+                {
+                    var vals = R.map(function(z)
+                    {
+                        var z1 = math.subtract(z, centre);
+
+                        var theta = math.atan2(z1.re, z1.im); // -pi .. pi
+
+                        var ctheta = math.cos(theta);
+                        var stheta = math.sin(theta);
+
+                        theta = theta + math.pi; // 0..2pi
+
+                        var minDist = 1e6;
+
+                        var pi2 = 2.0 * math.pi;
+                        var f = 1.0 / (math.pi * freq) * diameter; // factor to convert theta to a radius from 0..diam
+
+                        // find the closest point in the spiral
+
+                        for (var j = 0; j < freq; j++)
+                        {
+                            var theta2 = theta + j * pi2;
+
+                            var r = theta2 * f;
+
+                            var x = r  * ctheta;
+                            var y = r  * stheta;
+
+                            var dist = math.sqrt(math.square(x - z1.re) + math.square(y - z1.im));
+
+                            minDist = math.min(dist, minDist);
+                        }
+
+                        return minDist;
+
+                    }, result.zs);
+
+                    var max = math.max(R.map(math.abs, vals));
+
+                    return math.divide(vals, max);
+                });
+
+                var freq = math.randomInt(1, 11);
+                var diameter = Rp.bandom(1, -2);
+                var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
+
+                return {
+                    fn: fn(freq, diameter, centre),
+                    params:
+                    {
+                        name: 'spiralTrap',
+                        freq: freq,
+                        diameter: diameter,
+                        centre: centre
+                    }
+
+                };
+            },
+            weight: 1,
+        },
     ];
 }());
