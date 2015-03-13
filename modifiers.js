@@ -32,82 +32,188 @@
         weight: 1
     }];
 
+    var adjx = function(x, adj)
+    {
+        x += adj;
+
+        if (x < -1)
+        {
+            x = 2 + x;
+        }
+        else if (x > 1)
+        {
+            x = -2 + x;
+        }
+
+        return x;
+    };
+
     exports.modifiers = [
         {
-            name: 'angle',
-            fn: function(){ return function angle(functal, result)
+            fn: function()
             {
-                var vals = R.map(function(z)
+                var fn = R.curry(function(phase, functal, result)
                 {
-                    return math.atan2(z.re, z.im) / math.pi;
-                }, result.zs);
-
-                return vals;
-            };},
-            weight: 1,
-        },
-        {
-            name: 'angleChange',
-            fn: function(){ return function angleChange(functal, result)
-            {
-                var vals = R.mapIndexed(function(z, i, zs)
-                {
-                    var x = 0;
-
-                    if (i > 0)
+                    var vals = R.map(function(z)
                     {
-                        var z1 = zs[i - 1];
-                        var z2 = math.subtract(zs[i], z1);
+                        var x = adjx(math.atan2(z.re, z.im) / math.pi, phase);
 
-                        x = math.atan2(z2.re, z2.im) / math.pi;
+
+                        return x;
+                    }, result.zs);
+
+                    return vals;
+                });
+
+                var phase = math.random(-1, 1);
+
+                return {
+                    fn: fn(phase),
+                    params:
+                    {
+                        name: 'angle',
+                        phase: phase
                     }
-
-                    return x;
-
-                }, result.zs);
-
-                return vals;
-            };},
+                };
+            },
             weight: 1,
         },
         {
-            name: 'real',
-            fn:function(){ return  function real(functal, result)
+            fn: function()
             {
-                var max = math.max(R.map(function(z)
+                var fn = R.curry(function(phase, functal, result)
                 {
-                    return math.abs(z.re);
-                }, result.zs));
+                    var vals = R.mapIndexed(function(z, i, zs)
+                    {
+                        var x = 0;
 
-                var vals = R.map(function(z)
-                {
-                    return max ? z.re / max : 1;
-                }, result.zs);
+                        if (i > 0)
+                        {
+                            var z1 = zs[i - 1];
+                            var z2 = math.subtract(zs[i], z1);
 
-                return vals;
-            };},
+                            x = math.atan2(z2.re, z2.im) / math.pi;
+                        }
+
+                        x = adjx(x, phase);
+
+                        return x;
+
+                    }, result.zs);
+
+                    return vals;
+                });
+
+                var phase = math.random(-1, 1);
+
+                return {
+                    fn: fn(phase),
+                    params:
+                    {
+                        name: 'angleChange',
+                        phase: phase
+                    }
+                };
+            },
+            weight: 1,
+        },
+        {
+            fn: function()
+            {
+                return {
+                    fn: function real(functal, result)
+                    {
+                        // normalized z.re
+
+                        var max = math.max(R.map(function(z)
+                        {
+                            return math.abs(z.re);
+                        }, result.zs));
+
+                        var vals = R.map(function(z)
+                        {
+                            return max ? z.re / max : 1;
+                        }, result.zs);
+
+                        return vals;
+                    },
+                    params:
+                    {
+                        name: 'real'
+                    }
+                };
+            },
             weight: 1,
         },
 
         {
-            name: 'norm',
-            fn: function(){ return function norm(functal, result)
+            fn: function()
             {
-                var vals = R.map(function(z)
+                var fn = R.curry(function(phase, functal, result)
                 {
-                    var x = functal.finite(math.norm(z)) / functal.limit;
+                    // normalized z.re
 
-                    return x;
-                }, result.zs);
+                    var max = math.max(R.map(function(z)
+                    {
+                        return math.abs(z.re);
+                    }, result.zs));
 
-                return vals;
-            };},
+                    var vals = R.map(function(z)
+                    {
+                        return adjx(max ? z.re / max : 1, offset);
+                    }, result.zs);
+
+                    return vals;
+                });
+
+                var offset = math.random(-1, 1);
+
+                return {
+                    fn: fn(offset),
+                    params:
+                    {
+                        name: 'real',
+                        offset: offset
+                    }
+                };
+            },
             weight: 1,
         },
+
+
+        {
+            fn: function()
+            {
+                var fn = R.curry(function(phase, functal, result)
+                {
+
+                    var vals = R.map(function(z)
+                    {
+                        var x = functal.finite(math.norm(z)) / functal.limit;
+
+                        return adjx(x, offset);
+                    }, result.zs);
+
+                    return vals;
+                });
+
+                var offset = math.random(-1, 1);
+
+                return {
+                    fn: fn(offset),
+                    params:
+                    {
+                        name: 'norm',
+                        offset: offset
+                    }
+                };
+            },
+            weight: 1,
+        },
+
         {
             // circle trap
 
-            name: 'circleTrap',
             fn: function()
             {
                 var fn = R.curry(function circleTrap(diameter, band, centre, functal, result)
@@ -140,14 +246,22 @@
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
 
                 // return curried function with constant params
-                return fn(diameter, band, centre);
+                return {
+                    fn: fn(diameter, band, centre),
+                    params:
+                    {
+                        name: 'circleTrap',
+                        diameter: diameter,
+                        band: band,
+                        centre: centre
+                    }
+                };
             },
             weight: 1,
         },
         {
             // real circle trap
 
-            name: 'realCircleTrap',
             fn: function()
             {
                 var fn = R.curry(function realCircleTrap(centre, functal, result)
@@ -165,7 +279,15 @@
 
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
 
-                return fn(centre);
+                return {
+                    fn: fn(centre),
+                    params:
+                    {
+                        name: 'realCircleTrap',
+                        centre: centre
+                    }
+
+                };
 
             },
             weight: 1,
@@ -173,7 +295,6 @@
         {
             // box trap
 
-            name: 'boxTrap',
             fn: function()
             {
                 var fn = R.curry(function boxTrap(diameter, centre, functal, result)
@@ -199,14 +320,22 @@
                 var diameter = Rp.bandom(1, -2);
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
 
-                return fn(diameter, centre);
+                return {
+                    fn: fn(diameter, centre),
+                    params:
+                    {
+                        name: 'boxTrap',
+                        diameter: diameter,
+                        centre: centre
+                    }
+
+                };
             },
             weight: 1,
         },
         {
             // sin trap
 
-            name: 'sinTrap',
             fn: function()
             {
                 var fn = R.curry(function sinTrap(diameter, centre, ampl, freq, functal, result)
@@ -230,7 +359,18 @@
                 var freq = Rp.bandom(2, 4);
                 var ampl = math.random(0.5);
 
-                return fn(diameter, centre, freq, ampl);
+                return {
+                    fn: fn(diameter, centre, freq, ampl),
+                    params:
+                    {
+                        name: 'sinTrap',
+                        diameter: diameter,
+                        centre: centre,
+                        freq: freq,
+                        ampl: ampl
+                    }
+
+                };
             },
             weight: 1,
         },
@@ -258,7 +398,15 @@
 
                 var diameter = Rp.bandom(1, -2);
 
-                return fn(diameter);
+                return {
+                    fn: fn(diameter),
+                    params:
+                    {
+                        name: 'reimTrap',
+                        diameter: diameter
+                    }
+
+                };
             },
             weight: 1,
         },

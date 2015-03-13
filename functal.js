@@ -130,13 +130,9 @@
 
     fractal.getModifierValues = function(functal, result)
     {
-        var mods = R.mapIndexed(function(m, i)
+        var mods = R.map(function(m)
         {
-            var x = m.fn(functal, result);
-            x = functal.finite(functal.reducers[i](x));
-            x = functal.modifierModifiers[i](x);
-
-            return x;
+            return m(functal, result);
         }, functal.modifiers);
 
         return mods;
@@ -400,14 +396,6 @@
         functal.process = process.fn;
         functal.pow = options.pow();
 
-        var modifierChain = R.times(function()
-        {
-            return Rp.wandom(modifiers.modifiers);
-        }, 1 + Rp.bandomInt(8, 2));
-
-        functal.modifierModifiers = [];
-        functal.modifierModifierNames = [];
-
         var modifierModifierFns = [
         {
             fn: R.identity,
@@ -433,35 +421,25 @@
             weight: 1
         }, ];
 
-        R.times(function()
+        functal.modifierParams = [];
+
+        functal.modifiers = R.times(function()
         {
-            var mmfn = Rp.wandom(modifierModifierFns).fn;
-
-            functal.modifierModifiers.push(mmfn);
-            functal.modifierModifierNames.push(Rp.nameOf(mmfn));
-
-        }, modifierChain.length);
-
-        functal.reducers = [];
-        functal.reducerNames = [];
-
-        functal.modifiers = R.map(function(m)
-        {
-            var modifier = R.merge(m.fn,
-            {
-                fn: m.fn(),
-                name: m.name
-            });
+            var modifier = Rp.wandom(modifiers.modifiers).fn();
 
             var reducer = Rp.wandom(modifiers.reducers).fn;
-            functal.reducers.push(reducer);
-            functal.reducerNames.push(reducer.name);
 
-            return modifier;
+            var mmfn = Rp.wandom(modifierModifierFns).fn;
 
-        }, modifierChain);
+            var modfn = R.compose(mmfn, functal.finite, reducer, modifier.fn);
 
-        functal.blend = math.random(1) < 0.8;
+            functal.modifierParams.push(modifier.params);
+
+            return modfn;
+
+        },1 + Rp.bandomInt(10, 1));
+
+        functal.blend = math.random(1) < 0.85;
 
         // weight factors
         functal.layers = [];
@@ -477,9 +455,6 @@
             functal.layers.push(factor);
 
         }, functal.modifiers.length);
-
-        // functal.layers[0] = 0.25;
-        // functal.layers[1] = 0.5;
 
         var layerSum = math.sum(functal.layers);
 
@@ -555,9 +530,10 @@
     };
 
     // ------------ dump for debugging
+
     fractal.dump = function(functal)
     {
-        console.log(JSON.stringify(R.omit(['zs', 'data', 'modifierModifiers', 'reducers', 'adjzs'], functal), null, 4));
+        console.log(JSON.stringify(R.omit(['zs', 'data', 'adjzs', 'modifiers'], functal), null, 4));
     };
 
     // ------------ output to a png image
@@ -856,7 +832,7 @@
         if (functal.accept)
         {
             // save options spec
-            fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'modifierModifiers', 'reducers', 'adjzs'], functal), null, 4))
+            fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'adjzs', 'modifiers'], functal), null, 4))
                 .then(function()
                 {
                     // save png
@@ -895,7 +871,7 @@
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 12 : 1);
+        }, isDev ? 1 : 1);
 
         // run sequentially
 
