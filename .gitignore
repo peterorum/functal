@@ -33,10 +33,6 @@ node_modules
 *.sublime-project
 *.sublime-workspace
 
-<<<<<<< HEAD
 *.heapsnapshot
-=======
-*. heapsnapshot
->>>>>>> b5d7fb77fb2ffc4158e7372a25476349d6c0c015
 
 nohup.out

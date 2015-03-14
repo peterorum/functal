@@ -578,7 +578,7 @@
             },
             medium:
             {
-                width: 768,
+                width: 1024, //768
                 height: 1024
             },
             large:
@@ -883,7 +883,7 @@
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 12 : 1);
+        }, isDev ? 1 : 1);
 
         // run sequentially
 
