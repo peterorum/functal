@@ -578,7 +578,7 @@
             },
             medium:
             {
-                width: 768
+                width: 768,
                 height: 1024
             },
             large:
