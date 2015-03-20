@@ -87,7 +87,7 @@
         },
         {
             name: 'cothzc',
-            weight: 0.1,
+            weight: 1,
             fn: function(z, c)
             {
                 return applyFnMultC.call(this, math.coth, z, c);
@@ -95,7 +95,7 @@
         },
         {
             name: 'csczc',
-            weight: 0.1,
+            weight: 1,
             fn: function(z, c)
             {
                 return applyFnMultC.call(this, math.csc, z, c);
@@ -103,7 +103,7 @@
         },
         {
             name: 'cschzc',
-            weight: 0.1,
+            weight: 1,
             fn: function(z, c)
             {
                 return applyFnMultC.call(this, math.csch, z, c);
