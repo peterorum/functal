@@ -85,30 +85,30 @@
                 return applyFnMultC.call(this, math.cot, z, c);
             }
         },
-        {
-            name: 'cothzc',
-            weight: 1,
-            fn: function(z, c)
-            {
-                return applyFnMultC.call(this, math.coth, z, c);
-            }
-        },
-        {
-            name: 'csczc',
-            weight: 0.25,
-            fn: function(z, c)
-            {
-                return applyFnMultC.call(this, math.csc, z, c);
-            }
-        },
-        {
-            name: 'cschzc',
-            weight: 0.5,
-            fn: function(z, c)
-            {
-                return applyFnMultC.call(this, math.csch, z, c);
-            }
-        },
+        // {
+        //     name: 'cothzc',
+        //     weight: 0.5,
+        //     fn: function(z, c)
+        //     {
+        //         return applyFnMultC.call(this, math.coth, z, c);
+        //     }
+        // },
+        // {
+        //     name: 'csczc',
+        //     weight: 0.01,
+        //     fn: function(z, c)
+        //     {
+        //         return applyFnMultC.call(this, math.csc, z, c);
+        //     }
+        // },
+        // {
+        //     name: 'cschzc',
+        //     weight: 0.01,
+        //     fn: function(z, c)
+        //     {
+        //         return applyFnMultC.call(this, math.csch, z, c);
+        //     }
+        // },
         {
             name: 'expzc',
             weight: 1,
