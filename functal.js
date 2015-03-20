@@ -573,8 +573,8 @@
         var sizes = {
             small:
             {
-                width: 16,
-                height: 16
+                width: 100,
+                height: 100
             },
             medium:
             {
@@ -883,7 +883,7 @@
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 11 : 1);
+        }, isDev ? 12 : 1);
 
         // run sequentially
 
