@@ -24,12 +24,10 @@
     "mathjs": "^1.2.0",
     "node-png": "^0.4.3",
     "q": "^1.1.2",
-    "ramda": "^0.10.0",
+    "ramda": "^0.11.0",
     "request": "^2.52.0",
     "seedrandom": "^2.3.11",
     "twit": "^1.1.19"
   },
-  "devDependencies": {
-    "heapdump": "^0.3.5"
-  }
+  "devDependencies": {}
 }
