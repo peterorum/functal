@@ -1,15 +1,13 @@
-(function()
-{
+(function() {
     "use strict";
 
-    var version = '1.4.6';
+    var version = '1.4.7';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
 
     // must be first
-    seedrandom(randomSeed,
-    {
+    seedrandom(randomSeed, {
         global: true
     });
 
@@ -41,24 +39,17 @@
 
     var fractal = {};
 
-    fractal.finite = R.curry(function(max, z)
-    {
-        if (R.is(Number, z))
-        {
-            if (!isFinite(z) || isNaN(z))
-            {
+    fractal.finite = R.curry(function(max, z) {
+        if (R.is(Number, z)) {
+            if (!isFinite(z) || isNaN(z)) {
                 z = max;
             }
-        }
-        else
-        {
-            if (!isFinite(z.re) || isNaN(z.re))
-            {
+        } else {
+            if (!isFinite(z.re) || isNaN(z.re)) {
                 z.re = max;
             }
 
-            if (!isFinite(z.im) || isNaN(z.im))
-            {
+            if (!isFinite(z.im) || isNaN(z.im)) {
                 z.im = max;
             }
         }
@@ -66,16 +57,14 @@
         return z;
     });
 
-    fractal.isOkToMake = function()
-    {
+    fractal.isOkToMake = function() {
         var ok = true;
 
         // only proceed if less than 100 fractals already stored
 
         var files = fs.readdirSync(functalsFolder + '/medium');
 
-        var pngs = R.filter(function(f)
-        {
+        var pngs = R.filter(function(f) {
             return /\.png$/.test(f);
         }, files);
 
@@ -84,13 +73,11 @@
         return ok;
     };
 
-    fractal.isDone = function(functal, z)
-    {
+    fractal.isDone = function(functal, z) {
         return functal.test(z);
     };
 
-    fractal.escapeCount = function(functal, x, y)
-    {
+    fractal.escapeCount = function(functal, x, y) {
         var count = 0;
 
         var zs = [];
@@ -106,8 +93,7 @@
 
         var done = false;
 
-        while (!done && count < maxCount - 1)
-        {
+        while (!done && count < maxCount - 1) {
             z = functal.finite(functal.process(z, c));
 
             zs.push(z);
@@ -128,18 +114,15 @@
         return result;
     };
 
-    fractal.getModifierValues = function(functal, result)
-    {
-        var mods = R.map(function(m)
-        {
+    fractal.getModifierValues = function(functal, result) {
+        var mods = R.map(function(m) {
             return m(functal, result);
         }, functal.modifiers);
 
         return mods;
     };
 
-    fractal.setLayerOffsets = function(functal, palette)
-    {
+    fractal.setLayerOffsets = function(functal, palette) {
         // determine palette offsets for each layer such that th elighest point is always at the golden mean position.
         // at this point, want index + offset = lightest
 
@@ -152,22 +135,17 @@
 
         var mods = fractal.getModifierValues(functal, result);
 
-        if (functal.blend)
-        {
+        if (functal.blend) {
             functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, result.escape);
 
-            functal.layerOffsets = R.map(function(m)
-            {
+            functal.layerOffsets = R.map(function(m) {
                 return palette.lightestIndex - pal.getColorIndex(palette.size, m);
 
             }, mods);
-        }
-        else
-        {
+        } else {
             var k = 0;
 
-            var total = R.reduce(function(sum, mod)
-            {
+            var total = R.reduce(function(sum, mod) {
                 return sum + mod * functal.layers[k++];
 
             }, result.escape * functal.baseLayer, mods);
@@ -176,8 +154,7 @@
         }
     };
 
-    fractal.process = function(functal, palette, sample)
-    {
+    fractal.process = function(functal, palette, sample) {
         // sample is undefined for full resolution
         // use eg 3 to take points a third of the way in
 
@@ -189,8 +166,7 @@
         var yincr = 1;
 
         // if sample, only do a few
-        if (sample)
-        {
+        if (sample) {
             xincr = functal.width / sample;
             yincr = functal.height / sample;
         }
@@ -210,8 +186,7 @@
 
         functal.accept = true;
 
-        while (x < functal.width && functal.accept)
-        {
+        while (x < functal.width && functal.accept) {
             // translate to the sub-range
             var fx = functal.range.x1 + fxincr * x;
 
@@ -220,29 +195,25 @@
             var y = 0;
             var j = 0;
 
-            while (y < functal.height && functal.accept)
-            {
+            while (y < functal.height && functal.accept) {
                 var fy = functal.range.y1 + fyincr * y;
 
                 // all inputs & outputs are 0..1
                 var result = fractal.escapeCount(functal, fx, fy);
 
-                if (sample && result.unescaped)
-                {
+                if (sample && result.unescaped) {
                     functal.accept = false;
                     break;
                 }
 
                 var rgb, hsl;
 
-                if (!R.isEmpty(functal.modifiers))
-                {
+                if (!R.isEmpty(functal.modifiers)) {
                     var mods = fractal.getModifierValues(functal, result);
 
                     var k;
 
-                    if (functal.blend)
-                    {
+                    if (functal.blend) {
                         // blend modifiers onto base color
                         // use [r, g, b]
 
@@ -252,8 +223,7 @@
                         // not being passed as an argument for unknown reason. check with ramda
                         k = 0;
 
-                        var blended = R.reduce(function(sum, mod)
-                        {
+                        var blended = R.reduce(function(sum, mod) {
                             var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
 
                             var modColor = R.values(clr.hsl2rgb(hsl));
@@ -269,15 +239,12 @@
                         blended = math.floor(blended);
 
                         rgb = R.zipObj(['r', 'g', 'b'], blended);
-                    }
-                    else
-                    {
+                    } else {
                         // sum the values & use as index
 
                         k = 0;
 
-                        var total = R.reduce(function(sum, mod)
-                        {
+                        var total = R.reduce(function(sum, mod) {
                             return sum + mod * functal.layers[k++];
 
                         }, result.escape * functal.baseLayer, mods);
@@ -285,9 +252,7 @@
                         hsl = pal.getColor(palette, total, functal.baseOffset);
                         rgb = clr.hsl2rgb(hsl);
                     }
-                }
-                else
-                {
+                } else {
                     hsl = pal.getColor(palette, result.escape, functal.baseOffset);
                     rgb = clr.hsl2rgb(hsl);
                 }
@@ -304,20 +269,17 @@
             x += xincr;
             i++;
 
-            if (!sample)
-            {
+            if (!sample) {
                 var duration = moment.duration(((new Date()).getTime() - functal.startTime) / i * (functal.width - i));
 
                 var neweta = duration.humanize();
 
-                if (neweta !== eta)
-                {
+                if (neweta !== eta) {
                     eta = neweta;
                     console.log(eta);
                 }
 
-                if (duration.asHours() >= 8)
-                {
+                if (duration.asHours() >= 8) {
                     functal.accept = false;
 
                     throw "time overflow";
@@ -328,8 +290,7 @@
         return data;
     };
 
-    fractal.init = function(options)
-    {
+    fractal.init = function(options) {
         var functal = {};
 
         functal.version = options.version();
@@ -361,13 +322,11 @@
         functal.testName = test.name;
         functal.test = test.fn;
 
-        functal.adjzs = R.times(function()
-        {
+        functal.adjzs = R.times(function() {
             return Rp.wandom(options.z2zfns).fn;
         }, Rp.bandomInt(4, 2));
 
-        functal.adjzsNames = R.map(function(fn)
-        {
+        functal.adjzsNames = R.map(function(fn) {
             var o = {
                 name: Rp.nameOf(fn)
             };
@@ -379,8 +338,7 @@
         }, functal.adjzs);
 
         // wrap with finite after getting names
-        functal.adjzs = R.map(function(f)
-        {
+        functal.adjzs = R.map(function(f) {
             return R.compose(functal.finite, f);
         }, functal.adjzs);
 
@@ -389,26 +347,20 @@
         functal.process = process.fn;
         functal.pow = options.pow();
 
-        var modifierModifierFns = [
-        {
+        var modifierModifierFns = [{
             fn: R.identity,
             weight: 1
-        },
-        {
+        }, {
             fn: math.square,
             weight: 1
-        },
-        {
+        }, {
             fn: math.abs,
             weight: 1
-        },
-        {
+        }, {
             fn: math.round,
             weight: 1
-        },
-        {
-            fn: R.curry(function cospi(x)
-            {
+        }, {
+            fn: R.curry(function cospi(x) {
                 return math.cos(math.pi * x);
             }),
             weight: 1
@@ -416,8 +368,7 @@
 
         functal.modifierParams = [];
 
-        functal.modifiers = R.times(function()
-        {
+        functal.modifiers = R.times(function() {
             var modifier = Rp.wandom(modifiers.modifiers).fn();
 
             var reducer = Rp.wandom(modifiers.reducers).fn;
@@ -440,8 +391,7 @@
         // must sum to 1
         var layerRemaining = 1;
 
-        R.times(function()
-        {
+        R.times(function() {
             var factor = math.random(layerRemaining);
             layerRemaining -= factor;
 
@@ -459,8 +409,7 @@
 
     // ---------- sample a functal
 
-    fractal.calcVariation = function(options, palette)
-    {
+    fractal.calcVariation = function(options, palette) {
         var functal = fractal.init(options);
 
         fractal.setLayerOffsets(functal, palette);
@@ -468,14 +417,12 @@
         // get sampled data
         var data = fractal.process(functal, palette, functal.sampleCount);
 
-        if (functal.accept)
-        {
+        if (functal.accept) {
             // make easier to analyze
             var flatData = R.flatten(data);
 
             // // calc std dev for the sample data
-            var escapes = R.map(function(d)
-            {
+            var escapes = R.map(function(d) {
                 return d.escape;
             }, flatData);
 
@@ -483,8 +430,7 @@
             functal.stdDev = math.std(escapes);
 
             // analyze lightness
-            var ls = R.map(function(d)
-            {
+            var ls = R.map(function(d) {
                 return clr.rgb2hsl(d.rgb).l;
             }, flatData);
 
@@ -499,10 +445,8 @@
 
     // ---------- make a functal
 
-    fractal.make = function(functal, palette)
-    {
-        try
-        {
+    fractal.make = function(functal, palette) {
+        try {
             // create fractal
 
             functal.palette = R.omit(['colors'], palette);
@@ -511,9 +455,7 @@
             fractal.dump(functal);
 
             functal.data = fractal.process(functal, palette);
-        }
-        catch (ex)
-        {
+        } catch (ex) {
             functal.error = ex;
         }
 
@@ -524,19 +466,16 @@
 
     // ------------ dump for debugging
 
-    fractal.dump = function(functal)
-    {
+    fractal.dump = function(functal) {
         console.log(JSON.stringify(R.omit(['zs', 'data', 'adjzs', 'modifiers'], functal), null, 4));
     };
 
     // ------------ output to a png image
 
-    fractal.png = function(functal)
-    {
+    fractal.png = function(functal) {
         var deferred = Q.defer();
 
-        var image = new PNG(
-        {
+        var image = new PNG({
             width: functal.width,
             height: functal.height,
             filterType: -1
@@ -544,10 +483,8 @@
 
         var data = functal.data;
 
-        for (var y = 0; y < image.height; y++)
-        {
-            for (var x = 0; x < image.width; x++)
-            {
+        for (var y = 0; y < image.height; y++) {
+            for (var x = 0; x < image.width; x++) {
                 var rgb = data[x][y].rgb;
 
                 var idx = (image.width * y + x) << 2;
@@ -559,82 +496,67 @@
             }
         }
 
-        image.pack().pipe(fs.createWriteStream(functal.file + '.png')).on('close', function()
-        {
+        image.pack().pipe(fs.createWriteStream(functal.file + '.png')).on('close', function() {
             deferred.resolve();
         });
 
         return deferred.promise;
     };
 
-    fractal.setOptions = function(size)
-    {
+    fractal.setOptions = function(size) {
         // size: small, medium, large
         var sizes = {
-            small:
-            {
+            small: {
                 width: 100,
                 height: 100
             },
-            medium:
-            {
-                width: 768,
+            medium: {
+                width: 1024,
                 height: 1024
             },
-            large:
-            {
+            large: {
                 width: 1920,
                 height: 1080
             }
         };
 
         var options = {
-            version: function()
-            {
+            version: function() {
                 // github branch
 
                 return version;
             },
 
-            width: function()
-            {
+            width: function() {
                 return sizes[size].width;
             },
-            height: function()
-            {
+            height: function() {
                 return sizes[size].height;
             },
-            maxCount: function()
-            {
+            maxCount: function() {
                 return 256;
             },
-            limit: function()
-            {
+            limit: function() {
                 return 2;
             },
-            file: function()
-            {
+            file: function() {
                 // filename with utc time
                 return functalsFolder + '/' + size + '/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
             },
-            minStdDev: function()
-            {
+            minStdDev: function() {
                 return 0.02;
             },
-            minLightnessStdDev: function()
-            {
+            minLightnessStdDev: function() {
                 return 0.25;
             },
-            pow: function()
-            {
+            pow: function() {
                 return math.random(2, 10);
             }
         };
 
         // keep selected subarea the same aspect ratio as the image
 
-        options.range = function()
-        {
+        options.range = function() {
             var aspect = options.width() / options.height();
 
             // range is from -max to max
@@ -660,38 +582,30 @@
         };
 
         // types of fractals with different initial z & c.
-        var sets = [
-        {
+        var sets = [{
             name: 'mandelbrot',
-            z: function()
-            {
+            z: function() {
                 return math.complex(0, 0);
             },
-            c: function(x, y)
-            {
+            c: function(x, y) {
                 return math.complex(x, y);
             },
-            params: function()
-            {
+            params: function() {
                 return {};
             }
-        },
-        {
+        }, {
             name: 'julia',
-            z: function(x, y)
-            {
+            z: function(x, y) {
                 return math.complex(x, y);
             },
-            c: R.once(function()
-            {
+            c: R.once(function() {
                 var cmax = 1.75;
 
                 var c = math.complex(math.random(-cmax, cmax), math.random(-cmax, cmax));
 
                 return c;
             }),
-            params: function()
-            {
+            params: function() {
                 // stored for recreating
                 return {
                     c: this.c()
@@ -703,50 +617,38 @@
         // pick a random set type
         options.set = sets[math.randomInt(0, sets.length)];
 
-        options.z2zfns = [
-        {
+        options.z2zfns = [{
             fn: math.square,
             weight: 1
-        },
-        {
+        }, {
             fn: math.sqrt,
             weight: 1
-        },
-        {
+        }, {
             fn: math.sin,
             weight: 1
-        },
-        {
+        }, {
             fn: math.cos,
             weight: 1
-        },
-        {
+        }, {
             fn: math.log,
             weight: 1
-        },
-        {
+        }, {
             fn: math.floor,
             weight: 0.333
-        },
-        {
+        }, {
             fn: math.ceil,
             weight: 0.333
-        },
-        {
+        }, {
             fn: math.round,
             weight: 0.33
-        },
-        {
-            fn: function reciprocal(z)
-            {
+        }, {
+            fn: function reciprocal(z) {
                 return math.divide(math.complex(1, 0), z);
             },
 
             weight: 1
-        },
-        {
-            fn: (function trigxy()
-            {
+        }, {
+            fn: (function trigxy() {
                 var trig1 = Rp.wandom([math.sin, math.cos]);
                 var trig2 = Rp.wandom([math.sin, math.cos]);
 
@@ -759,8 +661,7 @@
                     name2: Rp.nameOf(trig2)
                 };
 
-                var fn = function trigxy(z)
-                {
+                var fn = function trigxy(z) {
                     return math.complex(fxy.trig1(math.mod(fxy.freq1 * z.re, math.pi * 2)), fxy.trig2(math.mod(fxy.freq2 * z.im, math.pi * 2)));
                 };
 
@@ -770,10 +671,8 @@
             })(),
 
             weight: 1
-        },
-        {
-            fn: function fraction(z)
-            {
+        }, {
+            fn: function fraction(z) {
                 return math.complex(z.re - math.floor(z.re), z.im - math.floor(z.im));
             },
 
@@ -786,8 +685,7 @@
     // ------------ make a functal
 
 
-    fractal.create = function()
-    {
+    fractal.create = function() {
         var deferred = Q.defer();
 
         var options, palette, functal;
@@ -799,8 +697,7 @@
         var ok = false;
 
         do {
-            try
-            {
+            try {
                 options = fractal.setOptions(size);
 
                 palette = pal.setPalette();
@@ -809,17 +706,14 @@
 
                 // fail if not enough variation in the image sample
                 ok = (functal.accept && functal.stdDev > functal.minStdDev && functal.lightnessStddev > functal.minLightnessStdDev && functal.uniques > functal.sampleCount);
-            }
-            catch (ex)
-            {
+            } catch (ex) {
                 ok = false;
                 functal = {
                     error: ex.toString()
                 };
             }
 
-            if (isDev && !ok)
-            {
+            if (isDev && !ok) {
                 fractal.dump(functal);
                 console.log('--- rejected');
             }
@@ -828,12 +722,9 @@
 
         // make full fractal
 
-        try
-        {
+        try {
             fractal.make(functal, palette);
-        }
-        catch (ex)
-        {
+        } catch (ex) {
             ok = false;
             functal.error = ex.toString();
             functal.accept = false;
@@ -841,22 +732,17 @@
 
         console.log('=== total duration: ', functal.duration);
 
-        if (functal.accept)
-        {
+        if (functal.accept) {
             // save options spec
             fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'adjzs', 'modifiers'], functal), null, 4))
-                .then(function()
-                {
+                .then(function() {
                     // save png
                     return fractal.png(functal);
 
-                }).done(function()
-                {
+                }).done(function() {
                     deferred.resolve();
                 });
-        }
-        else
-        {
+        } else {
             deferred.reject();
         }
 
@@ -866,22 +752,17 @@
 
     // kick off
 
-    if (!isDev && !fractal.isOkToMake())
-    {
+    if (!isDev && !fractal.isOkToMake()) {
         // sleep for a little while if enough files already & then exit for shell script to restart
         console.log('sleeping');
 
-        setTimeout(function()
-        {
+        setTimeout(function() {
             console.log('slept');
         }, 60 * 1000);
-    }
-    else
-    {
+    } else {
         // make an array with the create function repeated
 
-        var creators = R.times(function()
-        {
+        var creators = R.times(function() {
             return fractal.create;
         }, isDev ? 12 : 1);
 
@@ -890,8 +771,7 @@
         // initial promise
         var result = Q(); // jshint ignore:line
 
-        R.forEach(function(f)
-        {
+        R.forEach(function(f) {
             result = result.then(f);
         }, creators);
     }
