@@ -95,7 +95,7 @@
         },
         {
             name: 'csczc',
-            weight: 1,
+            weight: 0.2, // good, but too easily picked
             fn: function(z, c)
             {
                 return applyFnMultC.call(this, math.csc, z, c);
@@ -103,7 +103,7 @@
         },
         {
             name: 'cschzc',
-            weight: 1,
+            weight: 0.2, // good, but too easily picked
             fn: function(z, c)
             {
                 return applyFnMultC.call(this, math.csch, z, c);
@@ -190,7 +190,7 @@
         {
             // adjust real & imag parts with function of the opposite
             name: 'fxtrigy',
-            weight: 0.05, // good, but too easily chosen, so reduce weight
+            weight: 0.04, // good, but too easily chosen, so reduce weight
             fn: (function()
             {
                 // options will be the same for the entire run

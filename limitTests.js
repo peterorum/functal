@@ -46,14 +46,14 @@
 
             return math.max(math.abs(z.re), math.abs(z.im)) >= this.limit;
         }
-    }, {
-        name: 'minabs',
-        weight: 1,
-        fn: function(zs) {
-            var z = R.last(zs);
+    // }, {
+    //     name: 'minabs',
+    //     weight: 1,
+    //     fn: function(zs) {
+    //         var z = R.last(zs);
 
-            return math.min(math.abs(z.re), math.abs(z.im)) >= this.limit;
-        }
+    //         return math.min(math.abs(z.re), math.abs(z.im)) >= this.limit;
+    //     }
     }, {
         name: 'mean',
         weight: 0.25,
