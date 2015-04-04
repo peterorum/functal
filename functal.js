@@ -18,11 +18,12 @@
 
     var fs = require('fs');
     var fsq = require('./fsq');
+    var clr = require('./color');
     var pal = require('./palette');
+    var pickers = require('./pickers');
     var limitTests = require('./limitTests');
     var processes = require('./processes');
     var modifiers = require('./modifiers');
-    var clr = require('./color');
     var PNG = require('node-png').PNG;
     var Q = require('q');
 
@@ -152,28 +153,7 @@
 
         var mods = fractal.getModifierValues(functal, result);
 
-        if (functal.blend)
-        {
-            functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, result.escape);
-
-            functal.layerOffsets = R.map(function(m)
-            {
-                return palette.lightestIndex - pal.getColorIndex(palette.size, m);
-
-            }, mods);
-        }
-        else
-        {
-            var k = 0;
-
-            var total = R.reduce(function(sum, mod)
-            {
-                return sum + mod * functal.layers[k++];
-
-            }, result.escape * functal.baseLayer, mods);
-
-            functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, total);
-        }
+        functal.picker.setOffsets(functal, mods, result, palette);
     };
 
     fractal.process = function(functal, palette, sample)
@@ -233,62 +213,17 @@
                     break;
                 }
 
-                var rgb, hsl;
+                var rgb;
 
                 if (!R.isEmpty(functal.modifiers))
                 {
                     var mods = fractal.getModifierValues(functal, result);
 
-                    var k;
-
-                    if (functal.blend)
-                    {
-                        // blend modifiers onto base color
-                        // use [r, g, b]
-
-                        var base = R.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
-                        base = math.multiply(base, functal.baseLayer);
-
-                        // not being passed as an argument for unknown reason. check with ramda
-                        k = 0;
-
-                        var blended = R.reduce(function(sum, mod)
-                        {
-                            var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
-
-                            var modColor = R.values(clr.hsl2rgb(hsl));
-
-                            modColor = math.multiply(modColor, functal.layers[k]);
-
-                            k++;
-
-                            return math.add(sum, modColor);
-
-                        }, base, mods);
-
-                        blended = math.floor(blended);
-
-                        rgb = R.zipObj(['r', 'g', 'b'], blended);
-                    }
-                    else
-                    {
-                        // sum the values & use as index
-
-                        k = 0;
-
-                        var total = R.reduce(function(sum, mod)
-                        {
-                            return sum + mod * functal.layers[k++];
-
-                        }, result.escape * functal.baseLayer, mods);
-
-                        hsl = pal.getColor(palette, total, functal.baseOffset);
-                        rgb = clr.hsl2rgb(hsl);
-                    }
+                    rgb = functal.picker.getColor(functal, mods, result, palette);
                 }
                 else
                 {
-                    hsl = pal.getColor(palette, result.escape, functal.baseOffset);
+                    var hsl = pal.getColor(palette, result.escape, functal.baseOffset);
                     rgb = clr.hsl2rgb(hsl);
                 }
 
@@ -432,7 +367,9 @@
 
         }, 1 + Rp.bandomInt(10, 1));
 
-        functal.blend = math.random(1) < 0.85;
+        var picker = Rp.wandom(pickers.pickers);
+
+        functal.picker = picker;
 
         // weight factors
         functal.layers = [];
@@ -578,7 +515,7 @@
             },
             medium:
             {
-                width: 1024,
+                width: 768,
                 height: 1024
             },
             large:
