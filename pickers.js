@@ -109,6 +109,89 @@
         functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, total);
     };
 
+    //--------- average modifiers onto base color
+
+    var average = function(functal, mods, result, palette)
+    {
+        // use [r, g, b]
+
+        var base = R.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
+
+        var averaged = R.reduceIndexed(function(sum, mod, k)
+        {
+            var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
+
+            var modColor = R.values(clr.hsl2rgb(hsl));
+
+            return math.add(sum, modColor);
+
+        }, base, mods);
+
+        averaged = math.divide(averaged, 1 + mods.length);
+
+        averaged = math.floor(averaged);
+
+        var rgb = R.zipObj(['r', 'g', 'b'], averaged);
+
+        return rgb;
+    };
+
+    var averageOffsets = function(functal, mods, result, palette)
+    {
+        functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, result.escape);
+
+        functal.layerOffsets = R.map(function(m)
+        {
+            return palette.lightestIndex - pal.getColorIndex(palette.size, m);
+
+        }, mods);
+    };
+
+    //--------- blend modifiers onto base color
+
+    var blend2 = function(functal, mods, result, palette)
+    {
+        // use [r, g, b]
+
+        var factor = 1 / (1 + mods.length);
+
+        var base = R.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
+        base = math.multiply(base, factor);
+
+        // not being passed as an argument for unknown reason. check with ramda
+        var k = 0;
+
+        var blend2ed = R.reduce(function(sum, mod)
+        {
+            var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
+
+            var modColor = R.values(clr.hsl2rgb(hsl));
+
+            modColor = math.multiply(modColor, factor);
+
+            k++;
+
+            return math.add(sum, modColor);
+
+        }, base, mods);
+
+        blend2ed = math.floor(blend2ed);
+
+        var rgb = R.zipObj(['r', 'g', 'b'], blend2ed);
+
+        return rgb;
+    };
+
+    var blend2Offsets = function(functal, mods, result, palette)
+    {
+        functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, result.escape);
+
+        functal.layerOffsets = R.map(function(m)
+        {
+            return palette.lightestIndex - pal.getColorIndex(palette.size, m);
+
+        }, mods);
+    };
     //--------- exports
 
     exports.pickers = [
@@ -118,17 +201,31 @@
         getColor: blend,
         setOffsets: blendOffsets
     },
-    // {
-    //     name: 'lightness',
-    //     weight: 850000,
-    //     getColor: lightness,
-    //     setOffsets: lightnessOffsets
-    // },
     {
         name: 'direct',
         weight: 15,
         getColor: direct,
         setOffsets: directOffsets
-    }, ];
+    },
+    {
+        name: 'lightness',
+        weight: 0,
+        getColor: lightness,
+        setOffsets: lightnessOffsets
+    },
+    {
+        name: 'average',
+        weight: 0,
+        getColor: average,
+        setOffsets: averageOffsets
+    },
+    {
+        name: 'blend2',
+        weight: 0,
+        getColor: blend2,
+        setOffsets: blend2Offsets
+    },
+
+    ];
 
 })();

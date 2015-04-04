@@ -379,7 +379,8 @@
 
         R.times(function()
         {
-            var factor = math.random(layerRemaining);
+            var factor = Rp.bandom(layerRemaining, 2);
+
             layerRemaining -= factor;
 
             functal.layers.push(factor);
@@ -560,7 +561,7 @@
             },
             minLightnessStdDev: function()
             {
-                return 0.25;
+                return 0.15;
             },
             pow: function()
             {
