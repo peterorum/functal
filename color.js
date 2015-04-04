@@ -42,20 +42,6 @@
         var s = hsl.s;
         var l = hsl.l;
 
-        if (h < 0)
-        {
-            h += 1.0;
-        }
-
-        if (h > 1.0)
-        {
-            h -= 1.0;
-        }
-
-        // h = Math.min(1.0, Math.max(0.0, h));
-        // s = Math.min(1.0, Math.max(0.0, s));
-        // l = Math.min(1.0, Math.max(0.0, l));
-
         h = math.mod(h, 1);
         s = math.mod(s, 1);
         l = math.mod(l, 1);
