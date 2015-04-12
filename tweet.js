@@ -10,7 +10,7 @@
 
     var twit = require('./tweet-media');
 
-    var msg = '#fractal #functal';
+    var msg = '#fractal #functal #digitalart';
 
     var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
 

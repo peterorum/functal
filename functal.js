@@ -561,7 +561,7 @@
             },
             minLightnessStdDev: function()
             {
-                return 0.15;
+                return 0.16;
             },
             pow: function()
             {
