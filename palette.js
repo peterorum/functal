@@ -169,7 +169,7 @@
                         s: Rp.bandom(1, -2),
                         // bright/dark bands
                         // l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
-                        l: Rp.bandom(1, index % palette.blackness === 0 ? -palette.contrast : 1000)
+                        l: Rp.bandom(1, index % palette.blackness === 0 ? -palette.contrast : 10)
                     }
                 };
 
