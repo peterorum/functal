@@ -101,6 +101,9 @@
             weight: 0.5
         }];
 
+
+        palette.blackness = 2 + Rp.bandomInt(10, 2);
+
         do {
             palette.colors = [];
 
@@ -165,7 +168,8 @@
                         // brightish
                         s: Rp.bandom(1, -2),
                         // bright/dark bands
-                        l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
+                        // l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
+                        l: Rp.bandom(1, index % palette.blackness === 0 ? -palette.contrast : 1000)
                     }
                 };
 

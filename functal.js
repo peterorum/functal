@@ -34,7 +34,8 @@
     // heapdump.writeSnapshot();
 
     // smaller image, no tweet
-    var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
+
+    var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
     var functalsFolder = isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
 
