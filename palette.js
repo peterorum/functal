@@ -25,6 +25,85 @@
         return lightestIndex;
     };
 
+    // determine colors within the band
+
+    var interpolateColors = function(rgb1, rgb2, gap, i)
+    {
+        // calc gradient between 2 colors
+        var rgb = {
+            r: math.round(rgb1.r + (rgb2.r - rgb1.r) / gap * i),
+            g: math.round(rgb1.g + (rgb2.g - rgb1.g) / gap * i),
+            b: math.round(rgb1.b + (rgb2.b - rgb1.b) / gap * i)
+        };
+
+        // store hsl for easier later adjustment
+        var hsl = clr.rgb2hsl(rgb);
+
+        return hsl;
+    };
+
+    var solidColors = function(rgb1 /*, rgb2, gap, i*/)
+    {
+        // just a single color
+
+        var hsl = clr.rgb2hsl(rgb1);
+
+        return hsl;
+    };
+
+    // color band
+
+    var bands = [
+    {
+        name: "gradient",
+        fn: function(palette, hues, index)
+        {
+            var hsl = {
+                h: Rp.wandom(hues).h,
+                // brightish
+                s: Rp.bandom(1, -2),
+                // alternate bright/dark bands
+                l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
+            };
+
+            return hsl;
+        },
+        bandColor: interpolateColors,
+        weight: 500
+    },
+    {
+        name: "blackness",
+        fn: function(palette, hues, index)
+        {
+            var hsl = {
+                h: Rp.wandom(hues).h,
+                // v brightish
+                s: Rp.bandom(1, -3),
+                // sparse light & more black
+                l: Rp.bandom(1, index % palette.blackness === 0 ? -3 : 10)
+            };
+
+            return hsl;
+        },
+        bandColor: interpolateColors,
+        weight: 25
+    },
+    {
+        name: "solid",
+        fn: function(palette, hues /*, index*/)
+        {
+            var hsl = {
+                h: Rp.wandom(hues).h,
+                s: Rp.bandom(1, 1),
+                l: math.random(1)
+            };
+
+            return hsl;
+        },
+        bandColor: solidColors,
+        weight: 1
+    }
+];
 
     // ------------ make color palette
 
@@ -101,8 +180,7 @@
             weight: 0.5
         }];
 
-
-        palette.blackness = 2 + Rp.bandomInt(10, 2);
+        palette.blackness = 2 + Rp.bandomInt(6, 1);
 
         do {
             palette.colors = [];
@@ -156,21 +234,14 @@
             // todo: map is supposed to get index
             var index = 0;
 
-            palette.contrast = Rp.bandomInt(5, 2);
+            palette.contrast = Rp.bandomInt(5, 3);
+            palette.getColor = Rp.wandom(bands);
 
             var gaps = R.map(function(n)
             {
                 var gap = {
                     gap: math.max(1, math.round(n / sum * size)), // number of palette entries
-                    color:
-                    {
-                        h: Rp.wandom(hues).h,
-                        // brightish
-                        s: Rp.bandom(1, -2),
-                        // bright/dark bands
-                        // l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
-                        l: Rp.bandom(1, index % palette.blackness === 0 ? -palette.contrast : 10)
-                    }
+                    color: palette.getColor.fn(palette, hues, index)
                 };
 
                 index++;
@@ -193,15 +264,7 @@
 
                 R.times(function(i)
                 {
-                    // calc gradient between 2 colors
-                    var rgb = {
-                        r: math.round(rgb1.r + (rgb2.r - rgb1.r) / g.gap * i),
-                        g: math.round(rgb1.g + (rgb2.g - rgb1.g) / g.gap * i),
-                        b: math.round(rgb1.b + (rgb2.b - rgb1.b) / g.gap * i)
-                    };
-
-                    // store hsl for easuer later adjustment
-                    var hsl = clr.rgb2hsl(rgb);
+                    var hsl = palette.getColor.bandColor(rgb1, rgb2, g.gap, i);
 
                     palette.colors.push(hsl);
                 }, g.gap);
