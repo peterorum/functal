@@ -12,11 +12,6 @@
 
     exports.reducers = [
     {
-        name: 'last',
-        fn: R.last,
-        weight: 1
-    },
-    {
         name: 'min',
         fn: math.min,
         weight: 1
@@ -25,12 +20,18 @@
         name: 'max',
         fn: math.max,
         weight: 1
-    },
-    {
-        name: 'mean',
-        fn: math.mean,
-        weight: 1
-    }];
+    }
+    // {
+    //     name: 'last',
+    //     fn: R.last,
+    //     weight: 1
+    // },
+    // {
+    //     name: 'mean',
+    //     fn: math.mean,
+    //     weight: 1
+    // }
+    ];
 
     var adjx = function(x, adj)
     {
@@ -205,6 +206,40 @@
                     {
                         name: 'norm',
                         offset: offset
+                    }
+                };
+            },
+            weight: 1,
+        },
+
+        {
+            // point trap
+
+            fn: function()
+            {
+                var fn = R.curry(function pointTrap(point, functal, result)
+                {
+                    var vals = R.map(function(z)
+                    {
+                        var z1 = math.subtract(z, point);
+
+                        var distance = math.sqrt(functal.finite(math.norm(z1)));
+
+                        return distance;
+                    }, result.zs);
+
+                    return vals;
+                });
+
+                var point = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
+
+                // return curried function with constant params
+                return {
+                    fn: fn(point),
+                    params:
+                    {
+                        name: 'pointTrap',
+                        point: point
                     }
                 };
             },

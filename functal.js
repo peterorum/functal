@@ -351,16 +351,18 @@
         }, ];
 
         functal.modifierParams = [];
+        functal.reducers = [];
 
         functal.modifiers = R.times(function()
         {
             var modifier = Rp.wandom(modifiers.modifiers).fn();
 
-            var reducer = Rp.wandom(modifiers.reducers).fn;
+            var reducer = Rp.wandom(modifiers.reducers);
+            functal.reducers.push(reducer);
 
             var mmfn = Rp.wandom(modifierModifierFns).fn;
 
-            var modfn = R.compose(mmfn, functal.finite, reducer, modifier.fn);
+            var modfn = R.compose(mmfn, functal.finite, reducer.fn, modifier.fn);
 
             functal.modifierParams.push(modifier.params);
 
