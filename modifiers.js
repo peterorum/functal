@@ -247,6 +247,68 @@
         },
 
         {
+            // vertical line trap
+
+            fn: function()
+            {
+                var fn = R.curry(function pointTrap(x, functal, result)
+                {
+                    var vals = R.map(function(z)
+                    {
+                        var distance = math.abs(z.re - x);
+
+                        return distance;
+                    }, result.zs);
+
+                    return vals;
+                });
+
+                var x = math.random(-1, 1);
+
+                return {
+                    fn: fn(x),
+                    params:
+                    {
+                        name: 'vertical line trap',
+                        x: x
+                    }
+                };
+            },
+            weight: 1,
+        },
+
+        {
+            // horizontal line trap
+
+            fn: function()
+            {
+                var fn = R.curry(function pointTrap(y, functal, result)
+                {
+                    var vals = R.map(function(z)
+                    {
+                        var distance = math.abs(z.im - y);
+
+                        return distance;
+                    }, result.zs);
+
+                    return vals;
+                });
+
+                var y = math.random(-1, 1);
+
+                return {
+                    fn: fn(y),
+                    params:
+                    {
+                        name: 'horizontal line trap',
+                        y: y
+                    }
+                };
+            },
+            weight: 1,
+        },
+
+        {
             // circle trap
 
             fn: function()
