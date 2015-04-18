@@ -560,11 +560,11 @@
             },
             minStdDev: function()
             {
-                return 0.02;
+                return 0.03;
             },
             minLightnessStdDev: function()
             {
-                return 0.16;
+                return 0.20;
             },
             pow: function()
             {
