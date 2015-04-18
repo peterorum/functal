@@ -641,8 +641,6 @@
 
                         // find the closest point in the spiral
 
-                        var spiralDistance = 0;
-
                         for (var j = 0; j < freq; j++)
                         {
                             var theta2 = theta + j * pi2;
@@ -657,11 +655,10 @@
                             if (dist < minDistance)
                             {
                                 minDistance = dist;
-                                spiralDistance = math.sqrt(math.square(x) + math.square(y));
                             }
                         }
 
-                        return spiralDistance;
+                        return minDistance;
 
                         // return bounder.fn(spiralDistance, 0);
 
