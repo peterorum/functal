@@ -368,7 +368,7 @@
 
             return modfn;
 
-        }, 1);// + Rp.bandomInt(10, 1));
+        }, 1 + Rp.bandomInt(10, 1));
 
         var picker = Rp.wandom(pickers.pickers);
 
