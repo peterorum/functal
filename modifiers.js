@@ -458,7 +458,7 @@
                     }
                 };
             },
-            weight: 1000000,
+            weight: 1,
         },
         {
             // box trap
@@ -474,7 +474,7 @@
                         var x = math.abs(z1.re);
                         var y = math.abs(z1.im);
 
-                        var dist = math.max(x, y);
+                        var dist = math.min(x, y);
 
                         return math.mod(dist - diameter, 1);
 
@@ -498,7 +498,7 @@
 
                 };
             },
-            weight: 2,
+            weight: 1,
         },
         {
             // sin trap
