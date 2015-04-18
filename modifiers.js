@@ -33,6 +33,35 @@
         // }
     ];
 
+    // determines if the endpoint is within a band of the shape
+    // used as a bounder
+    var bander = function(options)
+    {
+        var fn = R.curry(function(band, distance, maxDistance)
+        {
+            var x;
+
+            if (math.abs(distance - maxDistance) < band)
+            {
+                x = (distance - maxDistance) % 1;
+            }
+            else
+            {
+                x = 0;
+            }
+
+            return x;
+        });
+
+        var band = Rp.bandom(options.maxDistance, 2);
+
+        return {
+            name: "band",
+            band: band,
+            fn: fn(band)
+        };
+    };
+
     var bounders = [
         {
             fn: function()
@@ -62,32 +91,7 @@
             weight: 1,
         },
         {
-            fn: function(options)
-            {
-                var fn = R.curry(function(band, distance, maxDistance)
-                {
-                    var x;
-
-                    if (math.abs(distance - maxDistance) < band)
-                    {
-                        x = (distance - maxDistance) % 1;
-                    }
-                    else
-                    {
-                        x = 0;
-                    }
-
-                    return x;
-                });
-
-                var band = Rp.bandom(options.maxDistance, 2);
-
-                return {
-                    name: "band",
-                    band: band,
-                    fn: fn(band)
-                };
-            },
+            fn: bander,
             weight: 4
         }
     ];
@@ -499,7 +503,7 @@
                         name: 'boxTrap',
                         size: size,
                         centre: centre,
-                        bounder:bounder
+                        bounder: bounder
                     }
 
                 };
@@ -542,16 +546,16 @@
             weight: 1,
         },
         {
-            // real imag trap
+            // real + a * imag - b
 
-            name: 'reimTrap',
-            fn: function( /* functal */ )
+            name: 'linear',
+            fn: function(functal)
             {
-                var fn = R.curry(function reimTrap(diameter, functal, result)
+                var fn = R.curry(function reimTrap(a, b, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
-                        var y = functal.finite(z.im * z.re) - diameter;
+                        var y = functal.finite(z.im + a * z.re - b);
 
                         return y;
 
@@ -561,14 +565,50 @@
 
                 });
 
-                var diameter = Rp.bandom(1, -2);
+                var a = math.random(-functal.limit, functal.limit);
+                var b = math.random(-functal.limit, functal.limit);
 
                 return {
-                    fn: fn(diameter),
+                    fn: fn(a, b),
                     params:
                     {
-                        name: 'reimTrap',
-                        diameter: diameter
+                        name: 'linear',
+                        a: a,
+                        b: b
+                    }
+
+                };
+            },
+            weight: 0.5,
+        },
+        {
+            // real * imag
+
+            name: 'rebyim',
+            fn: function( /* functal */ )
+            {
+                var fn = R.curry(function reimTrap(offset, functal, result)
+                {
+                    var vals = R.map(function(z)
+                    {
+                        var y = functal.finite(z.im * z.re) - offset;
+
+                        return y;
+
+                    }, result.zs);
+
+                    return normalize(vals);
+
+                });
+
+                var offset = Rp.bandom(1, -2);
+
+                return {
+                    fn: fn(offset),
+                    params:
+                    {
+                        name: 'rebyim',
+                        offset: offset
                     }
 
                 };
@@ -579,9 +619,9 @@
             // spiral trap
 
             name: 'spiralTrap',
-            fn: function( /* functal */ )
+            fn: function(functal)
             {
-                var fn = R.curry(function spiralTrap(freq, diameter, centre, functal, result)
+                var fn = R.curry(function spiralTrap(bounder, freq, diameter, centre, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
@@ -594,12 +634,14 @@
 
                         theta = theta + math.pi; // 0..2pi
 
-                        var minDist = 1e6;
+                        var minDistance = Number.MAX_VALUE;
 
                         var pi2 = 2.0 * math.pi;
-                        var f = 1.0 / (math.pi * freq) * diameter; // factor to convert theta to a radius from 0..diam
+                        var f = 1.0 / (math.pi * freq) * diameter; // factor to convert theta to a radius from 0..diameter
 
                         // find the closest point in the spiral
+
+                        var spiralDistance = 0;
 
                         for (var j = 0; j < freq; j++)
                         {
@@ -612,33 +654,45 @@
 
                             var dist = math.sqrt(math.square(x - z1.re) + math.square(y - z1.im));
 
-                            minDist = math.min(dist, minDist);
+                            if (dist < minDistance)
+                            {
+                                minDistance = dist;
+                                spiralDistance = math.sqrt(math.square(x) + math.square(y));
+                            }
                         }
 
-                        return minDist;
+                        return spiralDistance;
+
+                        // return bounder.fn(spiralDistance, 0);
 
                     }, result.zs);
 
                     return normalize(vals);
                 });
 
-                var freq = math.randomInt(1, 11);
-                var diameter = Rp.bandom(1, -2);
+                var freq = 1 + Rp.bandomInt(20, -2);
+                var diameter = Rp.bandom(functal.limit, -2);
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
+                // var bounder = bander({maxDistance: diameter / freq});
+                var bounder = bounders[2].fn(
+                {
+                    maxDistance: diameter / freq
+                });
 
                 return {
-                    fn: fn(freq, diameter, centre),
+                    fn: fn(bounder, freq, diameter, centre),
                     params:
                     {
                         name: 'spiralTrap',
                         freq: freq,
                         diameter: diameter,
-                        centre: centre
+                        centre: centre,
+                        bounder: bounder
                     }
 
                 };
             },
-            weight: 1,
+            weight: 1000000,
         },
     ];
 }());
