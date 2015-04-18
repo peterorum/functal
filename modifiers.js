@@ -121,13 +121,17 @@
 
     exports.modifiers = [
         {
-            fn: function( /* functal */ )
+            // final amgle
+
+            fn: function( functal )
             {
-                var fn = R.curry(function(phase, functal, result)
+                var fn = R.curry(function(point, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
-                        var x = adjx(math.atan2(z.re, z.im) / math.pi, phase);
+                        var z1 = math.subtract(z, point);
+
+                        var x = math.atan2(z1.re, z1.im) / math.pi;
 
                         return x;
                     }, result.zs);
@@ -135,53 +139,14 @@
                     return vals;
                 });
 
-                var phase = math.random(-1, 1);
+                var point = math.complex(math.random(-functal.limit, functal.limit), math.random(-functal.limit, functal.limit));
 
                 return {
-                    fn: fn(phase),
+                    fn: fn(point),
                     params:
                     {
                         name: 'angle',
-                        phase: phase
-                    }
-                };
-            },
-            weight: 1,
-        },
-        {
-            fn: function( /* functal */ )
-            {
-                var fn = R.curry(function(phase, functal, result)
-                {
-                    var vals = R.mapIndexed(function(z, i, zs)
-                    {
-                        var x = 0;
-
-                        if (i > 0)
-                        {
-                            var z1 = zs[i - 1];
-                            var z2 = math.subtract(zs[i], z1);
-
-                            x = math.atan2(z2.re, z2.im) / math.pi;
-                        }
-
-                        x = adjx(x, phase);
-
-                        return x;
-
-                    }, result.zs);
-
-                    return vals;
-                });
-
-                var phase = math.random(-1, 1);
-
-                return {
-                    fn: fn(phase),
-                    params:
-                    {
-                        name: 'angleChange',
-                        phase: phase
+                        point: point
                     }
                 };
             },
