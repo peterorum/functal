@@ -126,28 +126,28 @@
             weight: 1,
         },
         {
-            fn: function(/* functal */)
+            fn: function(functal)
             {
-                return {
-                    fn: function real(functal, result)
+                var fn = R.curry(function(offset, functal, result){
+                    // just z.re
+
+                    var vals = R.map(function(z)
                     {
-                        // normalized z.re
+                        return z.re + offset;
+                    }, result.zs);
 
-                        var max = math.max(R.map(function(z)
-                        {
-                            return math.abs(z.re);
-                        }, result.zs));
+                    return normalize(vals);
 
-                        var vals = R.map(function(z)
-                        {
-                            return max ? z.re / max : 1;
-                        }, result.zs);
+                });
 
-                        return vals;
-                    },
+                var offset = math.random(- functal.limit, functal.limit);
+
+                return {
+                    fn: fn(offset),
                     params:
                     {
-                        name: 'real'
+                        name: 'real',
+                        offset: offset
                     }
                 };
             },
