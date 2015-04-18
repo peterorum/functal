@@ -507,7 +507,7 @@
             weight: 2,
         },
         {
-            // sin trap
+            // sin
 
             fn: function( /* functal */ )
             {
@@ -515,9 +515,7 @@
                 {
                     var vals = R.map(function(z)
                     {
-                        var z1 = math.subtract(z, centre);
-
-                        return z1.im + ampl * math.sin(freq * z1.re) - diameter;
+                        return z.im + ampl * math.sin(freq * z.re);
 
                     }, result.zs);
 
@@ -533,13 +531,12 @@
                     fn: fn(diameter, centre, freq, ampl),
                     params:
                     {
-                        name: 'sinTrap',
+                        name: 'sin',
                         diameter: diameter,
                         centre: centre,
                         freq: freq,
                         ampl: ampl
                     }
-
                 };
             },
             weight: 1,
