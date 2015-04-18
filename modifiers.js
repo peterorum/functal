@@ -11,26 +11,26 @@
     // return -1..1
 
     exports.reducers = [
-    {
-        name: 'min',
-        fn: math.min,
-        weight: 1
-    },
-    {
-        name: 'max',
-        fn: math.max,
-        weight: 1
-    }
-    // {
-    //     name: 'last',
-    //     fn: R.last,
-    //     weight: 1
-    // },
-    // {
-    //     name: 'mean',
-    //     fn: math.mean,
-    //     weight: 1
-    // }
+        {
+            name: 'min',
+            fn: math.min,
+            weight: 1
+        },
+        {
+            name: 'max',
+            fn: math.max,
+            weight: 1
+        }
+        // {
+        //     name: 'last',
+        //     fn: R.last,
+        //     weight: 1
+        // },
+        // {
+        //     name: 'mean',
+        //     fn: math.mean,
+        //     weight: 1
+        // }
     ];
 
     var adjx = function(x, adj)
@@ -51,7 +51,7 @@
 
     exports.modifiers = [
         {
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function(phase, functal, result)
                 {
@@ -80,7 +80,7 @@
             weight: 1,
         },
         {
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function(phase, functal, result)
                 {
@@ -119,7 +119,7 @@
             weight: 1,
         },
         {
-            fn: function()
+            fn: function(functal)
             {
                 return {
                     fn: function real(functal, result)
@@ -148,7 +148,7 @@
         },
 
         {
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function(phase, functal, result)
                 {
@@ -183,7 +183,7 @@
 
 
         {
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function(phase, functal, result)
                 {
@@ -215,7 +215,7 @@
         {
             // point trap
 
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function pointTrap(point, functal, result)
                 {
@@ -231,7 +231,7 @@
                     return vals;
                 });
 
-                var point = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
+                var point = math.complex(math.random(- functal.limit, functal.limit), math.random(- functal.limit, functal.limit));
 
                 // return curried function with constant params
                 return {
@@ -249,7 +249,7 @@
         {
             // vertical line trap
 
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function pointTrap(x, functal, result)
                 {
@@ -263,7 +263,7 @@
                     return vals;
                 });
 
-                var x = math.random(-1, 1);
+                var x = math.random(- functal.limit, functal.limit);
 
                 return {
                     fn: fn(x),
@@ -280,7 +280,7 @@
         {
             // horizontal line trap
 
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function pointTrap(y, functal, result)
                 {
@@ -294,7 +294,7 @@
                     return vals;
                 });
 
-                var y = math.random(-1, 1);
+                var y = math.random(- functal.limit, functal.limit);
 
                 return {
                     fn: fn(y),
@@ -309,9 +309,53 @@
         },
 
         {
+            // grid trap
+            // closest line to in a square grid
+
+            fn: function(functal)
+            {
+                var fn = R.curry(function gridTrap(lines, functal, result)
+                {
+                    var range = functal.limit;
+
+                    var vals = R.map(function(z)
+                    {
+                        var horizontalDistances = R.times(function(i)
+                        {
+                            return math.abs(z.im - range *  (-1 + 2 / lines * i));
+                        }, lines + 1);
+
+                        var verticalDistances = R.times(function(i)
+                        {
+                            return math.abs(z.re - range * (-1 + 2 / lines * i));
+                        }, lines + 1);
+
+                        var distance = math.min(R.reduce(math.min, 1e6, horizontalDistances), R.reduce(math.min, 1e6, verticalDistances));
+
+                        return distance;
+                    }, result.zs);
+
+                    return vals;
+                });
+
+                var lines = math.randomInt(1, 10);
+
+                return {
+                    fn: fn(lines),
+                    params:
+                    {
+                        name: 'grid trap',
+                        lines: lines
+                    }
+                };
+            },
+            weight: 1,
+        },
+
+        {
             // circle trap
 
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function circleTrap(diameter, band, centre, functal, result)
                 {
@@ -359,7 +403,7 @@
         {
             // real circle trap
 
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function realCircleTrap(centre, functal, result)
                 {
@@ -392,7 +436,7 @@
         {
             // box trap
 
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function boxTrap(diameter, centre, functal, result)
                 {
@@ -433,7 +477,7 @@
         {
             // sin trap
 
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function sinTrap(diameter, centre, ampl, freq, functal, result)
                 {
@@ -475,7 +519,7 @@
             // real imag trap
 
             name: 'reimTrap',
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function reimTrap(diameter, functal, result)
                 {
@@ -511,7 +555,7 @@
             // spiral trap
 
             name: 'spiralTrap',
-            fn: function()
+            fn: function(functal)
             {
                 var fn = R.curry(function spiralTrap(freq, diameter, centre, functal, result)
                 {
@@ -539,8 +583,8 @@
 
                             var r = theta2 * f;
 
-                            var x = r  * ctheta;
-                            var y = r  * stheta;
+                            var x = r * ctheta;
+                            var y = r * stheta;
 
                             var dist = math.sqrt(math.square(x - z1.re) + math.square(y - z1.im));
 

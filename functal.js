@@ -355,7 +355,7 @@
 
         functal.modifiers = R.times(function()
         {
-            var modifier = Rp.wandom(modifiers.modifiers).fn();
+            var modifier = Rp.wandom(modifiers.modifiers).fn(functal);
 
             var reducer = Rp.wandom(modifiers.reducers);
             functal.reducers.push(reducer);
