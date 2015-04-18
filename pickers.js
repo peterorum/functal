@@ -46,6 +46,7 @@
 
         functal.layerOffsets = R.map(function(m)
         {
+            // console.log(palette.lightestIndex, pal.getColorIndex(palette.size, m), palette.lightestIndex - pal.getColorIndex(palette.size, m));
             return palette.lightestIndex - pal.getColorIndex(palette.size, m);
 
         }, mods);

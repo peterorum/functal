@@ -49,9 +49,16 @@
         return x;
     };
 
+    var normalize = function(vals)
+    {
+        var max = math.max(R.map(math.abs, vals));
+
+        return math.divide(vals, max);
+    };
+
     exports.modifiers = [
         {
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function(phase, functal, result)
                 {
@@ -80,7 +87,7 @@
             weight: 1,
         },
         {
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function(phase, functal, result)
                 {
@@ -119,7 +126,7 @@
             weight: 1,
         },
         {
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 return {
                     fn: function real(functal, result)
@@ -148,7 +155,7 @@
         },
 
         {
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function(phase, functal, result)
                 {
@@ -181,9 +188,8 @@
             weight: 1,
         },
 
-
         {
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function(phase, functal, result)
                 {
@@ -228,7 +234,7 @@
                         return distance;
                     }, result.zs);
 
-                    return vals;
+                    return normalize(vals);
                 });
 
                 var point = math.complex(math.random(- functal.limit, functal.limit), math.random(- functal.limit, functal.limit));
@@ -260,7 +266,8 @@
                         return distance;
                     }, result.zs);
 
-                    return vals;
+                    return normalize(vals);
+
                 });
 
                 var x = math.random(- functal.limit, functal.limit);
@@ -291,7 +298,7 @@
                         return distance;
                     }, result.zs);
 
-                    return vals;
+                    return normalize(vals);
                 });
 
                 var y = math.random(- functal.limit, functal.limit);
@@ -312,7 +319,7 @@
             // grid trap
             // closest line to in a square grid
 
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function gridTrap(lines, functal, result)
                 {
@@ -335,7 +342,7 @@
                         return distance;
                     }, result.zs);
 
-                    return vals;
+                    return normalize(vals);
                 });
 
                 var lines = math.randomInt(1, 10);
@@ -382,9 +389,9 @@
                     return vals;
                 });
 
-                var diameter = Rp.bandom(1, -2);
-                var band = Rp.bandom(1, -3);
-                var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
+                var diameter = Rp.bandom(functal.limit, -2);
+                var band = Rp.bandom(diameter, 1);
+                var centre = math.complex( math.random(- functal.limit, functal.limit),  math.random(- functal.limit, functal.limit));
 
                 // return curried function with constant params
                 return {
@@ -401,42 +408,9 @@
             weight: 1,
         },
         {
-            // real circle trap
-
-            fn: function(functal)
-            {
-                var fn = R.curry(function realCircleTrap(centre, functal, result)
-                {
-                    var vals = R.map(function(z)
-                    {
-                        var x = math.mod(z.re - centre, 1);
-
-                        return math.sqrt(math.max(0, 1.0 - x * x));
-
-                    }, result.zs);
-
-                    return vals;
-                });
-
-                var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
-
-                return {
-                    fn: fn(centre),
-                    params:
-                    {
-                        name: 'realCircleTrap',
-                        centre: centre
-                    }
-
-                };
-
-            },
-            weight: 1,
-        },
-        {
             // box trap
 
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function boxTrap(diameter, centre, functal, result)
                 {
@@ -453,9 +427,8 @@
 
                     }, result.zs);
 
-                    var max = math.max(R.map(math.abs, vals));
+                    return normalize(vals);
 
-                    return math.divide(vals, max);
                 });
 
                 var diameter = Rp.bandom(1, -2);
@@ -477,7 +450,7 @@
         {
             // sin trap
 
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function sinTrap(diameter, centre, ampl, freq, functal, result)
                 {
@@ -519,7 +492,7 @@
             // real imag trap
 
             name: 'reimTrap',
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function reimTrap(diameter, functal, result)
                 {
@@ -531,9 +504,7 @@
 
                     }, result.zs);
 
-                    var max = math.max(R.map(math.abs, vals));
-
-                    return math.divide(vals, max);
+                    return normalize(vals);
 
                 });
 
@@ -555,7 +526,7 @@
             // spiral trap
 
             name: 'spiralTrap',
-            fn: function(functal)
+            fn: function(/* functal */)
             {
                 var fn = R.curry(function spiralTrap(freq, diameter, centre, functal, result)
                 {
@@ -595,9 +566,7 @@
 
                     }, result.zs);
 
-                    var max = math.max(R.map(math.abs, vals));
-
-                    return math.divide(vals, max);
+                    return normalize(vals);
                 });
 
                 var freq = math.randomInt(1, 11);

@@ -190,7 +190,7 @@
         {
             // adjust real & imag parts with function of the opposite
             name: 'fxtrigy',
-            weight: 0.04, // good, but too easily chosen, so reduce weight
+            weight: 0.03, // good, but too easily chosen, so reduce weight
             fn: (function()
             {
                 // options will be the same for the entire run
