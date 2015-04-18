@@ -424,7 +424,7 @@
 
             fn: function(functal)
             {
-                var fn = R.curry(function circleTrap(diameter, centre, functal, result)
+                var fn = R.curry(function circleTrap(bounder, diameter, centre, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
@@ -448,7 +448,7 @@
 
                 // return curried function with constant params
                 return {
-                    fn: fn(diameter, centre),
+                    fn: fn(bounder, diameter, centre),
                     params:
                     {
                         name: 'circleTrap',
@@ -465,7 +465,7 @@
 
             fn: function( /* functal */ )
             {
-                var fn = R.curry(function boxTrap(diameter, centre, functal, result)
+                var fn = R.curry(function boxTrap(bounder, size, centre, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
@@ -474,9 +474,10 @@
                         var x = math.abs(z1.re);
                         var y = math.abs(z1.im);
 
-                        var dist = math.min(x, y);
+                        // furthest dimension from centre
+                        var distance = math.max(x, y);
 
-                        return math.mod(dist - diameter, 1);
+                        return bounder.fn(distance, size);
 
                     }, result.zs);
 
@@ -484,21 +485,26 @@
 
                 });
 
-                var diameter = Rp.bandom(1, -2);
+                var size = Rp.bandom(1, -2);
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
+                var bounder = Rp.wandom(bounders).fn(
+                {
+                    maxDistance: size
+                });
 
                 return {
-                    fn: fn(diameter, centre),
+                    fn: fn(bounder, size, centre),
                     params:
                     {
                         name: 'boxTrap',
-                        diameter: diameter,
-                        centre: centre
+                        size: size,
+                        centre: centre,
+                        bounder:bounder
                     }
 
                 };
             },
-            weight: 1,
+            weight: 2,
         },
         {
             // sin trap
@@ -513,12 +519,9 @@
 
                         return z1.im + ampl * math.sin(freq * z1.re) - diameter;
 
-
                     }, result.zs);
 
-                    var max = math.max(R.map(math.abs, vals));
-
-                    return math.divide(vals, max);
+                    return normalize(vals);
                 });
 
                 var diameter = Rp.bandom(1, -2);
