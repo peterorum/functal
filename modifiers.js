@@ -458,7 +458,7 @@
                     }
                 };
             },
-            weight: 1,
+            weight: 2,
         },
         {
             // box trap
