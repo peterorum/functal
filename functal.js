@@ -280,7 +280,7 @@
         functal.range = options.range();
         functal.rangeWidth = functal.range.x2 - functal.range.x1;
 
-        functal.sampleCount = 10;
+        functal.sampleCount = 11;
 
         functal.set = {
             name: options.set.name,

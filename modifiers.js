@@ -374,7 +374,7 @@
                     return normalize(vals);
                 });
 
-                var lines = math.randomInt(1, 10);
+                var lines = 2 + Rp.bandomInt(20, 1);
 
                 return {
                     fn: fn(lines),
@@ -385,7 +385,7 @@
                     }
                 };
             },
-            weight: 1,
+            weight: 5,
         },
 
         {
