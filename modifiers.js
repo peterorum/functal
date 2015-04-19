@@ -121,7 +121,7 @@
 
     exports.modifiers = [
         {
-            // final amgle
+            // final angle
 
             fn: function( functal )
             {
@@ -623,9 +623,9 @@
                             }
                         }
 
-                        return minDistance;
+                        // return minDistance;
 
-                        // return bounder.fn(spiralDistance, 0);
+                        return bounder.fn(minDistance, 0);
 
                     }, result.zs);
 
@@ -635,11 +635,7 @@
                 var freq = 1 + Rp.bandomInt(20, -2);
                 var diameter = Rp.bandom(functal.limit, -2);
                 var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
-                // var bounder = bander({maxDistance: diameter / freq});
-                var bounder = bounders[2].fn(
-                {
-                    maxDistance: diameter / freq
-                });
+                var bounder = bander({maxDistance: diameter / freq});
 
                 return {
                     fn: fn(bounder, freq, diameter, centre),
