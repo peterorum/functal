@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.5.1';
+    var version = '1.5.2';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -119,7 +119,7 @@
             count++;
         }
 
-        var zsAdj = functal.adjzs.length ? R.map(R.compose.apply(functal, functal.adjzs), zs) : zs;
+        var zsAdj = functal.adjzs.length ? R.map(R.compose.apply(functal, R.pluck('fn', functal.adjzs)), zs) : zs;
 
         var result = {
             escape: count / maxCount,
@@ -299,25 +299,13 @@
 
         functal.adjzs = R.times(function()
         {
-            return Rp.wandom(options.z2zfns).fn;
+            return Rp.wandom(options.z2zfns).fn();
         }, Rp.bandomInt(4, 2));
 
-        functal.adjzsNames = R.map(function(fn)
+        // wrap with finite
+        R.forEach(function(f)
         {
-            var o = {
-                name: Rp.nameOf(fn)
-            };
-
-            // params
-            o = R.merge(fn, o);
-
-            return o;
-        }, functal.adjzs);
-
-        // wrap with finite after getting names
-        functal.adjzs = R.map(function(f)
-        {
-            return R.compose(functal.finite, f);
+            f.fn = R.compose(functal.finite, f.fn);
         }, functal.adjzs);
 
         var process = Rp.wandom(processes.processes);
@@ -467,7 +455,7 @@
 
     fractal.dump = function(functal)
     {
-        console.log(JSON.stringify(R.omit(['zs', 'data', 'adjzs', 'modifiers'], functal), null, 4));
+        console.log(JSON.stringify(R.omit(['zs', 'data', 'modifiers'], functal), null, 4));
     };
 
     // ------------ output to a png image
@@ -646,78 +634,128 @@
 
         options.z2zfns = [
         {
-            fn: math.square,
-            weight: 1
-        },
-        {
-            fn: math.sqrt,
-            weight: 1
-        },
-        {
-            fn: math.sin,
-            weight: 1
-        },
-        {
-            fn: math.cos,
-            weight: 1
-        },
-        {
-            fn: math.log,
-            weight: 1
-        },
-        {
-            fn: math.floor,
-            weight: 0.333
-        },
-        {
-            fn: math.ceil,
-            weight: 0.333
-        },
-        {
-            fn: math.round,
-            weight: 0.33
-        },
-        {
-            fn: function reciprocal(z)
+            fn: function()
             {
-                return math.divide(math.complex(1, 0), z);
+                return {
+                    name: "square",
+                    fn: math.square
+                };
+            },
+            weight: 1
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "sqrt",
+                    fn: math.sqrt,
+                };
+            },
+            weight: 1
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "sin",
+                    fn: math.sin
+                };
+            },
+            weight: 1
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "cos",
+                    fn: math.cos
+                };
+            },
+            weight: 1
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "log",
+                    fn: math.log
+                };
+            },
+            weight: 1
+        },
+        {
+            fn: function()
+            {
+                var factor = math.randomInt(1, 1000);
+
+                return {
+                    name: "floor mod",
+                    factor: factor,
+                    fn: R.curry(function(f, z)
+                    {
+                        return math.chain(z).multiply(f).floor().divide(f).done();
+                    })(factor)
+                };
+            },
+            weight: 1,
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "reciprocal",
+                    fn: function reciprocal(z)
+                    {
+                        return math.divide(math.complex(1, 0), z);
+                    }
+                };
             },
 
             weight: 1
         },
         {
-            fn: (function trigxy()
+            fn: function()
             {
-                var trig1 = Rp.wandom([math.sin, math.cos]);
-                var trig2 = Rp.wandom([math.sin, math.cos]);
+                return {
+                    name: "trigxy",
+                    fn: (function trigxy()
+                    {
+                        var trig1 = Rp.wandom([math.sin, math.cos]);
+                        var trig2 = Rp.wandom([math.sin, math.cos]);
 
-                var fxy = {
-                    freq1: math.random(20),
-                    freq2: math.random(20),
-                    trig1: trig1,
-                    trig2: trig2,
-                    name1: Rp.nameOf(trig1),
-                    name2: Rp.nameOf(trig2)
+                        var fxy = {
+                            freq1: math.random(20),
+                            freq2: math.random(20),
+                            trig1: trig1,
+                            trig2: trig2,
+                            name1: Rp.nameOf(trig1),
+                            name2: Rp.nameOf(trig2)
+                        };
+
+                        var fn = function trigxy(z)
+                        {
+                            return math.complex(fxy.trig1(math.mod(fxy.freq1 * z.re, math.pi * 2)), fxy.trig2(math.mod(fxy.freq2 * z.im, math.pi * 2)));
+                        };
+
+                        fn.params = fxy;
+
+                        return fn;
+                    })()
                 };
-
-                var fn = function trigxy(z)
-                {
-                    return math.complex(fxy.trig1(math.mod(fxy.freq1 * z.re, math.pi * 2)), fxy.trig2(math.mod(fxy.freq2 * z.im, math.pi * 2)));
-                };
-
-                fn.params = fxy;
-
-                return fn;
-            })(),
-
+            },
             weight: 1
         },
         {
-            fn: function fraction(z)
+            fn: function()
             {
-                return math.complex(z.re - math.floor(z.re), z.im - math.floor(z.im));
+                return {
+                    name: "fraction",
+                    fn: function fraction(z)
+                    {
+                        return math.complex(z.re - math.floor(z.re), z.im - math.floor(z.im));
+                    }
+                };
             },
-
             weight: 1
         }, ];
 
@@ -788,7 +826,7 @@
         if (functal.accept)
         {
             // save options spec
-            fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'adjzs', 'modifiers'], functal), null, 4))
+            fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'modifiers'], functal), null, 4))
                 .then(function()
                 {
                     // save png
