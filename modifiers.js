@@ -389,65 +389,6 @@
         },
 
         {
-            // points trap
-            // closest to a matrix of points
-
-            fn: function( /* functal */ )
-            {
-                var fn = R.curry(function pointsTrap(points, functal, result)
-                {
-                    var range = functal.limit;
-
-                    var vals = R.map(function(z)
-                    {
-                        var minDistance = Number.MAX_VALUE;
-
-                        for (var i = 0; i < points; i++)
-                        {
-                            for (var j = 0; j < points; j++)
-                            {
-                                var point = math.complex(range * (-1 + 2 / points * (i + 0.5)), range * (-1 + 2 / points * (j + 0.5)));
-
-                                var z1 = math.subtract(z, point);
-
-                                var distance = math.sqrt(functal.finite(math.norm(z1)));
-
-                                minDistance = math.min(minDistance, distance);
-
-                                if (minDistance < range * 2 / points)
-                                {
-                                    break;
-                                }
-                            }
-
-                            if (minDistance < range * 2 / points)
-                            {
-                                break;
-                            }
-                        }
-
-                        return minDistance;
-
-                    }, result.zs);
-
-                    return normalize(vals);
-                });
-
-                var points = 2 + Rp.bandomInt(20, 1);
-
-                return {
-                    fn: fn(points),
-                    params:
-                    {
-                        name: 'points trap',
-                        points: points
-                    }
-                };
-            },
-            weight: 10,
-        },
-
-        {
             // circle trap
 
             fn: function(functal)
