@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.5.2';
+    var version = '1.5.3';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -865,7 +865,7 @@
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 12 : 12);
+        }, isDev ? 1 : 12);
 
         // run sequentially
 
