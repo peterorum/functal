@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.5.3';
+    var version = '1.5.4';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
