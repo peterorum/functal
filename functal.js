@@ -865,7 +865,7 @@
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 1 : 12);
+        }, isDev ? 12 : 12);
 
         // run sequentially
 

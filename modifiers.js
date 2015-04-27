@@ -53,7 +53,7 @@
             return x;
         });
 
-        var band = Rp.bandom(options.maxDistance, 2);
+        var band = Rp.bandom(options.maxDistance, 1);
 
         return {
             name: "band",
@@ -344,29 +344,67 @@
             weight: 1,
         },
 
+        // {
+        //     // grid trap
+        //     // closest line to in a square grid
+
+        //     fn: function( /* functal */ )
+        //     {
+        //         var fn = R.curry(function gridTrap(lines, functal, result)
+        //         {
+        //             var range = functal.limit;
+
+        //             var vals = R.map(function(z)
+        //             {
+        //                 var horizontalDistances = R.times(function(i)
+        //                 {
+        //                     return math.abs(z.im - range * (-1 + 2 / lines * i));
+        //                 }, lines + 1);
+
+        //                 var verticalDistances = R.times(function(i)
+        //                 {
+        //                     return math.abs(z.re - range * (-1 + 2 / lines * i));
+        //                 }, lines + 1);
+
+        //                 var distance = math.min(R.reduce(math.min, 1e6, horizontalDistances), R.reduce(math.min, 1e6, verticalDistances));
+
+        //                 return distance;
+        //             }, result.zs);
+
+        //             return normalize(vals);
+        //         });
+
+        //         var lines = 2 + Rp.bandomInt(20, 1);
+
+        //         return {
+        //             fn: fn(lines),
+        //             params:
+        //             {
+        //                 name: 'grid trap',
+        //                 lines: lines
+        //             }
+        //         };
+        //     },
+        //     weight: 5,
+        // },
+
         {
-            // grid trap
+            // grid2 trap
             // closest line to in a square grid
 
             fn: function( /* functal */ )
             {
-                var fn = R.curry(function gridTrap(lines, functal, result)
+                var fn = R.curry(function grid2Trap(lines, functal, result)
                 {
-                    var range = functal.limit;
+                    // var range = functal.limit;
 
                     var vals = R.map(function(z)
                     {
-                        var horizontalDistances = R.times(function(i)
-                        {
-                            return math.abs(z.im - range * (-1 + 2 / lines * i));
-                        }, lines + 1);
+                        var z1 = math.multiply(z, lines);
+                        var z2 = math.floor(z1);
+                        var z3 = math.subtract(z2, z1);
 
-                        var verticalDistances = R.times(function(i)
-                        {
-                            return math.abs(z.re - range * (-1 + 2 / lines * i));
-                        }, lines + 1);
-
-                        var distance = math.min(R.reduce(math.min, 1e6, horizontalDistances), R.reduce(math.min, 1e6, verticalDistances));
+                        var distance = math.min(math.abs(z3.re), math.abs(z3.im));
 
                         return distance;
                     }, result.zs);
@@ -380,7 +418,7 @@
                     fn: fn(lines),
                     params:
                     {
-                        name: 'grid trap',
+                        name: 'grid2 trap',
                         lines: lines
                     }
                 };
