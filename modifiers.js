@@ -119,6 +119,49 @@
         return math.divide(vals, max);
     };
 
+    var distancers = [
+        {
+            fn: function()
+            {
+                return {
+                    name: "edge",
+                    fn: function(z, lines)
+                    {
+                        return math.min(z.re, z.im);
+                    }
+                };
+            },
+            weight: 1,
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "edges",
+                    fn: function(z, lines)
+                    {
+                        return math.min(z.re, z.im, 1 / lines - z.re, 1 / lines - z.im);
+                    }
+                };
+            },
+            weight: 1,
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "point",
+                    fn: function(z, lines)
+                    {
+                        return math.sqrt(math.norm(math.subtract(z, math.complex(0.5 / lines, 0.5 / lines))));
+                    }
+                };
+            },
+            weight: 1,
+        },
+
+    ];
+
     exports.modifiers = [
         {
             // final angle
@@ -345,12 +388,12 @@
         },
 
         // {
-        //     // grid trap
+        //     // grid1 trap
         //     // closest line to in a square grid
 
         //     fn: function( /* functal */ )
         //     {
-        //         var fn = R.curry(function gridTrap(lines, functal, result)
+        //         var fn = R.curry(function grid1Trap(lines, functal, result)
         //         {
         //             var range = functal.limit;
 
@@ -380,50 +423,55 @@
         //             fn: fn(lines),
         //             params:
         //             {
-        //                 name: 'grid trap',
+        //                 name: 'grid1 trap',
         //                 lines: lines
         //             }
         //         };
         //     },
-        //     weight: 5,
+        //     weight: 0,
         // },
 
         {
-            // grid2 trap
+            // grid trap
             // closest line to in a square grid
 
             fn: function( /* functal */ )
             {
-                var fn = R.curry(function grid2Trap(lines, functal, result)
+                var fn = R.curry(function gridTrap(lines, distancer, functal, result)
                 {
-                    // var range = functal.limit;
-
                     var vals = R.map(function(z)
                     {
                         var z1 = math.multiply(z, lines);
                         var z2 = math.floor(z1);
-                        var z3 = math.subtract(z2, z1);
+                        var z3 = math.subtract(z1, z2);
+                        var z4 = math.divide(z3, lines);
 
-                        var distance = math.min(math.abs(z3.re), math.abs(z3.im));
+                        var distance = distancer.fn(z4, lines);
 
                         return distance;
+
                     }, result.zs);
 
                     return normalize(vals);
                 });
 
-                var lines = 2 + Rp.bandomInt(20, 1);
+                var lines = 1 + Rp.bandomInt(4, 1);
+
+                var distancer = Rp.wandom(distancers).fn(
+                {
+                });
 
                 return {
-                    fn: fn(lines),
+                    fn: fn(lines, distancer),
                     params:
                     {
-                        name: 'grid2 trap',
-                        lines: lines
+                        name: 'grid trap',
+                        lines: lines,
+                        distancer: distancer
                     }
                 };
             },
-            weight: 5,
+            weight: 2,
         },
 
         {
