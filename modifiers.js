@@ -125,7 +125,7 @@
             {
                 return {
                     name: "edge",
-                    fn: function(z, lines)
+                    fn: function(z /*, lines*/)
                     {
                         return math.min(z.re, z.im);
                     }
@@ -437,7 +437,7 @@
 
             fn: function( /* functal */ )
             {
-                var fn = R.curry(function gridTrap(lines, distancer, functal, result)
+                var fn = R.curry(function gridTrap(lines, distancer, border, bounder, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
@@ -448,7 +448,7 @@
 
                         var distance = distancer.fn(z4, lines);
 
-                        return distance;
+                        return bounder.fn(distance, border);
 
                     }, result.zs);
 
@@ -461,13 +461,22 @@
                 {
                 });
 
+                var border = math.random(1) / lines;
+
+                var bounder = Rp.wandom(bounders).fn(
+                {
+                    maxDistance: border
+                });
+
                 return {
-                    fn: fn(lines, distancer),
+                    fn: fn(lines, distancer, border, bounder),
                     params:
                     {
                         name: 'grid trap',
                         lines: lines,
-                        distancer: distancer
+                        distancer: distancer,
+                        border: border,
+                        bounder: bounder
                     }
                 };
             },
@@ -507,8 +516,8 @@
                     params:
                     {
                         name: 'circleTrap',
-                        diameter: diameter,
                         centre: centre,
+                        diameter: diameter,
                         bounder: bounder
                     }
                 };
