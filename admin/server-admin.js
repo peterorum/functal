@@ -4,7 +4,7 @@
         "use strict";
 
         // must always be running
-        // nohup node server&
+        // nohup node server-admin&
 
         var express = require('express');
         var app = express();
@@ -147,14 +147,14 @@
             res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
             res.write('</div>\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<button class="btn btn-danger" ng-click="delete(image)">Delete</button>\n');
+            res.write('<button class="btn btn-danger btn-lg" ng-click="delete(image)">Delete</button>\n');
             res.write('</div>\n');
             res.write('</div>\n');
             res.write('</div>\n');
 
             res.write('<div class="row" ng-show="images && showCount < images.length">\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<button class="btn btn-primary" ng-click="showCount = showCount + 10">More</button>\n');
+            res.write('<button class="btn btn-primary btn-lg" ng-click="showCount = showCount + 10">More</button>\n');
             res.write('</div>\n');
             res.write('</div>\n');
 
