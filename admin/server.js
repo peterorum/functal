@@ -12,7 +12,11 @@
 
         app.disable('view cache');
         app.set('json spaces', 4);
-        app.use(bodyParser());
+        app.use(bodyParser.urlencoded(
+        {
+            extended: true
+        }));
+        app.use(bodyParser.json());
 
         var http = require('http');
         var url = require('url');
