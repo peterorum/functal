@@ -51,7 +51,7 @@
 
             // head
             res.write('<head>\n');
-            res.write('<title>2Functal Admin ({{images.length}})</title>\n');
+            res.write('<title>Functal Admin ({{images.length}})</title>\n');
             res.write('<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css" />\n');
             res.write('<link href="css/base.css" rel="stylesheet" type="text/css" />\n');
 
