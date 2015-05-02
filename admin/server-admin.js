@@ -147,14 +147,14 @@
             res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
             res.write('</div>\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<button class="btn btn-danger btn-lg" ng-click="delete(image)">Delete</button>\n');
+            res.write('<button class="btn btn-danger btn-xl" ng-click="delete(image)">Delete</button>\n');
             res.write('</div>\n');
             res.write('</div>\n');
             res.write('</div>\n');
 
             res.write('<div class="row" ng-show="images && showCount < images.length">\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<button class="btn btn-primary btn-lg" ng-click="showCount = showCount + 10">More</button>\n');
+            res.write('<button class="btn btn-primary btn-xl" ng-click="showCount = showCount + 10">More</button>\n');
             res.write('</div>\n');
             res.write('</div>\n');
 

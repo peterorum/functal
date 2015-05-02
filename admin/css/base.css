@@ -3,5 +3,12 @@
 }
 
 button {
-    margin:20px;
+    margin: 20px;
+}
+
+.btn-xl {
+    padding: 20px 32px;
+    font-size: 36px;
+    line-height: 2.66667;
+    border-radius: 12px
 }
