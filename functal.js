@@ -789,8 +789,11 @@
         // use different options until a fractal with enough variety is found
 
         var ok = false;
+        var attempts = 0;
 
         do {
+            console.log('attempt', attempts);
+
             try
             {
                 options = fractal.setOptions(size);
