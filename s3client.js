@@ -109,7 +109,47 @@
         return deferred.promise;
     };
 
-    //--------- upload to s3
+    //--------- doenload from s3
+
+    var s3download = function(bucket, key, file)
+    {
+        var deferred = Q.defer();
+
+        console.log('Downloading from s3', bucket, key, file);
+
+        var params = {
+            localFile: file,
+
+            s3Params:
+            {
+                Bucket: bucket,
+                Key: key
+            },
+        };
+
+        var downloader = s3client.downloadFile(params);
+
+        downloader.on('error', function(err)
+        {
+            console.error("unable to download:", err.stack);
+            deferred.reject();
+        });
+
+        downloader.on('progress', function()
+        {
+            // console.log("progress", downloader.progressAmount, downloader.progressTotal);
+        });
+
+        downloader.on('end', function()
+        {
+            // console.log("done downloading");
+            deferred.resolve();
+        });
+
+        return deferred.promise;
+    };
+
+    //--------- delete from s3
 
     var s3delete = function(bucket, key)
     {
@@ -153,6 +193,7 @@
 
     exports.list = s3list;
     exports.upload = s3upload;
+    exports.download = s3download;
     exports.delete = s3delete;
 
 }());

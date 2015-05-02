@@ -34,7 +34,7 @@
 
     })();
 
-    exports.tweet = function(text, file)
+    exports.tweet = function(text, file, callback)
     {
         if (process.env.consumer_key)
         {
@@ -54,6 +54,11 @@
                 }
 
                 console.log(JSON.parse(response.body).text);
+
+                if (callback)
+                {
+                    callback();
+                }
             });
         }
     };

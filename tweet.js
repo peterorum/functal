@@ -3,8 +3,9 @@
     "use strict";
 
     // tweet & delete oldest file
+    // download it from s3 & delete it
 
-    var fsq = require('./fsq');
+    var s3 = require('./s3client');
 
     var R = require('ramda');
 
@@ -12,35 +13,43 @@
 
     var msg = '#fractal #functal #digitalart';
 
-    var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
+    // var isDev = (process.env.TERM_PROGRAM === 'Apple_Terminal');
 
-    var functalsFolder = isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
+    var bucket = 'functal-images';
+    var bucketJson = 'functal-json';
 
-    var folder = functalsFolder + '/medium/';
-
-    fsq.readdir(folder).then(function(files)
+    s3.list('functal-images').then(function(result)
     {
-        var file = R.find(function(f)
+        // console.log(result);
+
+        if (result.count === 0)
         {
-            return /\.png$/.test(f);
-        }, files);
-
-        if (file)
-        {
-            file = folder + file;
-
-            console.log(file);
-
-            twit.tweet(msg, file);
-
-            fsq.unlink(file).then(function()
-            {
-                fsq.unlink(file.replace(/\.png/, '.json'));
-            });
+            console.log('No files');
         }
         else
         {
-            console.log('no file');
+            var oldestKey = result.files[0].Key;
+
+            console.log(oldestKey);
+
+            var tmpFile = '/tmp/tweet-' + oldestKey;
+
+            s3.download(bucket, oldestKey, tmpFile).then(function()
+            {
+                console.log('tweeting');
+
+                twit.tweet(msg, tmpFile, function()
+                {
+                console.log('tweeted');
+
+                    s3.delete(bucket, oldestKey)
+                        .then(function()
+                        {
+                            return s3.delete(bucketJson, oldestKey.replace(/png$/, 'json'));
+                        })
+                        .done();
+                });
+            });
         }
     });
 }());
