@@ -38,7 +38,7 @@
 
     var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
-    var functalsFolder = isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
+    var functalsFolder = 'functals'; // isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
 
     //----------- s3
 
@@ -53,49 +53,56 @@
 
     var sendToS3 = function(bucket, key, file)
     {
-        console.log('Sending to s3', bucket, key, file);
-
         var deferred = Q.defer();
 
-        var params = {
-            localFile: file,
-
-            s3Params:
-            {
-                Bucket: bucket,
-                Key: key,
-                ACL: 'public-read'
-            },
-        };
-
-        var uploader = s3client.uploadFile(params);
-
-        uploader.on('error', function(err)
+        if (isDev)
         {
-            console.error("unable to upload:", err.stack);
-            deferred.reject();
-        });
-
-        uploader.on('progress', function()
-        {
-            // console.log("progress", uploader.progressMd5Amount, uploader.progressAmount, uploader.progressTotal);
-        });
-
-        uploader.on('end', function()
-        {
-            // console.log("done uploading");
             deferred.resolve();
-        });
-
-        uploader.on('fileOpened', function()
+        }
+        else
         {
-            // console.log('file opened');
-        });
+            console.log('Sending to s3', bucket, key, file);
 
-        uploader.on('fileClosed', function()
-        {
-            // console.log('file closed');
-        });
+            var params = {
+                localFile: file,
+
+                s3Params:
+                {
+                    Bucket: bucket,
+                    Key: key,
+                    ACL: 'public-read'
+                },
+            };
+
+            var uploader = s3client.uploadFile(params);
+
+            uploader.on('error', function(err)
+            {
+                console.error("unable to upload:", err.stack);
+                deferred.reject();
+            });
+
+            uploader.on('progress', function()
+            {
+                // console.log("progress", uploader.progressMd5Amount, uploader.progressAmount, uploader.progressTotal);
+            });
+
+            uploader.on('end', function()
+            {
+                // console.log("done uploading");
+                deferred.resolve();
+            });
+
+            uploader.on('fileOpened', function()
+            {
+                // console.log('file opened');
+            });
+
+            uploader.on('fileClosed', function()
+            {
+                // console.log('file closed');
+            });
+        }
 
         return deferred.promise;
 
@@ -136,14 +143,14 @@
 
         // only proceed if less than 100 fractals already stored
 
-        var files = fs.readdirSync(functalsFolder + '/medium');
+        // var files = fs.readdirSync(functalsFolder + '/medium');
 
-        var pngs = R.filter(function(f)
-        {
-            return /\.png$/.test(f);
-        }, files);
+        // var pngs = R.filter(function(f)
+        // {
+        //     return /\.png$/.test(f);
+        // }, files);
 
-        ok = pngs.length < 100;
+        // ok = pngs.length < 100;
 
         return ok;
     };
@@ -909,6 +916,20 @@
                 .then(function()
                 {
                     return sendToS3('functal-json', functal.filename + '.json', functal.file + '.json');
+                })
+                .then(function()
+                {
+                    if (!isDev)
+                    {
+                        return fsq.unlink(functal.file + '.png');
+                    }
+                })
+                .then(function()
+                {
+                    if (!isDev)
+                    {
+                        return fsq.unlink(functal.file + '.json');
+                    }
                 })
                 .done(function()
                 {
