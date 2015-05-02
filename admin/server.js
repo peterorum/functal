@@ -47,11 +47,11 @@
             res.setHeader("Content-Type", "text/html");
             res.writeHead(200);
 
-            res.write('<html ng-app="functalApp">\n');
+            res.write('<html ng-app="functalApp" ng-controller="FunctalCtrl">\n');
 
             // head
             res.write('<head>\n');
-            res.write('<title>Functal Admin</title>\n');
+            res.write('<title>Functal Admin ({{images.length}})</title>\n');
             res.write('<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css" />\n');
             res.write('<link href="css/base.css" rel="stylesheet" type="text/css" />\n');
 
@@ -126,7 +126,7 @@
             htmlHead(res);
 
             // start container
-            res.write('<div class="container ng-cloak"  ng-controller="FunctalCtrl" >\n');
+            res.write('<div class="container ng-cloak" >\n');
 
             // heading
             res.write('<div class="row">\n');
@@ -147,7 +147,7 @@
             res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
             res.write('</div>\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<button class="btn btn-primary" ng-click="delete(image)">Delete</button>\n');
+            res.write('<button class="btn btn-danger" ng-click="delete(image)">Delete</button>\n');
             res.write('</div>\n');
             res.write('</div>\n');
             res.write('</div>\n');
