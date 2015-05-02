@@ -8,9 +8,11 @@
 
         var express = require('express');
         var app = express();
+        var bodyParser = require("body-parser");
 
         app.disable('view cache');
         app.set('json spaces', 4);
+        app.use(bodyParser());
 
         var http = require('http');
         var url = require('url');
@@ -21,6 +23,7 @@
         var s3 = require('../s3client');
 
         var bucket = 'functal-images';
+        var bucketJson = 'functal-json';
 
         http.createServer(app).listen(process.env.PORT || 8083);
 
@@ -57,6 +60,7 @@
         var htmlEnd = function(res)
         {
             res.write('<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>\n');
+            res.write('<script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.13.0/ramda.min.js"></script>\n');
 
             res.write('<script src="app/app.js"></script>\n');
             res.write('<script src="controllers/functal.js"></script>\n');
@@ -124,16 +128,29 @@
             res.write('<div class="row">\n');
             res.write('<div class="col-xs-12">\n');
 
-            res.write('<h1 class="text-center">Functals</h1>');
+            res.write('<h1 class="text-center">Functal Admin</h1>');
+            res.write('<h2 class="text-center" ng-show="images">{{images.length}} functals</h2>');
+            res.write('<h2 class="text-center" ng-show="!images">loading...</h2>');
 
             res.write('</div>\n');
             res.write('</div>\n');
 
             // content
 
-            res.write('<div class="panel row" ng-repeat="image in images">\n');
+            res.write('<div class="panel" ng-repeat="image in images | limitTo : showCount">\n');
+            res.write('<div class="row">\n');
             res.write('<div class="col-xs-12 text-center">\n');
             res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
+            res.write('</div>\n');
+            res.write('<div class="col-xs-12 text-center">\n');
+            res.write('<button class="btn btn-primary" ng-click="delete(image)">Delete</button>\n');
+            res.write('</div>\n');
+            res.write('</div>\n');
+            res.write('</div>\n');
+
+            res.write('<div class="row" ng-show="images && showCount < images.length">\n');
+            res.write('<div class="col-xs-12 text-center">\n');
+            res.write('<button class="btn btn-primary" ng-click="showCount = showCount + 10">More</button>\n');
             res.write('</div>\n');
             res.write('</div>\n');
 
@@ -148,7 +165,10 @@
         {
             s3.list(bucket).then(function(result)
             {
+                // console.log(result.files);
+
                 var images = R.pluck('Key', result.files);
+                images = R.reverse(images);
 
                 res.json(
                 {
@@ -156,6 +176,22 @@
                 });
 
             });
+        });
+
+        // delete image on s3
+        app.post('/delete', function(req, res)
+        {
+            var key = req.body.key;
+
+            s3.delete(bucket, key)
+                .then(function()
+                {
+                    return s3.delete(bucketJson, key.replace(/png$/, 'json'));
+                })
+                .then(function(result)
+                {
+                    res.json(result);
+                });
         });
 
     }()

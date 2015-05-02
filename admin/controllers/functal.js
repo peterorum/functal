@@ -3,9 +3,10 @@
     {
         "use strict";
 
-        angular.module('functalApp').controller('FunctalCtrl', ['$scope', '$http', function($scope, $http)
+        angular.module('functalApp').controller('FunctalCtrl', ['$scope', '$http', '$window', '$timeout',
+            function($scope, $http, $window, $timeout)
         {
-            $scope.getImages = function()
+            var getImages = function()
             {
                 $http.get('/images').then(function(result)
                 {
@@ -13,11 +14,45 @@
                 });
             };
 
+            $scope.delete = function(key)
+            {
+                $scope.images = R.filter(function(k)
+                {
+                    return k !== key;
+                }, $scope.images);
+
+                $http(
+                {
+                    method: 'POST',
+                    url: '/delete',
+                    data:
+                    {
+                        key: key
+                    }
+                }).then(function(result)
+                {
+                    if (result.error)
+                    {
+                        $window.alert(result.error);
+                    }
+                });
+
+            };
+
+            // reload
+
+            $timeout(function()
+            {
+                getImages();
+            }, 5 * 60000);
+
             // init
 
             $scope.cdn = 'https://d1aienjtp63qx3.cloudfront.net/';
 
-            $scope.getImages();
+            $scope.showCount = 10;
+
+            getImages();
 
         }]);
 

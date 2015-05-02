@@ -109,9 +109,50 @@
         return deferred.promise;
     };
 
+    //--------- upload to s3
+
+    var s3delete = function(bucket, key)
+    {
+        var deferred = Q.defer();
+
+        // console.log('Deleting ', bucket, key);
+
+        var S3Params = {
+
+                Bucket: bucket,
+                Delete:
+                {
+                    Objects: [
+                    {
+                        Key: key
+                    }]
+                },
+        };
+
+        var deleter = s3client.deleteObjects(S3Params);
+
+        deleter.on('error', function(err)
+        {
+            console.error("unable to delete:", err.stack);
+            deferred.reject({error: err});
+        });
+
+        deleter.on('end', function()
+        {
+            console.log("deleted", bucket, key);
+
+            deferred.resolve(
+            {
+            });
+        });
+
+        return deferred.promise;
+    };
+
     //----------- exports
 
     exports.list = s3list;
     exports.upload = s3upload;
+    exports.delete = s3delete;
 
 }());

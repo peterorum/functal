@@ -15,5 +15,5 @@
     "undef": true,
     "unused": true,
 
-    "predef": ["browser", "element", "by", "phantom", "angular"]
+    "predef": ["browser", "element", "by", "phantom", "angular", "R"]
 }

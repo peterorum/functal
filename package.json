@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/peterorum/functal",
   "dependencies": {
+    "body-parser": "^1.12.3",
     "express": "^4.12.3",
     "mathjs": "^1.2.0",
     "node-png": "^0.4.3",

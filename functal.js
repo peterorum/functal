@@ -823,7 +823,7 @@
 
         } while (!ok);
 
-        console.log('attempt', attempts);
+        console.log('attempts', attempts);
 
         // make full fractal
 
