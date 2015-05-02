@@ -792,6 +792,8 @@
         var attempts = 0;
 
         do {
+            attempts += 1;
+
             console.log('attempt', attempts);
 
             try
