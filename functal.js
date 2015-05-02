@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.5.4';
+    var version = '1.6.0';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -15,21 +15,21 @@
 
     var math = require('mathjs');
     var moment = require('moment');
-
+    var Q = require('q');
+    var s3 = require('s3');
     var fs = require('fs');
     var fsq = require('./fsq');
+    var PNG = require('node-png').PNG;
+    var R = require('ramda');
+    var Rp = require('./plus-fp/plus-fp');
+    var s3 = require('./s3client');
+
     var clr = require('./color');
     var pal = require('./palette');
     var pickers = require('./pickers');
     var limitTests = require('./limitTests');
     var processes = require('./processes');
     var modifiers = require('./modifiers');
-    var PNG = require('node-png').PNG;
-    var Q = require('q');
-    var s3 = require('s3');
-
-    var R = require('ramda');
-    var Rp = require('./plus-fp/plus-fp');
 
     // var heapdump = require('heapdump')
     // heapdump.writeSnapshot();
@@ -39,118 +39,6 @@
     var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
     var functalsFolder = 'functals'; // isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
-
-    //----------- s3
-
-    var s3client = s3.createClient(
-    {
-        s3Options:
-        {
-            accessKeyId: process.env.s3Key,
-            secretAccessKey: process.env.s3Secret
-        },
-    });
-
-
-    //--------- list s3 bucket
-
-    var s3list = function(bucket)
-    {
-        var deferred = Q.defer();
-
-        var s3files = [];
-
-        var lister = s3client.listObjects(
-        {
-            s3Params:
-            {
-                Bucket: bucket
-            }
-        });
-
-        lister.on('error', function(err)
-        {
-            console.error("unable to list:", err.stack);
-            deferred.reject();
-        });
-
-        lister.on('data', function(data)
-        {
-            // console.log('data', data);
-            s3files.push(data.Contents);
-        });
-
-        lister.on('end', function()
-        {
-            var result = {
-                count: lister.objectsFound,
-                files: R.flatten(s3files)
-            };
-
-            deferred.resolve(result);
-        });
-
-        return deferred.promise;
-    };
-
-    //--------- upload to s3
-
-    var s3upload = function(bucket, key, file)
-    {
-        var deferred = Q.defer();
-
-        if (isDev)
-        {
-            deferred.resolve();
-        }
-        else
-        {
-            console.log('Sending to s3', bucket, key, file);
-
-            var params = {
-                localFile: file,
-
-                s3Params:
-                {
-                    Bucket: bucket,
-                    Key: key,
-                    ACL: 'public-read'
-                },
-            };
-
-            var uploader = s3client.uploadFile(params);
-
-            uploader.on('error', function(err)
-            {
-                console.error("unable to upload:", err.stack);
-                deferred.reject();
-            });
-
-            uploader.on('progress', function()
-            {
-                // console.log("progress", uploader.progressMd5Amount, uploader.progressAmount, uploader.progressTotal);
-            });
-
-            uploader.on('end', function()
-            {
-                // console.log("done uploading");
-                deferred.resolve();
-            });
-
-            uploader.on('fileOpened', function()
-            {
-                // console.log('file opened');
-            });
-
-            uploader.on('fileClosed', function()
-            {
-                // console.log('file closed');
-            });
-        }
-
-        return deferred.promise;
-
-    };
 
     //----------- fractal functions
 
@@ -191,7 +79,7 @@
         }
         else
         {
-            s3list('functal-images').then(function(result)
+            s3.list('functal-images').then(function(result)
             {
                 console.log('bucket count', result.count);
 
@@ -960,11 +848,17 @@
                 })
                 .then(function()
                 {
-                    return s3upload('functal-images', functal.filename + '.png', functal.file + '.png');
+                    if (!isDev)
+                    {
+                        return s3.upload('functal-images', functal.filename + '.png', functal.file + '.png');
+                    }
                 })
                 .then(function()
                 {
-                    return s3upload('functal-json', functal.filename + '.json', functal.file + '.json');
+                    if (!isDev)
+                    {
+                        return s3.upload('functal-json', functal.filename + '.json', functal.file + '.json');
+                    }
                 })
                 .then(function()
                 {
