@@ -26,6 +26,7 @@
     var modifiers = require('./modifiers');
     var PNG = require('node-png').PNG;
     var Q = require('q');
+    var s3 = require('s3');
 
     var R = require('ramda');
     var Rp = require('./plus-fp/plus-fp');
@@ -38,6 +39,67 @@
     var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
     var functalsFolder = isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
+
+    //----------- s3
+
+    var s3client = s3.createClient(
+    {
+        s3Options:
+        {
+            accessKeyId: process.env.s3Key,
+            secretAccessKey: process.env.s3Secret
+        },
+    });
+
+    var sendToS3 = function(bucket, key, file)
+    {
+        console.log('Sending to s3', bucket, key, file);
+
+        var deferred = Q.defer();
+
+        var params = {
+            localFile: file,
+
+            s3Params:
+            {
+                Bucket: bucket,
+                Key: key,
+                ACL: 'public-read'
+            },
+        };
+
+        var uploader = s3client.uploadFile(params);
+
+        uploader.on('error', function(err)
+        {
+            console.error("unable to upload:", err.stack);
+            deferred.reject();
+        });
+
+        uploader.on('progress', function()
+        {
+            // console.log("progress", uploader.progressMd5Amount, uploader.progressAmount, uploader.progressTotal);
+        });
+
+        uploader.on('end', function()
+        {
+            // console.log("done uploading");
+            deferred.resolve();
+        });
+
+        uploader.on('fileOpened', function()
+        {
+            // console.log('file opened');
+        });
+
+        uploader.on('fileClosed', function()
+        {
+            // console.log('file closed');
+        });
+
+        return deferred.promise;
+
+    };
 
     //----------- fractal functions
 
@@ -291,6 +353,7 @@
         functal.z = options.set.z;
         functal.c = options.set.c;
 
+        functal.filename = options.filename();
         functal.file = options.file();
 
         var test = Rp.wandom(limitTests.tests);
@@ -498,6 +561,8 @@
 
     fractal.setOptions = function(size)
     {
+        var filename = 'functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
+
         // size: small, medium, large
         var sizes = {
             small:
@@ -541,10 +606,14 @@
             {
                 return 2;
             },
+            filename: function()
+            {
+                return filename;
+            },
             file: function()
             {
                 // filename with utc time
-                return functalsFolder + '/' + size + '/functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
+                return functalsFolder + '/' + size + '/' + filename;
             },
             minStdDev: function()
             {
@@ -832,9 +901,21 @@
                     // save png
                     return fractal.png(functal);
 
-                }).done(function()
+                })
+                .then(function()
+                {
+                    return sendToS3('functal-images', functal.filename + '.png', functal.file + '.png');
+                })
+                .then(function()
+                {
+                    return sendToS3('functal-json', functal.filename + '.json', functal.file + '.json');
+                })
+                .done(function()
                 {
                     deferred.resolve();
+                }, function()
+                {
+                    deferred.reject();
                 });
         }
         else
@@ -865,7 +946,7 @@
         var creators = R.times(function()
         {
             return fractal.create;
-        }, isDev ? 12 : 12);
+        }, isDev ? 1 : 12);
 
         // run sequentially
 
