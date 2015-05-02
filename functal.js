@@ -16,7 +16,6 @@
     var math = require('mathjs');
     var moment = require('moment');
     var Q = require('q');
-    var s3 = require('s3');
     var fs = require('fs');
     var fsq = require('./fsq');
     var PNG = require('node-png').PNG;
@@ -794,8 +793,6 @@
         do {
             attempts += 1;
 
-            console.log('attempt', attempts);
-
             try
             {
                 options = fractal.setOptions(size);
@@ -825,6 +822,8 @@
             }
 
         } while (!ok);
+
+        console.log('attempt', attempts);
 
         // make full fractal
 

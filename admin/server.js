@@ -3,6 +3,9 @@
     {
         "use strict";
 
+        // must always be running
+        // nohup node server&
+
         var express = require('express');
         var app = express();
 
