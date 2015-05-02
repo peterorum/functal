@@ -51,7 +51,51 @@
         },
     });
 
-    var sendToS3 = function(bucket, key, file)
+
+    //--------- list s3 bucket
+
+    var s3list = function(bucket)
+    {
+        var deferred = Q.defer();
+
+        var s3files = [];
+
+        var lister = s3client.listObjects(
+        {
+            s3Params:
+            {
+                Bucket: bucket
+            }
+        });
+
+        lister.on('error', function(err)
+        {
+            console.error("unable to list:", err.stack);
+            deferred.reject();
+        });
+
+        lister.on('data', function(data)
+        {
+            // console.log('data', data);
+            s3files.push(data.Contents);
+        });
+
+        lister.on('end', function()
+        {
+            var result = {
+                count: lister.objectsFound,
+                files: R.flatten(s3files)
+            };
+
+            deferred.resolve(result);
+        });
+
+        return deferred.promise;
+    };
+
+    //--------- upload to s3
+
+    var s3upload = function(bucket, key, file)
     {
         var deferred = Q.defer();
 
@@ -139,20 +183,25 @@
 
     fractal.isOkToMake = function()
     {
-        var ok = true;
+        var deferred = Q.defer();
 
-        // only proceed if less than 100 fractals already stored
+        if (isDev)
+        {
+            deferred.resolve(true);
+        }
+        else
+        {
+            s3list('functal-images').then(function(result)
+            {
+                console.log('bucket count', result.count);
 
-        // var files = fs.readdirSync(functalsFolder + '/medium');
+                var ok = result.count < 1000;
 
-        // var pngs = R.filter(function(f)
-        // {
-        //     return /\.png$/.test(f);
-        // }, files);
+                deferred.resolve(ok);
+            });
+        }
 
-        // ok = pngs.length < 100;
-
-        return ok;
+        return deferred.promise;
     };
 
     fractal.isDone = function(functal, z)
@@ -911,11 +960,11 @@
                 })
                 .then(function()
                 {
-                    return sendToS3('functal-images', functal.filename + '.png', functal.file + '.png');
+                    return s3upload('functal-images', functal.filename + '.png', functal.file + '.png');
                 })
                 .then(function()
                 {
-                    return sendToS3('functal-json', functal.filename + '.json', functal.file + '.json');
+                    return s3upload('functal-json', functal.filename + '.json', functal.file + '.json');
                 })
                 .then(function()
                 {
@@ -950,33 +999,37 @@
 
     // kick off
 
-    if (!isDev && !fractal.isOkToMake())
+    fractal.isOkToMake().then(function(ok)
     {
-        // sleep for a little while if enough files already & then exit for shell script to restart
-        console.log('sleeping');
-
-        setTimeout(function()
+        if (!ok)
         {
-            console.log('slept');
-        }, 60 * 1000);
-    }
-    else
-    {
-        // make an array with the create function repeated
+            // sleep for a little while if enough files already & then exit for shell script to restart
+            console.log('sleeping');
 
-        var creators = R.times(function()
+            setTimeout(function()
+            {
+                console.log('slept');
+            }, 60 * 1000);
+        }
+        else
         {
-            return fractal.create;
-        }, isDev ? 1 : 12);
+            // make an array with the create function repeated
 
-        // run sequentially
+            var creators = R.times(function()
+            {
+                return fractal.create;
+            }, isDev ? 1 : 1);
 
-        // initial promise
-        var result = Q(); // jshint ignore:line
+            // run sequentially
 
-        R.forEach(function(f)
-        {
-            result = result.then(f);
-        }, creators);
-    }
+            // initial promise
+            var result = Q(); // jshint ignore:line
+
+            R.forEach(function(f)
+            {
+                result = result.then(f);
+            }, creators);
+        }
+    });
+
 }());
