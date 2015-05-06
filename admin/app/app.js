@@ -3,6 +3,6 @@
     {
         "use strict";
 
-        angular.module('functalApp', []);
+        angular.module('functalApp', ['infinite-scroll']);
     }()
 );
