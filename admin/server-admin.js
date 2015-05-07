@@ -55,7 +55,7 @@
             res.write('<title>Functal Admin ({{images.length}})</title>\n');
             res.write('<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css" />\n');
             res.write('<link href="css/base.css" rel="stylesheet" type="text/css" />\n');
-            res.write('<link rel="icon" type="image/png" href="/images/favicon.png">\n');
+            res.write('<link rel="shortcut icon" type="image/png" href="/images/favicon.png">\n');
             res.write('</head>\n');
             // body
             res.write('<body>\n');
