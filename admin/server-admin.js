@@ -53,7 +53,7 @@
             // head
             res.write('<head>\n');
             res.write('<title>Functal Admin ({{images.length}})</title>\n');
-            // res.write('<link rel="icon" type="image/png" href="/images/favicon.png" />\n');
+            res.write('<link rel="icon" type="image/png" href="/images/favicon.png" />\n');
             res.write('<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css" />\n');
             res.write('<link href="css/base.css" rel="stylesheet" type="text/css" />\n');
             res.write('</head>\n');
@@ -125,12 +125,10 @@
         });
 
         // images
-        app.get(/\.(png|jpg|ico)$/, function(req, res)
+        app.get(/\.(png|jpg)$/, function(req, res)
         {
             var uri = url.parse(req.url, true, false);
             var filename = path.join(process.cwd(), uri.pathname);
-
-            console.log(filename);
 
             fs.readFile(filename, "binary", function(err, file)
             {
