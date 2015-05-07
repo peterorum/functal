@@ -7,6 +7,8 @@
         // nohup node server-admin&
 
         var express = require('express');
+        var path = require('path');
+
         var app = express();
         var bodyParser = require("body-parser");
 
@@ -54,9 +56,8 @@
             res.write('<title>Functal Admin ({{images.length}})</title>\n');
             res.write('<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css" />\n');
             res.write('<link href="css/base.css" rel="stylesheet" type="text/css" />\n');
-
+            res.write('<link rel="icon" type="image/png" href="images/favicon.png">');
             res.write('</head>\n');
-
             // body
             res.write('<body>\n');
         };
@@ -124,6 +125,28 @@
             });
         });
 
+        // images
+        app.get(/\.(png|jpg)$/, function(req, res)
+        {
+            var uri = url.parse(req.url, true, false);
+            var filename = path.join(process.cwd(), uri.pathname);
+
+            fs.readFile(filename, "binary", function(err, file)
+            {
+                if (err)
+                {
+                    handleError(res, 404, "Not found " + err);
+                }
+                else
+                {
+                    res.setHeader("Content-Type", "image/" + path.extname(filename).substr(1));
+                    res.writeHead(200);
+                    res.write(file, "binary");
+                    res.end();
+                }
+            });
+        });
+
 
         app.get('/', function(req, res)
         {
@@ -165,7 +188,7 @@
         });
 
         // get images on s3
-        app.get('/images', function(req, res)
+        app.get('/getimages', function(req, res)
         {
             s3.list(bucket).then(function(result)
             {

@@ -8,7 +8,7 @@
             {
                 var getImages = function()
                 {
-                    $http.get('/images').then(function(result)
+                    $http.get('/getimages').then(function(result)
                     {
                         $scope.images = result.data.images;
                     });
@@ -43,7 +43,7 @@
                 {
                     console.log('showmore');
 
-                    $scope.showCount += 2;
+                    $scope.showCount += 4;
                 };
 
                 // reload
