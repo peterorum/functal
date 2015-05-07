@@ -27,8 +27,7 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
-*.png
-*.json
+small/*
 
 *.sublime-project
 *.sublime-workspace
