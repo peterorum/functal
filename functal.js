@@ -803,8 +803,8 @@
 
                 // fail if not enough variation in the image sample
                 ok = (functal.accept &&
-                    // functal.stdDev > functal.minStdDev &&
-                    functal.lightnessStddev > functal.minLightnessStdDev //////////&&
+                    functal.stdDev > functal.minStdDev &&
+                    functal.lightnessStddev > functal.minLightnessStdDev ///&&
                     /////////////////////// functal.uniques > functal.sampleCount
                     );
             }
