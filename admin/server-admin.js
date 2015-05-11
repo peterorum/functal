@@ -160,6 +160,7 @@
 
             res.write('<h1 class="text-center">Functal Admin</h1>');
             res.write('<h2 class="text-center" ng-show="images" ng-bind="images.length + \' functals\'"></h2>');
+            res.write('<h2 class="text-center" ng-show="images"><span ng-show="!isSortAsc" ng-click="sortAsc(true);" class="glyphicon glyphicon-arrow-up"></span><span ng-show="isSortAsc" ng-click="sortAsc(false);" class="glyphicon glyphicon-arrow-down"></span></h2>');
             res.write('<h2 class="text-center" ng-show="!images">loading...</h2>');
 
             res.write('</div>\n');

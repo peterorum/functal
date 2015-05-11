@@ -11,6 +11,11 @@
                     $http.get('/getimages').then(function(result)
                     {
                         $scope.images = result.data.images;
+
+                        if ($scope.isSortAsc)
+                        {
+                            $scope.images.reverse();
+                        }
                     });
                 };
 
@@ -46,6 +51,13 @@
                     $scope.showCount += 4;
                 };
 
+                $scope.sortAsc = function(isAsc)
+                {
+                    $scope.isSortAsc = isAsc;
+
+                    $scope.images.reverse();
+                };
+
                 // reload
 
                 $timeout(function()
@@ -58,6 +70,8 @@
                 $scope.cdn = 'https://d1aienjtp63qx3.cloudfront.net/';
 
                 $scope.showCount = 10;
+
+                $scope.isSortAsc = false;
 
                 getImages();
 
