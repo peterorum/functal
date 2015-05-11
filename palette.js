@@ -42,6 +42,26 @@
         return hsl;
     };
 
+    var interpolateWithBlackLine = function(rgb1, rgb2, gap, i, palette)
+    {
+        var hsl;
+
+        if (i < palette.colors.length / 1000)
+        {
+            hsl = {
+                h: 0,
+                s: 0,
+                l: 0
+            };
+        }
+        else
+        {
+            hsl = interpolateColors(rgb1, rgb2, gap, i);
+        }
+
+        return hsl;
+    };
+
     var solidColors = function(rgb1 /*, rgb2, gap, i*/ )
     {
         // just a single color
@@ -80,6 +100,33 @@
             };
         },
         weight: 500
+    },
+    {
+        // gradient with black line
+
+        name: "black line",
+        fn: function()
+        {
+            var fn = function(palette, hues, index)
+            {
+                var hsl = {
+                    h: Rp.wandom(hues).h,
+                    // brightish
+                    s: Rp.bandom(1, -2),
+                    // alternate bright/dark bands
+                    l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
+                };
+
+                return hsl;
+            };
+
+            return {
+                name: "black line",
+                fn: fn,
+                bandColor: interpolateWithBlackLine
+            };
+        },
+        weight: 25
     },
     {
         // blackness
@@ -295,7 +342,7 @@
 
                 R.times(function(i)
                 {
-                    var hsl = palette.getColor.bandColor(rgb1, rgb2, g.gap, i);
+                    var hsl = palette.getColor.bandColor(rgb1, rgb2, g.gap, i, palette);
 
                     palette.colors.push(hsl);
                 }, g.gap);
