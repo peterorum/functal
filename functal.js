@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.6.0';
+    var version = '1.6.1';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -803,9 +803,10 @@
 
                 // fail if not enough variation in the image sample
                 ok = (functal.accept &&
-                    functal.stdDev > functal.minStdDev &&
-                    functal.lightnessStddev > functal.minLightnessStdDev &&
-                    functal.uniques > functal.sampleCount);
+                    // functal.stdDev > functal.minStdDev &&
+                    functal.lightnessStddev > functal.minLightnessStdDev //////////&&
+                    /////////////////////// functal.uniques > functal.sampleCount
+                    );
             }
             catch (ex)
             {
