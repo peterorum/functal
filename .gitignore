@@ -27,7 +27,7 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
-#functals/small/*
+functals/small/*
 
 *.sublime-project
 *.sublime-workspace
