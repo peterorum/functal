@@ -347,6 +347,8 @@
         functal.modifierParams = [];
         functal.reducers = [];
 
+        var modifierCount = 1 + Rp.bandomInt(10, 1);
+
         functal.modifiers = R.times(function()
         {
             var modifier = Rp.wandom(modifiers.modifiers).fn(functal);
@@ -362,7 +364,7 @@
 
             return modfn;
 
-        }, 1 + Rp.bandomInt(10, 1));
+        }, modifierCount);
 
         var picker = Rp.wandom(pickers.pickers);
 
