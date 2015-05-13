@@ -807,7 +807,7 @@
                 ok = (functal.accept &&
                     functal.stdDev > functal.minStdDev &&
                     functal.lightnessStddev > functal.minLightnessStdDev ///&&
-                    /////////////////////// functal.uniques > functal.sampleCount
+                    // functal.uniques > functal.sampleCount
                     );
             }
             catch (ex)

@@ -723,35 +723,37 @@
         {
             // spiral trap
 
-            name: 'spiralTrap',
+            name: 'spiral trap',
             fn: function(functal)
             {
-                var fn = R.curry(function spiralTrap(bounder, diameter, centre, functal, result)
+                var fn = R.curry(function spiralTrap(bounder, diameter, freq, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
-                        var z1 = math.subtract(z, centre);
+                        var rz = math.norm(z);
 
-                        var theta = math.atan2(z1.im, z1.re); // -pi .. pi
-                        // theta += math.pi;
+                        var theta = math.atan2(z.im, z.re) + math.pi; // -pi .. pi
 
-                        var r = diameter * theta; // / math.pi / 2;
+                        var minDistance = Number.MAX_VALUE;
 
-                        // var spiralPoint = math.complex(r * theta * math.cos(theta), r * theta * math.sin(theta));
-                        var spiralPoint = math.complex(r * math.cos(theta), r * math.sin(theta));
+                        for (var i = 1; i <= freq; i++)
+                        {
+                            var r = diameter * i * theta;
 
-                        var distance = math.norm(math.subtract(z, spiralPoint));
+                            var distance = math.abs(r - rz);
 
-                        return bounder.fn(distance, diameter);
+                            minDistance = math.min(distance, minDistance);
+                        }
+
+                        return bounder.fn(minDistance, diameter);
 
                     }, result.zs);
 
                     return normalize(vals);
                 });
 
-                var diameter = Rp.bandom(functal.limit, -2);
-                var centre = math.complex(math.random(-functal.limit, functal.limit), math.random(-functal.limit, functal.limit));
-
+                var freq = 1 + math.randomInt(8);
+                var diameter = Rp.bandom(functal.limit, 1) / math.pi / 2 / freq;
 
                 var bounder = Rp.wandom(bounders).fn(
                 {
@@ -759,12 +761,12 @@
                 });
 
                 return {
-                    fn: fn(bounder, diameter, centre),
+                    fn: fn(bounder, diameter, freq),
                     params:
                     {
-                        name: 'spiralTrap',
+                        name: 'spiral trap',
                         diameter: diameter,
-                        centre: centre,
+                        freq: freq,
                         bounder: bounder
                     }
 
