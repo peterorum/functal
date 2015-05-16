@@ -169,7 +169,7 @@
             res.write('<div class="panel" ng-repeat="image in images | limitTo : showCount">\n');
             res.write('<div class="row">\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<img style="height:1024px" class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
+            res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
             res.write('</div>\n');
             res.write('<div class="col-xs-12 text-center">\n');
             res.write('<button class="btn btn-primary btn-xl" ng-click="gotoTop()">top</button>\n');
