@@ -58,7 +58,7 @@
             res.write('<link href="css/base.css" rel="stylesheet" type="text/css" />\n');
             res.write('</head>\n');
             // body
-            res.write('<body>\n');
+            res.write('<body id="top">\n');
         };
 
         var htmlEnd = function(res)
@@ -174,7 +174,8 @@
             res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
             res.write('</div>\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<button class="btn btn-danger btn-xl" ng-click="delete(image)">Delete</button>\n');
+            res.write('<button class="btn btn-danger btn-xl" ng-click="delete(image)">delete</button>\n');
+            res.write('<button class="btn btn-primary btn-xl" ng-click="gotoTop()">top</button>\n');
             res.write('</div>\n');
             res.write('</div>\n');
             res.write('</div>\n');

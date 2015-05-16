@@ -676,49 +676,6 @@
             weight: 2,
         },
 
-        {
-            // polar circle trap
-
-            name: 'polar circle trap',
-            fn: function(functal)
-            {
-                var fn = R.curry(function spiralTrap(bounder, r, functal, result)
-                {
-                    var vals = R.map(function(z)
-                    {
-                        var theta = math.atan2(z.im, z.re); // -pi .. pi
-
-                        var spiralPoint = math.complex(r * math.cos(theta), r * math.sin(theta));
-
-                        var distance = math.norm(math.subtract(z, spiralPoint));
-
-                        return bounder.fn(distance, 0);
-
-                    }, result.zs);
-
-                    return normalize(vals);
-                });
-
-                var r = Rp.bandom(functal.limit, -2);
-
-                var bounder = Rp.wandom(bounders).fn(
-                {
-                    maxDistance: r
-                });
-
-                return {
-                    fn: fn(bounder, r),
-                    params:
-                    {
-                        name: 'polar circle trap',
-                        r: r,
-                        bounder: bounder
-                    }
-
-                };
-            },
-            weight: 0.1,
-        },
 
         {
             // spiral trap
@@ -726,23 +683,33 @@
             name: 'spiral trap',
             fn: function(functal)
             {
-                var fn = R.curry(function spiralTrap(bounder, diameter, freq, functal, result)
+                var fn = R.curry(function spiralTrap(bounder, diameter, freq, spirality, functal, result)
                 {
+                    var pi2 = math.pi * 2;
+                    var d2 = diameter / pi2;
+                    var maxGap = diameter / 2;
+
                     var vals = R.map(function(z)
                     {
                         var rz = math.norm(z);
 
-                        var theta = math.atan2(z.im, z.re) + math.pi; // -pi .. pi
+                        var theta = math.atan2(z.im, z.re); // -pi .. pi
+                        var thetaSpirality = theta * spirality;
 
                         var minDistance = Number.MAX_VALUE;
 
-                        for (var i = 1; i <= freq; i++)
+                        for (var f = 0; f < freq; f++)
                         {
-                            var r = diameter * i * theta;
+                            var r = (thetaSpirality + f * pi2) * d2;
 
                             var distance = math.abs(r - rz);
 
                             minDistance = math.min(distance, minDistance);
+
+                            if (minDistance < maxGap)
+                            {
+                                break;
+                            }
                         }
 
                         return bounder.fn(minDistance, diameter);
@@ -752,8 +719,10 @@
                     return normalize(vals);
                 });
 
-                var freq = 1 + math.randomInt(8);
-                var diameter = Rp.bandom(functal.limit, 1) / math.pi / 2 / freq;
+                var freq = 1 + Rp.bandomInt(50, 3);
+                var maxDiameter = Rp.bandom(functal.limit, 1);
+                var diameter = maxDiameter / freq;
+                var spirality = math.randomInt(2); // 0 = concentric circles, 1 = spiral
 
                 var bounder = Rp.wandom(bounders).fn(
                 {
@@ -761,12 +730,13 @@
                 });
 
                 return {
-                    fn: fn(bounder, diameter, freq),
+                    fn: fn(bounder, diameter, freq, spirality),
                     params:
                     {
                         name: 'spiral trap',
                         diameter: diameter,
                         freq: freq,
+                        spirality: spirality,
                         bounder: bounder
                     }
 

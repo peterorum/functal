@@ -3,8 +3,8 @@
     {
         "use strict";
 
-        angular.module('functalApp').controller('FunctalCtrl', ['$scope', '$http', '$window', '$timeout',
-            function($scope, $http, $window, $timeout)
+        angular.module('functalApp').controller('FunctalCtrl', ['$scope', '$http', '$window', '$interval',
+            function($scope, $http, $window, $interval)
             {
                 var getImages = function()
                 {
@@ -44,6 +44,10 @@
 
                 };
 
+                $scope.gotoTop = function()
+                {
+                    $window.location.href = '#top';
+                };
                 $scope.showMore = function()
                 {
                     console.log('showmore');
@@ -60,7 +64,7 @@
 
                 // reload
 
-                $timeout(function()
+                $interval(function()
                 {
                     getImages();
                 }, 5 * 60000);
