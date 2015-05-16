@@ -179,7 +179,7 @@
             res.write('</div>\n');
             res.write('</div>\n');
 
-            res.write('<div infinite-scroll="showMore()">\n');
+            res.write('<div infinite-scroll="showMore()"></div>\n');
 
             // end container
             res.write('</div>\n');
