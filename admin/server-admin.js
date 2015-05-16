@@ -68,10 +68,9 @@
             res.write('<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>\n');
             res.write('<script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.13.0/ramda.min.js"></script>\n');
 
-            res.write('<script src="js/ng-infinite-scroll.min.js"></script>\n');
-
             res.write('<script src="app/app.js"></script>\n');
             res.write('<script src="controllers/functal.js"></script>\n');
+            res.write('<script src="directives/infinite-scroll.js"></script>\n');
 
 
             res.write('</body>\n');
@@ -152,7 +151,7 @@
             htmlHead(res);
 
             // start container
-            res.write('<div class="container ng-cloak" >\n');
+            res.write('<div class="container ng-cloak">\n');
 
             // heading
             res.write('<div class="row">\n');
@@ -167,11 +166,10 @@
             res.write('</div>\n');
 
             // content
-
             res.write('<div class="panel" ng-repeat="image in images | limitTo : showCount">\n');
             res.write('<div class="row">\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
+            res.write('<img style="height:1024px" class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
             res.write('</div>\n');
             res.write('<div class="col-xs-12 text-center">\n');
             res.write('<button class="btn btn-primary btn-xl" ng-click="gotoTop()">top</button>\n');
@@ -181,7 +179,7 @@
             res.write('</div>\n');
             res.write('</div>\n');
 
-            res.write('<div infinite-scroll="showMore()" infinite-scroll-distance="3"></div>\n');
+            res.write('<div infinite-scroll="showMore()">\n');
 
             // end container
             res.write('</div>\n');

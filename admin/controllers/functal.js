@@ -48,11 +48,12 @@
                 {
                     $window.location.href = '#top';
                 };
+
                 $scope.showMore = function()
                 {
-                    console.log('showmore');
-
                     $scope.showCount += 4;
+
+                    console.log('showmore', $scope.showCount);
                 };
 
                 $scope.sortAsc = function(isAsc)
@@ -60,6 +61,8 @@
                     $scope.isSortAsc = isAsc;
 
                     $scope.images.reverse();
+
+                    $scope.showCount = 6;
                 };
 
                 $scope.showJson = function(image)
@@ -81,7 +84,7 @@
                 $scope.cdn = 'https://d1aienjtp63qx3.cloudfront.net/';
                 $scope.s3 = 'https://s3.amazonaws.com/functal-json/';
 
-                $scope.showCount = 10;
+                $scope.showCount = 6;
 
                 $scope.isSortAsc = false;
 
