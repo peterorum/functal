@@ -35,3 +35,5 @@ functals/small/*
 *.heapsnapshot
 
 nohup.out
+
+~$*.xlsx
