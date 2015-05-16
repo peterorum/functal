@@ -202,7 +202,7 @@
         {
             // warm red
             hue: 0 / 12,
-            weight: 100
+            weight: 50
         },
         {
             // orange
@@ -212,27 +212,27 @@
         {
             // yellow
             hue: 2 / 12,
-            weight: 40
+            weight: 50
         },
         {
             // lime green
             hue: 3 / 12,
-            weight: 0
+            weight: 1
         },
         {
             // bright green
             hue: 4 / 12,
-            weight: 0
+            weight: 1
         },
         {
             // light green
             hue: 5 / 12,
-            weight: 0
+            weight: 1
         },
         {
             // cyan
             hue: 6 / 12,
-            weight: 40,
+            weight: 10,
         },
         {
             // cool blue
@@ -242,12 +242,12 @@
         {
             // warm blue
             hue: 8 / 12,
-            weight: 40
+            weight: 80
         },
         {
             // violet
             hue: 9 / 12,
-            weight: 1
+            weight: 0.1
         },
         {
             // magenta
@@ -263,8 +263,8 @@
         do {
             palette.colors = [];
 
-            // set the number of differnet colors to use
-            palette.numColors = 2 + Rp.bandomInt(15, -2);
+            // set the number of different colors to use
+            palette.numColors = 2 + Rp.bandomInt(24, -2);
 
             // allocate a different amount of each color
             var weights = math.random([palette.numColors]);
@@ -279,7 +279,17 @@
             var hues = [];
 
             var hue = Rp.wandom(wues).hue;
-            hue = math.mod(hue + math.random(-0.25, 0.25) / 12, 1);
+
+            var hueFrom = -0.5;
+            var hueTo = 0.5;
+
+            // stop bad yellows, purples
+            if (hue === 2 / 12 || hue === 8 / 12)
+            {
+                hueTo = 0;
+            }
+
+            hue = math.mod(hue + math.random(hueFrom, hueTo) / 12, 1);
 
             palette.mainHue = hue * 12;
 
