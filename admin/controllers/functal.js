@@ -62,6 +62,13 @@
                     $scope.images.reverse();
                 };
 
+                $scope.showJson = function(image)
+                {
+                    var url = $scope.s3 + image.replace(/\.(png|jpg)$/, '.json');
+
+                    $window.open(url);
+                };
+
                 // reload
 
                 $interval(function()
@@ -72,6 +79,7 @@
                 // init
 
                 $scope.cdn = 'https://d1aienjtp63qx3.cloudfront.net/';
+                $scope.s3 = 'https://s3.amazonaws.com/functal-json/';
 
                 $scope.showCount = 10;
 

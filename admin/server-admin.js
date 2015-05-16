@@ -174,8 +174,9 @@
             res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
             res.write('</div>\n');
             res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<button class="btn btn-danger btn-xl" ng-click="delete(image)">delete</button>\n');
             res.write('<button class="btn btn-primary btn-xl" ng-click="gotoTop()">top</button>\n');
+            res.write('<button class="btn btn-info btn-xl" ng-click="showJson(image)">json</button>\n');
+            res.write('<button class="btn btn-danger btn-xl" ng-click="delete(image)">delete</button>\n');
             res.write('</div>\n');
             res.write('</div>\n');
             res.write('</div>\n');
