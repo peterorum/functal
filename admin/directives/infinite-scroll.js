@@ -22,7 +22,7 @@
                         {
                             // fire event when top of div reaches bottom of visible page
 
-                            if ($(element).position().top - $($window).scrollTop() - $($document)[0].body.clientHeight <= 0)
+                            if ($(element).position().top - $($window).scrollTop() - $($document)[0].body.clientHeight <= $($document)[0].body.clientHeight)
                             {
                                 scope.infiniteScroll();
                                 scope.$apply();
