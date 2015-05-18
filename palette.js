@@ -42,6 +42,16 @@
         return hsl;
     };
 
+    var canBeDarkened = function(hue)
+    {
+        var h = hue * 12;
+
+        // not yellow
+        var ok =  (h < 1.5 && h > 2.5);
+
+        return ok;
+    };
+
     var interpolateWithBlackLine = function(rgb1, rgb2, gap, i, palette)
     {
         var hsl;
@@ -82,12 +92,14 @@
         {
             var fn = function(palette, hues, index)
             {
+                var hue = Rp.wandom(hues).h;
+
                 var hsl = {
-                    h: Rp.wandom(hues).h,
+                    h: hue,
                     // brightish
                     s: Rp.bandom(1, -2),
                     // alternate bright/dark bands
-                    l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
+                    l: Rp.bandom(1, (index % 2 && canBeDarkened(hue)) ? palette.contrast : -palette.contrast)
                 };
 
                 return hsl;
