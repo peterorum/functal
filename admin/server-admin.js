@@ -32,159 +32,36 @@
 
         http.createServer(app).listen(process.env.PORT || 8083);
 
-        var handleError = function(res, errNo, err)
+        var sendFile = function(res, filename)
         {
-            res.writeHead(errNo,
-            {
-                "Content-Type": "text/plain"
-            });
-            res.write(errNo + " " + err + "\n");
-            res.end();
-            return;
-        };
+            var filepath = path.join(process.cwd(), filename);
 
-        var htmlHead = function(res)
-        {
-            res.setHeader("Content-Type", "text/html");
-            res.writeHead(200);
-
-            res.write('<html ng-app="functalApp" ng-controller="FunctalCtrl">\n');
-
-            // head
-            res.write('<head>\n');
-            res.write('<title>Functal Admin ({{images.length}})</title>\n');
-            res.write('<link rel="icon" type="image/png" href="/images/favicon.png" />\n');
-            res.write('<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet" type="text/css" />\n');
-            res.write('<link href="css/base.css" rel="stylesheet" type="text/css" />\n');
-            res.write('</head>\n');
-            // body
-            res.write('<body id="top">\n');
-        };
-
-        var htmlEnd = function(res)
-        {
-
-            res.write('<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>\n');
-            res.write('<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>\n');
-            res.write('<script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.13.0/ramda.min.js"></script>\n');
-
-            res.write('<script src="app/app.js"></script>\n');
-            res.write('<script src="controllers/functal.js"></script>\n');
-            res.write('<script src="directives/infinite-scroll.js"></script>\n');
-
-
-            res.write('</body>\n');
-
-            // end
-            res.end('</html>\n');
-        };
-
-        // javascript files
-        app.get(/\.js$/, function(req, res)
-        {
-            var uri = url.parse(req.url, true, false);
-            var filename = path.join(process.cwd(), uri.pathname);
-
-            fs.readFile(filename, "binary", function(err, file)
+            res.sendFile(filepath, function(err)
             {
                 if (err)
                 {
-                    handleError(res, 404, "Not found " + err);
+                    console.log(err);
+                    res.status(err.status).end();
                 }
                 else
                 {
-                    res.setHeader("Content-Type", "application/javascript");
-                    res.writeHead(200);
-                    res.write(file, "binary");
-                    res.end();
+                    // console.log('Sent:', filename);
                 }
             });
-        });
+        };
 
-        // css files
-        app.get(/\.css$/, function(req, res)
+        // files
+        app.get(/\.(js|css|png|jpg|html)$/, function(req, res)
         {
             var uri = url.parse(req.url, true, false);
-            var filename = path.join(process.cwd(), uri.pathname);
 
-            fs.readFile(filename, "binary", function(err, file)
-            {
-                if (err)
-                {
-                    handleError(res, 404, "Not found " + err);
-                }
-                else
-                {
-                    res.setHeader("Content-Type", "text/css");
-                    res.writeHead(200);
-                    res.write(file, "binary");
-                    res.end();
-                }
-            });
+            sendFile(res, uri.pathname);
         });
 
-        // images
-        app.get(/\.(png|jpg)$/, function(req, res)
-        {
-            var uri = url.parse(req.url, true, false);
-            var filename = path.join(process.cwd(), uri.pathname);
-
-            fs.readFile(filename, "binary", function(err, file)
-            {
-                if (err)
-                {
-                    handleError(res, 404, "Not found " + err);
-                }
-                else
-                {
-                    res.setHeader("Content-Type", "image/" + path.extname(filename).substr(1));
-                    res.writeHead(200);
-                    res.write(file, "binary");
-                    res.end();
-                }
-            });
-        });
-
-
+        // home page
         app.get('/', function(req, res)
         {
-            htmlHead(res);
-
-            // start container
-            res.write('<div class="container ng-cloak">\n');
-
-            // heading
-            res.write('<div class="row">\n');
-            res.write('<div class="col-xs-12">\n');
-
-            res.write('<h1 class="text-center">Functal Admin</h1>');
-            res.write('<h2 class="text-center" ng-show="images" ng-bind="images.length + \' functals\'"></h2>');
-            res.write('<h2 class="text-center" ng-show="images"><span ng-show="!isSortAsc" ng-click="sortAsc(true);" class="glyphicon glyphicon-arrow-up"></span><span ng-show="isSortAsc" ng-click="sortAsc(false);" class="glyphicon glyphicon-arrow-down"></span></h2>');
-            res.write('<h2 class="text-center" ng-show="!images">loading...</h2>');
-
-            res.write('</div>\n');
-            res.write('</div>\n');
-
-            // content
-            res.write('<div class="panel" ng-repeat="image in images | limitTo : showCount">\n');
-            res.write('<div class="row">\n');
-            res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<img class="img-responsive" ng-src="{{cdn}}{{image}}"/>\n');
-            res.write('</div>\n');
-            res.write('<div class="col-xs-12 text-center">\n');
-            res.write('<button class="btn btn-primary btn-xl" ng-click="gotoTop()">top</button>\n');
-            res.write('<button class="btn btn-info btn-xl" ng-click="showJson(image)">json</button>\n');
-            res.write('<button class="btn btn-danger btn-xl" ng-click="delete(image)">delete</button>\n');
-            res.write('</div>\n');
-            res.write('</div>\n');
-            res.write('</div>\n');
-
-            res.write('<div infinite-scroll="showMore()"></div>\n');
-
-            // end container
-            res.write('</div>\n');
-
-            htmlEnd(res);
+            sendFile(res, '/views/index.html');
         });
 
         // get images on s3
