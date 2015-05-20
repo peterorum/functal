@@ -22,7 +22,6 @@
         var http = require('http');
         var url = require('url');
         var path = require('path');
-        var fs = require('fs');
         var R = require('ramda');
 
         var s3 = require('../s3client');
