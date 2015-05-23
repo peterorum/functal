@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.7.1';
+    var version = '1.7.2';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -293,7 +293,7 @@
         };
 
         functal.minStdDev = options.minStdDev();
-        functal.minLightnessStdDev = options.minLightnessStdDev();
+        functal.minHslStdDev = options.minHslStdDev();
         functal.z = options.set.z;
         functal.c = options.set.c;
 
@@ -570,11 +570,11 @@
             },
             minStdDev: function()
             {
-                return 0.01;
+                return 0.001;
             },
-            minLightnessStdDev: function()
+            minHslStdDev: function()
             {
-                return 0.25;
+                return pal.getMinHslStdDevs();
             },
             pow: function()
             {
@@ -812,11 +812,19 @@
                 functal = fractal.calcVariation(options, palette);
 
                 // fail if not enough variation in the image sample
-                ok = (functal.accept &&
+
+                ok = functal.accept &&
+                    functal.hslStdDev.l > functal.minHslStdDev.l &&
                     functal.stdDev > functal.minStdDev &&
-                    functal.hslStdDev.l > functal.minLightnessStdDev ///&&
-                    // functal.uniques > functal.sampleCount
-                    );
+                    functal.uniques > functal.sampleCount;
+
+
+                //     ok = (functal.accept &&
+                //         functal.stdDev > functal.minStdDev &&
+                //         functal.hslStdDev.h > functal.minHslStdDev.h &&
+                //         functal.hslStdDev.l > functal.minHslStdDev.l ///&&
+                //         // functal.uniques > functal.sampleCount
+                //         );
             }
             catch (ex)
             {
@@ -834,7 +842,7 @@
 
         } while (!ok);
 
-        console.log('attempts', attempts);
+        functal.attempts = attempts;
 
         // make full fractal
 

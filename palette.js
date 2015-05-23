@@ -8,6 +8,13 @@
     var R = require('ramda');
     var Rp = require('./plus-fp/plus-fp');
 
+    var minHslStdDevs =
+    {
+        h: 0.08,
+        s: 0,
+        l: 0.25
+    };
+
     // find the index of the lightest color
 
     var findLighestIndex = function(palette)
@@ -42,7 +49,7 @@
         return hsl;
     };
 
-    var canBeDarkened = function(hue)
+    var canBeDulled = function(hue)
     {
         var h = hue * 12;
 
@@ -54,16 +61,32 @@
 
     var getLightness = function(index, hue, contrast)
     {
+        // alternate bright/dark bands
         var l = Rp.bandom(1, (index % 2) ? contrast : -contrast);
 
         // 0..1
 
-        if (!canBeDarkened(hue))
+        if (!canBeDulled(hue))
         {
             l = l / 2 + 0.5; // 0.5 .. 1
         }
 
         return l;
+    };
+
+    var getSaturation = function(hue)
+    {
+        // brightish
+        var s = Rp.bandom(1, -2);
+
+        // 0..1
+
+        if (!canBeDulled(hue))
+        {
+            s = s / 2 + 0.5; // 0.5 .. 1
+        }
+
+        return s;
     };
 
     var interpolateWithBlackLine = function(rgb1, rgb2, gap, i, palette)
@@ -110,9 +133,7 @@
 
                 var hsl = {
                     h: hue,
-                    // brightish
-                    s: Rp.bandom(1, -2),
-                    // alternate bright/dark bands
+                    s: getSaturation(hue),
                     l: getLightness(index, hue, palette.contrast)
                 };
 
@@ -208,7 +229,7 @@
             };
         },
 
-        weight: 1
+        weight: 0.1
     }];
 
     // ------------ make color palette
@@ -319,7 +340,7 @@
             hues.push(
             {
                 h: hue,
-                weight: 200
+                weight: 100
             });
 
             // adjacent
@@ -398,7 +419,7 @@
                 }, palette.colors));
             }, hslkeys));
 
-            ok = palette.stdDev.l > 0.2;
+            ok = palette.stdDev.h > minHslStdDevs.h && palette.stdDev.l > minHslStdDevs.l;
 
         }
         while (!ok);
@@ -417,6 +438,11 @@
             var index = exports.getColorIndex(palette.size, color) + offset;
 
             return palette.colors[math.mod(index, palette.size)];
+        };
+
+        exports.getMinHslStdDevs = function()
+        {
+            return minHslStdDevs;
         };
 
         palette.lightestIndex = findLighestIndex(palette.colors);
