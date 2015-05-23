@@ -224,7 +224,7 @@
         {
             // yellow
             hue: 2 / 12,
-            weight: 50
+            weight: 5
         },
         {
             // lime green
