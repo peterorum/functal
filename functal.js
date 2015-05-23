@@ -428,13 +428,23 @@
 
             var hslkeys = R.keys(hsls[0]); // h s l
 
-            functal.hslStdDev = R.zipObj(hslkeys, R.map(function(p)
+            var statFns = ['std', 'mean', 'min', 'max'];
+
+            functal.hslStats = {};
+
+            R.forEach(function(statFn)
             {
-                return math.std(R.map(function(hsl)
-                {
-                    return hsl[p];
-                }, hsls));
-            }, hslkeys));
+                functal.hslStats[statFn] =
+
+                    R.zipObj(hslkeys, R.map(function(p)
+                    {
+                        return math[statFn](R.map(function(hsl)
+                        {
+                            return hsl[p];
+                        }, hsls));
+                    }, hslkeys));
+
+            }, statFns);
 
             functal.uniques = R.uniq(R.pluck('l', hsls)).length;
         }
@@ -570,7 +580,7 @@
             },
             minStdDev: function()
             {
-                return 0.001;
+                return 0.004;
             },
             minHslStdDev: function()
             {
@@ -814,7 +824,7 @@
                 // fail if not enough variation in the image sample
 
                 ok = functal.accept &&
-                    functal.hslStdDev.l > functal.minHslStdDev.l &&
+                    functal.hslStats.std.l > functal.minHslStdDev.l &&
                     functal.stdDev > functal.minStdDev &&
                     functal.uniques > functal.sampleCount;
 
