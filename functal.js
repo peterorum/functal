@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.7.2';
+    var version = '1.7.3';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -147,7 +147,7 @@
 
     fractal.setLayerOffsets = function(functal, palette)
     {
-        // determine palette offsets for each layer such that th elighest point is always at the golden mean position.
+        // determine palette offsets for each layer such that the desired point is always at the golden mean position.
         // at this point, want index + offset = lightest
 
         var goldenMeanx = functal.range.x1 + (1 - 0.618033989) * (functal.range.x2 - functal.range.x1);
@@ -293,7 +293,7 @@
         };
 
         functal.minStdDev = options.minStdDev();
-        functal.minHslStdDev = options.minHslStdDev();
+        functal.minHslStats = options.minHslStats();
         functal.z = options.set.z;
         functal.c = options.set.c;
 
@@ -423,12 +423,19 @@
             // calc h s l std dev
             var hsls = R.map(function(d)
             {
-                return clr.rgb2hsl(d.rgb);
+                var hsli = clr.rgb2hsl(d.rgb);
+
+                // intensity (max sat at 0.5 l)
+                var il = 1 - 2 * math.abs(0.5 - hsli.l); // 0.5 = 1, 0,1 = 0
+                hsli.i = il * hsli.s;
+
+                return hsli;
+
             }, flatData);
 
-            var hslkeys = R.keys(hsls[0]); // h s l
+            var hslkeys = ['h', 's', 'l', 'i'];
 
-            var statFns = ['std', 'mean', 'min', 'max'];
+            var statFns = ['std', 'mean', 'median', 'min', 'max'];
 
             functal.hslStats = {};
 
@@ -438,11 +445,15 @@
 
                     R.zipObj(hslkeys, R.map(function(p)
                     {
-                        return math[statFn](R.map(function(hsl)
+                        var x = math[statFn](R.map(function(hsl)
                         {
                             return hsl[p];
                         }, hsls));
+
+                        return math.round(x, 3);
+
                     }, hslkeys));
+
 
             }, statFns);
 
@@ -582,9 +593,9 @@
             {
                 return 0.004;
             },
-            minHslStdDev: function()
+            minHslStats: function()
             {
-                return pal.getMinHslStdDevs();
+                return pal.getExpectedHslStats();
             },
             pow: function()
             {
@@ -824,10 +835,10 @@
                 // fail if not enough variation in the image sample
 
                 ok = functal.accept &&
-                    functal.hslStats.std.l > functal.minHslStdDev.l &&
                     functal.stdDev > functal.minStdDev &&
+                    functal.hslStats.std.l > functal.minHslStats.stdDev.l &&
+                    functal.hslStats.max.i > functal.minHslStats.max.i &&
                     functal.uniques > functal.sampleCount;
-
 
                 //     ok = (functal.accept &&
                 //         functal.stdDev > functal.minStdDev &&

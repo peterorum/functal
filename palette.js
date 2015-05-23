@@ -8,11 +8,17 @@
     var R = require('ramda');
     var Rp = require('./plus-fp/plus-fp');
 
-    var minHslStdDevs =
-    {
-        h: 0.08,
-        s: 0,
-        l: 0.25
+    var minHslStats = {
+        stdDev:
+        {
+            h: 0.08,
+            s: 0,
+            l: 0.25
+        },
+        max:
+        {
+            i: 0.5 // intensity
+        }
     };
 
     // find the index of the lightest color
@@ -419,7 +425,19 @@
                 }, palette.colors));
             }, hslkeys));
 
-            ok = palette.stdDev.h > minHslStdDevs.h && palette.stdDev.l > minHslStdDevs.l;
+            palette.maxIntensity = math.max(
+                R.map(function(c)
+                {
+                    var il = 1 - 2 * math.abs(0.5 - c.l); // 0.5 = 1, 0,1 = 0
+
+                    return il * c.s;
+
+                }, palette.colors)
+            );
+
+            ok = palette.stdDev.h > minHslStats.stdDev.h &&
+                palette.stdDev.l > minHslStats.stdDev.l &&
+                palette.maxIntensity > minHslStats.max.i;
 
         }
         while (!ok);
@@ -440,9 +458,9 @@
             return palette.colors[math.mod(index, palette.size)];
         };
 
-        exports.getMinHslStdDevs = function()
+        exports.getExpectedHslStats = function()
         {
-            return minHslStdDevs;
+            return minHslStats;
         };
 
         palette.lightestIndex = findLighestIndex(palette.colors);
