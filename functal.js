@@ -37,7 +37,7 @@
 
     var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
-    var functalsFolder = 'functals'; // isDev ? 'functals' : process.env.HOME + '/Dropbox/functals';
+    var functalsFolder = 'functals';
 
     //----------- fractal functions
 
@@ -291,6 +291,7 @@
             name: options.set.name,
             params: options.set.params()
         };
+
         functal.minStdDev = options.minStdDev();
         functal.minLightnessStdDev = options.minLightnessStdDev();
         functal.z = options.set.z;
@@ -419,16 +420,23 @@
             // store in object to facilitate dumping
             functal.stdDev = math.std(escapes);
 
-            // analyze lightness
-            var ls = R.map(function(d)
+            // calc h s l std dev
+            var hsls = R.map(function(d)
             {
-                return clr.rgb2hsl(d.rgb).l;
+                return clr.rgb2hsl(d.rgb);
             }, flatData);
 
-            var lightnessStddev = math.std(ls);
+            var hslkeys = R.keys(hsls[0]); // h s l
 
-            functal.lightnessStddev = lightnessStddev;
-            functal.uniques = R.uniq(ls).length;
+            functal.hslStdDev = R.zipObj(hslkeys, R.map(function(p)
+            {
+                return math.std(R.map(function(hsl)
+                {
+                    return hsl[p];
+                }, hsls));
+            }, hslkeys));
+
+            functal.uniques = R.uniq(R.pluck('l', hsls)).length;
         }
 
         return functal;
@@ -806,7 +814,7 @@
                 // fail if not enough variation in the image sample
                 ok = (functal.accept &&
                     functal.stdDev > functal.minStdDev &&
-                    functal.lightnessStddev > functal.minLightnessStdDev ///&&
+                    functal.hslStdDev.l > functal.minLightnessStdDev ///&&
                     // functal.uniques > functal.sampleCount
                     );
             }

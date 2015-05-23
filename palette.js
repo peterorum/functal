@@ -47,9 +47,23 @@
         var h = hue * 12;
 
         // not yellow
-        var ok =  (h < 1.5 && h > 2.5);
+        var ok = (h < 1.5 && h > 2.5);
 
         return ok;
+    };
+
+    var getLightness = function(index, hue, contrast)
+    {
+        var l = Rp.bandom(1, (index % 2) ? contrast : -contrast);
+
+        // 0..1
+
+        if (!canBeDarkened(hue))
+        {
+            l = l / 2 + 0.5; // 0.5 .. 1
+        }
+
+        return l;
     };
 
     var interpolateWithBlackLine = function(rgb1, rgb2, gap, i, palette)
@@ -99,7 +113,7 @@
                     // brightish
                     s: Rp.bandom(1, -2),
                     // alternate bright/dark bands
-                    l: Rp.bandom(1, (index % 2 && canBeDarkened(hue)) ? palette.contrast : -palette.contrast)
+                    l: getLightness(index, hue, palette.contrast)
                 };
 
                 return hsl;
@@ -295,12 +309,6 @@
             var hueFrom = -0.5;
             var hueTo = 0.5;
 
-            // stop bad yellows, purples
-            if (hue === 2 / 12 || hue === 8 / 12)
-            {
-                hueTo = 0;
-            }
-
             hue = math.mod(hue + math.random(hueFrom, hueTo) / 12, 1);
 
             palette.mainHue = hue * 12;
@@ -313,21 +321,27 @@
                 h: hue,
                 weight: 200
             });
+
+            // adjacent
             hues.push(
             {
                 h: math.mod(hue - 1 * d, 1),
                 weight: 25
-            }); // adjacent
+            });
+
+            // adjacent
             hues.push(
             {
                 h: math.mod(hue + 1 * d, 1),
                 weight: 25
-            }); // adjacent
+            });
+
+            // complement
             hues.push(
             {
                 h: math.mod(hue + 6 * d, 1),
                 weight: 50
-            }); // complement
+            });
 
             // calc how many palette entries each color will have, and set a random color for this gap
 
@@ -371,13 +385,20 @@
 
             }, gaps);
 
-            // calc lightness std dev
-            palette.stdDevL = math.std(R.map(function(p)
-            {
-                return p.l;
-            }, palette.colors));
+            palette.stdDev = {};
 
-            ok = palette.stdDevL > 0.2;
+            // calc std dev of h s & l
+            var hslkeys = R.keys(palette.colors[0]); // h s l
+
+            palette.stdDev = R.zipObj(hslkeys, R.map(function(p)
+            {
+                return math.std(R.map(function(hsl)
+                {
+                    return hsl[p];
+                }, palette.colors));
+            }, hslkeys));
+
+            ok = palette.stdDev.l > 0.2;
 
         }
         while (!ok);
