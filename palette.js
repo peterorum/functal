@@ -9,16 +9,59 @@
     var Rp = require('./plus-fp/plus-fp');
 
     var minHslStats = {
-        stdDev:
+        h:
         {
-            h: 0.08,
-            s: 0,
-            l: 0.25
+            std: 0.08
         },
-        max:
+        s:
         {
-            i: 0.5 // intensity
+            std: 0
+        },
+        l:
+        {
+            std: 0.15
+        },
+        i: // intensity
+        {
+            max: 0.5
         }
+    };
+
+    var getIntensity = function(hsl)
+    {
+        // intensity (max sat at 0.5 l)
+        var il = 1 - 2 * math.abs(0.5 - hsl.l); // 0.5 = 1, 0,1 = 0
+        return il * hsl.s;
+    };
+
+    var calcHslStats = function(hsls)
+    {
+
+        var hslkeys = ['h', 's', 'l', 'i'];
+
+        var statFns = ['std', 'mean', 'median', 'min', 'max'];
+
+        var hslStats = {};
+
+        R.forEach(function(hslkey)
+        {
+            hslStats[hslkey] =
+
+                R.zipObj(statFns, R.map(function(statFn)
+                {
+                    var x = math[statFn](R.map(function(hsl)
+                    {
+                        return hsl[hslkey];
+                    }, hsls));
+
+                    return math.round(x, 3);
+
+                }, statFns));
+
+
+        }, hslkeys);
+
+        return hslStats;
     };
 
     // find the index of the lightest color
@@ -60,7 +103,7 @@
         var h = hue * 12;
 
         // not yellow
-        var ok = (h < 1.5 && h > 2.5);
+        var ok = (h < 1.5 || h > 2.5);
 
         return ok;
     };
@@ -162,12 +205,12 @@
         {
             var fn = function(palette, hues, index)
             {
+                var hue = Rp.wandom(hues).h;
+
                 var hsl = {
-                    h: Rp.wandom(hues).h,
-                    // brightish
-                    s: Rp.bandom(1, -2),
-                    // alternate bright/dark bands
-                    l: Rp.bandom(1, index % 2 ? palette.contrast : -palette.contrast)
+                    h: hue,
+                    s: getSaturation(hue),
+                    l: getLightness(index, hue, palette.contrast)
                 };
 
                 return hsl;
@@ -407,37 +450,18 @@
                 {
                     var hsl = palette.getColor.bandColor(rgb1, rgb2, g.gap, i, palette);
 
+                    hsl.i = getIntensity(hsl);
+
                     palette.colors.push(hsl);
                 }, g.gap);
 
             }, gaps);
 
-            palette.stdDev = {};
+            palette.hslStats = calcHslStats(palette.colors);
 
-            // calc std dev of h s & l
-            var hslkeys = R.keys(palette.colors[0]); // h s l
-
-            palette.stdDev = R.zipObj(hslkeys, R.map(function(p)
-            {
-                return math.std(R.map(function(hsl)
-                {
-                    return hsl[p];
-                }, palette.colors));
-            }, hslkeys));
-
-            palette.maxIntensity = math.max(
-                R.map(function(c)
-                {
-                    var il = 1 - 2 * math.abs(0.5 - c.l); // 0.5 = 1, 0,1 = 0
-
-                    return il * c.s;
-
-                }, palette.colors)
-            );
-
-            ok = palette.stdDev.h > minHslStats.stdDev.h &&
-                palette.stdDev.l > minHslStats.stdDev.l &&
-                palette.maxIntensity > minHslStats.max.i;
+            ok = palette.hslStats.h.std > minHslStats.h.std &&
+                palette.hslStats.l.std > minHslStats.l.std &&
+                palette.hslStats.i.max > minHslStats.i.max;
 
         }
         while (!ok);
@@ -462,6 +486,9 @@
         {
             return minHslStats;
         };
+
+        exports.getIntensity = getIntensity;
+        exports.calcHslStats = calcHslStats;
 
         palette.lightestIndex = findLighestIndex(palette.colors);
 

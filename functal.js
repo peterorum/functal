@@ -423,39 +423,15 @@
             // calc h s l std dev
             var hsls = R.map(function(d)
             {
-                var hsli = clr.rgb2hsl(d.rgb);
+                var hsl = clr.rgb2hsl(d.rgb);
 
-                // intensity (max sat at 0.5 l)
-                var il = 1 - 2 * math.abs(0.5 - hsli.l); // 0.5 = 1, 0,1 = 0
-                hsli.i = il * hsli.s;
+                hsl.i = pal.getIntensity(hsl);
 
-                return hsli;
+                return hsl;
 
             }, flatData);
 
-            var hslkeys = ['h', 's', 'l', 'i'];
-
-            var statFns = ['std', 'mean', 'median', 'min', 'max'];
-
-            functal.hslStats = {};
-
-            R.forEach(function(statFn)
-            {
-                functal.hslStats[statFn] =
-
-                    R.zipObj(hslkeys, R.map(function(p)
-                    {
-                        var x = math[statFn](R.map(function(hsl)
-                        {
-                            return hsl[p];
-                        }, hsls));
-
-                        return math.round(x, 3);
-
-                    }, hslkeys));
-
-
-            }, statFns);
+            functal.hslStats = pal.calcHslStats(hsls);
 
             functal.uniques = R.uniq(R.pluck('l', hsls)).length;
         }
@@ -836,8 +812,8 @@
 
                 ok = functal.accept &&
                     functal.stdDev > functal.minStdDev &&
-                    functal.hslStats.std.l > functal.minHslStats.stdDev.l &&
-                    functal.hslStats.max.i > functal.minHslStats.max.i &&
+                    functal.hslStats.l.std > functal.minHslStats.l.std &&
+                    functal.hslStats.i.max > functal.minHslStats.i.max &&
                     functal.uniques > functal.sampleCount;
 
                 //     ok = (functal.accept &&
