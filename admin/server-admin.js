@@ -73,7 +73,7 @@
                 var images = R.pluck('Key', result.files);
                 images = R.reverse(images);
 
-                res.json(
+                res.jsonp(
                 {
                     images: images
                 });

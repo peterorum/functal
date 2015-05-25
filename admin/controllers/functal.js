@@ -8,7 +8,7 @@
             {
                 var getImages = function()
                 {
-                    $http.get('/getimages').then(function(result)
+                    $http.jsonp('/getimages?callback=JSON_CALLBACK').then(function(result)
                     {
                         $scope.images = result.data.images;
 
