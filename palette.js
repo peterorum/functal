@@ -313,17 +313,17 @@
         {
             // lime green
             hue: 3 / 12,
-            weight: 1
+            weight: 0
         },
         {
             // bright green
             hue: 4 / 12,
-            weight: 1
+            weight: 0
         },
         {
             // light green
             hue: 5 / 12,
-            weight: 1
+            weight: 0
         },
         {
             // cyan
@@ -338,7 +338,7 @@
         {
             // warm blue
             hue: 8 / 12,
-            weight: 80
+            weight: 1
         },
         {
             // violet
@@ -374,12 +374,18 @@
             // analogous complementray color scheme (adjacents & complemt)
             var hues = [];
 
-            var hue = Rp.wandom(wues).hue;
+            var baseHue = Rp.wandom(wues).hue;
 
             var hueFrom = -0.5;
             var hueTo = 0.5;
 
-            hue = math.mod(hue + math.random(hueFrom, hueTo) / 12, 1);
+            // no cool yellow
+            if (baseHue === 2)
+            {
+                hueTo = 0;
+            }
+
+            var hue = math.mod(baseHue + math.random(hueFrom, hueTo) / 12, 1);
 
             palette.mainHue = hue * 12;
 
@@ -400,11 +406,15 @@
             });
 
             // adjacent
-            hues.push(
+
+            if (baseHue !== 2)
             {
-                h: math.mod(hue + 1 * d, 1),
-                weight: 25
-            });
+                hues.push(
+                {
+                    h: math.mod(hue + 1 * d, 1),
+                    weight: 25
+                });
+            }
 
             // complement
             hues.push(
