@@ -34,6 +34,45 @@
         return il * hsl.s;
     };
 
+    var makeAcceptable = function(hsl)
+    {
+        // subjective modifications to colors
+
+
+        var h = hsl.h * 12;
+        var s = hsl.s;
+        var l = hsl.l;
+
+        // no lime yellow
+        if (h >= 22 && h < 48)
+        {
+            // translate to warm yellow
+            h = 12 + 10 * (h - 22) / (48 - 22);
+        }
+
+        // darken greens
+
+        if (h >= 48 && h < 72)
+        {
+            l /= 2;
+        }
+
+        // really darken pinks
+
+        if (h >= 162 && h < 204)
+        {
+            l /= 4;
+        }
+
+        var hsl2 = {
+            h: h / 12,
+            l: l,
+            s: s
+        };
+
+        return hsl2;
+    };
+
     var calcHslStats = function(hsls)
     {
 
@@ -98,42 +137,18 @@
         return hsl;
     };
 
-    var canBeDulled = function(hue)
-    {
-        var h = hue * 12;
-
-        // not yellow
-        var ok = (h < 1.5 || h > 2.5);
-
-        return ok;
-    };
-
     var getLightness = function(index, hue, contrast)
     {
         // alternate bright/dark bands
         var l = Rp.bandom(1, (index % 2) ? contrast : -contrast);
 
-        // 0..1
-
-        if (!canBeDulled(hue))
-        {
-            l = l / 2 + 0.5; // 0.5 .. 1
-        }
-
         return l;
     };
 
-    var getSaturation = function(hue)
+    var getSaturation = function( /*hue*/ )
     {
         // brightish
         var s = Rp.bandom(1, -2);
-
-        // 0..1
-
-        if (!canBeDulled(hue))
-        {
-            s = s / 2 + 0.5; // 0.5 .. 1
-        }
 
         return s;
     };
@@ -308,22 +323,22 @@
         {
             // yellow
             hue: 2 / 12,
-            weight: 5
+            weight: 50
         },
         {
             // lime green
             hue: 3 / 12,
-            weight: 0
+            weight: 1
         },
         {
             // bright green
             hue: 4 / 12,
-            weight: 0
+            weight: 1
         },
         {
             // light green
             hue: 5 / 12,
-            weight: 0
+            weight: 1
         },
         {
             // cyan
@@ -338,22 +353,22 @@
         {
             // warm blue
             hue: 8 / 12,
-            weight: 1
+            weight: 40
         },
         {
             // violet
             hue: 9 / 12,
-            weight: 0.1
+            weight: 1
         },
         {
             // magenta
             hue: 10 / 12,
-            weight: 0
+            weight: 1
         },
         {
             // cool red
             hue: 11 / 12,
-            weight: 0.5
+            weight: 10
         }];
 
         do {
@@ -379,12 +394,6 @@
             var hueFrom = -0.5;
             var hueTo = 0.5;
 
-            // no cool yellow
-            if (baseHue === 2)
-            {
-                hueTo = 0;
-            }
-
             var hue = math.mod(baseHue + math.random(hueFrom, hueTo) / 12, 1);
 
             palette.mainHue = hue * 12;
@@ -407,14 +416,11 @@
 
             // adjacent
 
-            if (baseHue !== 2)
-            {
                 hues.push(
                 {
                     h: math.mod(hue + 1 * d, 1),
                     weight: 25
                 });
-            }
 
             // complement
             hues.push(
@@ -459,6 +465,8 @@
                 R.times(function(i)
                 {
                     var hsl = palette.getColor.bandColor(rgb1, rgb2, g.gap, i, palette);
+
+                    hsl = makeAcceptable(hsl);
 
                     hsl.i = getIntensity(hsl);
 
