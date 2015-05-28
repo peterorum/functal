@@ -73,6 +73,108 @@
         return hsl2;
     };
 
+    var schemes = [
+        {
+            fn: function()
+            {
+                return {
+                    name: "analagous complimentary",
+                    fn: function(hue, hues)
+                    {
+                        // delta to next hue
+                        var d = 1 / 12;
+
+                        hues.push(
+                        {
+                            h: hue,
+                            weight: 100
+                        });
+
+                        // adjacent
+                        hues.push(
+                        {
+                            h: math.mod(hue - 1 * d, 1),
+                            weight: 25
+                        });
+
+                        // adjacent
+
+                        hues.push(
+                        {
+                            h: math.mod(hue + 1 * d, 1),
+                            weight: 25
+                        });
+
+                        // complement
+                        hues.push(
+                        {
+                            h: math.mod(hue + 6 * d, 1),
+                            weight: 50
+                        });
+                    }
+                };
+            },
+            weight: 4,
+        },
+
+        {
+            fn: function()
+            {
+                return {
+                    name: "triad",
+                    fn: function(hue, hues)
+                    {
+                        hues.push(
+                        {
+                            h: hue,
+                            weight: 100
+                        });
+
+                        hues.push(
+                        {
+                            h: math.mod(hue + 0.3333, 1),
+                            weight: 50
+                        });
+
+                        hues.push(
+                        {
+                            h: math.mod(hue - 0.3333, 1),
+                            weight: 50
+                        });
+                    }
+                };
+            },
+            weight: 2,
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "tetrad",
+                    fn: function(hue, hues)
+                    {
+                        hues.push(
+                        {
+                            h: hue,
+                            weight: 100
+                        });
+
+                        for (var i = 1; i < 4; i++)
+                        {
+                            hues.push(
+                            {
+                                h: math.mod(hue + i / 4, 1),
+                                weight: 50
+                            });
+                        }
+                    }
+                };
+            },
+            weight: 1,
+        }
+
+    ];
+
     var calcHslStats = function(hsls)
     {
 
@@ -377,6 +479,8 @@
             // set the number of different colors to use
             palette.numColors = 2 + Rp.bandomInt(24, -2);
 
+            palette.scheme = Rp.wandom(schemes).fn();
+
             // allocate a different amount of each color
             var weights = math.random([palette.numColors]);
 
@@ -398,36 +502,7 @@
 
             palette.mainHue = hue * 12;
 
-            // delta to next hue
-            var d = 1 / 12;
-
-            hues.push(
-            {
-                h: hue,
-                weight: 100
-            });
-
-            // adjacent
-            hues.push(
-            {
-                h: math.mod(hue - 1 * d, 1),
-                weight: 25
-            });
-
-            // adjacent
-
-                hues.push(
-                {
-                    h: math.mod(hue + 1 * d, 1),
-                    weight: 25
-                });
-
-            // complement
-            hues.push(
-            {
-                h: math.mod(hue + 6 * d, 1),
-                weight: 50
-            });
+            palette.scheme.fn(hue, hues);
 
             // calc how many palette entries each color will have, and set a random color for this gap
 
