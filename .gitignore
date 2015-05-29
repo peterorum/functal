@@ -29,6 +29,8 @@ node_modules
 
 functals/small/*
 
+admin/downloads/*
+
 *.sublime-project
 *.sublime-workspace
 
