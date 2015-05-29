@@ -21,8 +21,6 @@
 
         R.forEach(function(f)
         {
-            console.log(f);
-
             step = step.then(function()
             {
                 return s3.upload(bucket, 'downloads/' + f, f)
