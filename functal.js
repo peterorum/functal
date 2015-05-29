@@ -19,6 +19,7 @@
     var fs = require('fs');
     var fsq = require('./fsq');
     var PNG = require('node-png').PNG;
+    var jpeg = require('jpeg-js');
     var R = require('ramda');
     var Rp = require('./plus-fp/plus-fp');
     var s3 = require('./s3client');
@@ -509,6 +510,64 @@
         return deferred.promise;
     };
 
+    // ------------ output to a jpeg image
+
+    fractal.jpg = function(functal)
+    {
+        var deferred = Q.defer();
+
+
+
+        var frameData = new Buffer(functal.width * functal.height * 4);
+
+        var i = 0;
+
+        while (i < frameData.length)
+        {
+            frameData[i++] = 0xFF; // red
+            frameData[i++] = 0x00; // green
+            frameData[i++] = 0x00; // blue
+            frameData[i++] = 0xFF; // alpha - ignored in JPEGs
+        }
+
+        var data = functal.data;
+
+        for (var y = 0; y < functal.height; y++)
+        {
+            for (var x = 0; x < functal.width; x++)
+            {
+                var rgb = data[x][y].rgb;
+
+                var idx = (functal.width * y + x) << 2;
+
+                frameData[idx] = rgb.r;
+                frameData[idx + 1] = rgb.g;
+                frameData[idx + 2] = rgb.b;
+                frameData[idx + 3] = 0xff;
+            }
+        }
+
+        var rawImageData = {
+            data: frameData,
+            width: functal.width,
+            height: functal.height
+        };
+
+        var jpegImageData = jpeg.encode(rawImageData, 80);
+
+        var wstream = fs.createWriteStream(functal.file + '.jpg');
+
+        wstream.write(jpegImageData.data);
+
+        wstream.end(function()
+        {
+            deferred.resolve();
+
+        });
+
+        return deferred.promise;
+    };
+
     fractal.setOptions = function(size)
     {
         var filename = 'functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
@@ -862,10 +921,16 @@
             fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'modifiers'], functal), null, 4))
                 .then(function()
                 {
-                    // save png
-                    return fractal.png(functal);
+                    // save jpg
+                    return fractal.jpg(functal);
 
                 })
+                // .then(function()
+                // {
+                //     // save png
+                //     return fractal.png(functal);
+
+                // })
                 .then(function()
                 {
                     if (!isDev)

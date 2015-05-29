@@ -89,7 +89,7 @@
             s3.delete(bucket, key)
                 .then(function()
                 {
-                    return s3.delete(bucketJson, key.replace(/png$/, 'json'));
+                    return s3.delete(bucketJson, key.replace(/(png|jpg)$/, 'json'));
                 })
                 .then(function(result)
                 {
