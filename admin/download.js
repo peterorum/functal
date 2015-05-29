@@ -29,7 +29,7 @@
                     {
                         step = step.then(function()
                         {
-                            return s3.download('functal-images', img.Key, 'downloads/' + img.Key);
+                            return s3.download(bucket, img.Key, 'downloads/' + img.Key);
                         });
                     }
                 }
