@@ -5,8 +5,11 @@
 
         // download all images from s3
 
+        // mogrify -quality 80 -format jpg *.png
+
         var R = require('ramda');
         var Q = require('q');
+        var fs = require('fs');
 
         var s3 = require('../s3client');
 
@@ -22,10 +25,13 @@
             {
                 if (/png$/.test(img.Key))
                 {
-                    step = step.then(function()
+                    if (!fs.existsSync('downloads/' + img.Key))
                     {
-                        return s3.download('functal-images', img.Key, 'downloads/' + img.Key);
-                    });
+                        step = step.then(function()
+                        {
+                            return s3.download('functal-images', img.Key, 'downloads/' + img.Key);
+                        });
+                    }
                 }
             }, result.files);
 
