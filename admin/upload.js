@@ -23,7 +23,7 @@
         {
             step = step.then(function()
             {
-                return s3.upload(bucket, 'downloads/' + f, f)
+                return s3.upload(bucket, f, 'downloads/' + f)
                     .then(function()
                     {
                         return fs.unlink('downloads/' + f);
