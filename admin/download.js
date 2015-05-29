@@ -14,9 +14,9 @@
 
         s3.list(bucket).then(function(result)
         {
-            // console.log(result.files[0]);
+            console.log(result.files[0]);
 
-            var step = Q(); // xjshint ignore:line
+            var step = Q(); // jshint ignore:line
 
             R.forEach(function(img)
             {
