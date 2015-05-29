@@ -27,7 +27,7 @@
                         return s3.download('functal-images', img.Key, 'downloads/' + img.Key);
                     });
                 }
-            }, R.take(3, result.files));
+            }, R.take(result.files));
 
         });
 
