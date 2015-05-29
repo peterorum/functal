@@ -14,7 +14,7 @@
 
         s3.list(bucket).then(function(result)
         {
-            console.log(result.files[0]);
+            // console.log(result.files[0]);
 
             var step = Q(); // jshint ignore:line
 
@@ -27,7 +27,7 @@
                         return s3.download('functal-images', img.Key, 'downloads/' + img.Key);
                     });
                 }
-            }, R.take(result.files));
+            }, result.files);
 
         });
 
