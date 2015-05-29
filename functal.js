@@ -949,7 +949,7 @@
                 {
                     if (!isDev)
                     {
-                        return fsq.unlink(functal.file + '.png');
+                        return fsq.unlink(functal.file + '.jpg');
                     }
                 })
                 .then(function()
