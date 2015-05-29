@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.7.3';
+    var version = '1.7.4';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -935,7 +935,7 @@
                 {
                     if (!isDev)
                     {
-                        return s3.upload('functal-images', functal.filename + '.png', functal.file + '.png');
+                        return s3.upload('functal-images', functal.filename + '.jpg', functal.file + '.jpg');
                     }
                 })
                 .then(function()
