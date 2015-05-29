@@ -44,6 +44,8 @@
 
     var fractal = {};
 
+    fractal.jpegQuality = 70;
+
     fractal.finite = R.curry(function(max, z)
     {
         if (R.is(Number, z))
@@ -516,8 +518,6 @@
     {
         var deferred = Q.defer();
 
-
-
         var frameData = new Buffer(functal.width * functal.height * 4);
 
         var i = 0;
@@ -553,7 +553,7 @@
             height: functal.height
         };
 
-        var jpegImageData = jpeg.encode(rawImageData, 80);
+        var jpegImageData = jpeg.encode(rawImageData, fractal.jpegQuality);
 
         var wstream = fs.createWriteStream(functal.file + '.jpg');
 

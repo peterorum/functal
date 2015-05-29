@@ -5,6 +5,8 @@
 #MAILTO=me@example.com
 #00 10 * * * /home/ec2-user/functal/create
 
+# nohup ./create&
+
 source $HOME/.bash_profile
 
 cd $HOME/functal
