@@ -31,11 +31,7 @@
     var processes = require('./processes');
     var modifiers = require('./modifiers');
 
-    // var heapdump = require('heapdump')
-    // heapdump.writeSnapshot();
-
     // smaller image, no tweet
-
     var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
     var functalsFolder = 'functals';
@@ -45,6 +41,7 @@
     var fractal = {};
 
     fractal.jpegQuality = 70;
+    fractal.maxCount = 10000;
 
     fractal.finite = R.curry(function(max, z)
     {
@@ -85,7 +82,7 @@
             {
                 console.log('bucket count', result.count);
 
-                var ok = result.count < 1000;
+                var ok = result.count < fractal.maxCount;
 
                 deferred.resolve(ok);
             });
