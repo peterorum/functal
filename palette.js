@@ -114,7 +114,7 @@
                     }
                 };
             },
-            weight: 4,
+            weight: 100,
         },
 
         {
@@ -144,7 +144,7 @@
                     }
                 };
             },
-            weight: 2,
+            weight: 10,
         },
         {
             fn: function()
@@ -170,7 +170,7 @@
                     }
                 };
             },
-            weight: 1,
+            weight: 5,
         }
 
     ];
@@ -420,12 +420,12 @@
         {
             // orange
             hue: 1 / 12,
-            weight: 200
+            weight: 400
         },
         {
             // yellow
             hue: 2 / 12,
-            weight: 50
+            weight: 10
         },
         {
             // lime green
