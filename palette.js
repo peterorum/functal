@@ -208,13 +208,13 @@
     var isHueModeOk = function(h12)
     {
         // no green
-        var ok = ! (h12 >= 2 && h12 < 6);
+        var ok = !(h12 >= 2 && h12 < 6);
 
         // no purple
-        ok = ok && ! ( h12 >= 10 && h <= 11);
+        ok = ok && !(h12 >= 8.5 && h12 <= 11);
 
         return ok;
-    }
+    };
 
     // find the index of the lightest color
 
