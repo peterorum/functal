@@ -34,45 +34,6 @@
         return il * hsl.s;
     };
 
-    var makeAcceptable = function(hsl)
-    {
-        // subjective modifications to colors
-
-
-        var h = hsl.h * 12;
-        var s = hsl.s;
-        var l = hsl.l;
-
-        // no lime yellow
-        if (h >= 22 && h < 48)
-        {
-            // translate to warm yellow
-            h = 12 + 10 * (h - 22) / (48 - 22);
-        }
-
-        // darken greens
-
-        if (h >= 48 && h < 72)
-        {
-            l /= 2;
-        }
-
-        // really darken pinks
-
-        if (h >= 162 && h < 204)
-        {
-            l /= 4;
-        }
-
-        var hsl2 = {
-            h: h / 12,
-            l: l,
-            s: s
-        };
-
-        return hsl2;
-    };
-
     var schemes = [
         {
             fn: function()
@@ -202,8 +163,58 @@
 
         }, hslkeys);
 
+        hslStats.h.mode = calcHueMode(hsls);
+
         return hslStats;
     };
+
+    var calcHueMode = function(hsls)
+    {
+        var dist = R.map(function()
+        {
+            return 0;
+        }, R.range(0, 25));
+
+        R.forEach(function(hsl)
+        {
+            // todo : sometimes h is NaN
+            // 0..24
+
+            var h = math.round(hsl.h * 12 * 2);
+
+            if (dist[h])
+            {
+                dist[h] += 1;
+            }
+            else
+            {
+                dist[h] = 1;
+            }
+        }, hsls);
+
+        var max = math.max(dist);
+
+        var mode = R.findIndex(function(h)
+        {
+            return h === max;
+        }, dist);
+
+        // 0..12
+        mode = mode / 2;
+
+        return mode;
+    };
+
+    var isHueModeOk = function(h12)
+    {
+        // no green
+        var ok = ! (h12 >= 2 && h12 < 6);
+
+        // no purple
+        ok = ok && ! ( h12 >= 10 && h <= 11);
+
+        return ok;
+    }
 
     // find the index of the lightest color
 
@@ -541,8 +552,6 @@
                 {
                     var hsl = palette.getColor.bandColor(rgb1, rgb2, g.gap, i, palette);
 
-                    hsl = makeAcceptable(hsl);
-
                     hsl.i = getIntensity(hsl);
 
                     palette.colors.push(hsl);
@@ -582,6 +591,7 @@
 
         exports.getIntensity = getIntensity;
         exports.calcHslStats = calcHslStats;
+        exports.isHueModeOk = isHueModeOk;
 
         palette.lightestIndex = findLighestIndex(palette.colors);
 

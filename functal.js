@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.7.4';
+    var version = '1.7.5';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -870,6 +870,7 @@
                     functal.stdDev > functal.minStdDev &&
                     functal.hslStats.l.std > functal.minHslStats.l.std &&
                     functal.hslStats.i.max > functal.minHslStats.i.max &&
+                    pal.isHueModeOk(functal.hslStats.h.mode) &&
                     functal.uniques > functal.sampleCount;
 
                 //     ok = (functal.accept &&
