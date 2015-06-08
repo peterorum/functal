@@ -563,7 +563,8 @@
 
             ok = palette.hslStats.h.std > minHslStats.h.std &&
                 palette.hslStats.l.std > minHslStats.l.std &&
-                palette.hslStats.i.max > minHslStats.i.max;
+                palette.hslStats.i.max > minHslStats.i.max &&
+                isHueModeOk(palette.hslStats.h);
 
         }
         while (!ok);
