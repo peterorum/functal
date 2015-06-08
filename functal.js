@@ -872,13 +872,6 @@
                     functal.hslStats.i.max > functal.minHslStats.i.max &&
                     pal.isHueModeOk(functal.hslStats.h.mode) &&
                     functal.uniques > functal.sampleCount;
-
-                //     ok = (functal.accept &&
-                //         functal.stdDev > functal.minStdDev &&
-                //         functal.hslStdDev.h > functal.minHslStdDev.h &&
-                //         functal.hslStdDev.l > functal.minHslStdDev.l ///&&
-                //         // functal.uniques > functal.sampleCount
-                //         );
             }
             catch (ex)
             {
@@ -928,8 +921,8 @@
                 //     // save png
                 //     return fractal.png(functal);
 
-                // })
-                .then(function()
+            // })
+            .then(function()
                 {
                     if (!isDev)
                     {

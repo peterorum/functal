@@ -82,6 +82,77 @@
             fn: function()
             {
                 return {
+                    name: "split complimentary",
+                    fn: function(hue, hues)
+                    {
+                        // delta to next hue
+                        var d = 1 / 12;
+
+                        hues.push(
+                        {
+                            h: hue,
+                            weight: 100
+                        });
+
+                        // adjacent to complimentary
+                        hues.push(
+                        {
+                            h: math.mod(hue + 5 * d, 1),
+                            weight: 25
+                        });
+
+                        // adjacent to complimentary
+
+                        hues.push(
+                        {
+                            h: math.mod(hue + 7 * d, 1),
+                            weight: 25
+                        });
+                    }
+                };
+            },
+            weight: 100,
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "analagous",
+                    fn: function(hue, hues)
+                    {
+                        // delta to next hue
+                        var d = 1 / 12;
+
+                        hues.push(
+                        {
+                            h: hue,
+                            weight: 100
+                        });
+
+                        // adjacent
+                        hues.push(
+                        {
+                            h: math.mod(hue - 1 * d, 1),
+                            weight: 50
+                        });
+
+                        // adjacent
+
+                        hues.push(
+                        {
+                            h: math.mod(hue + 1 * d, 1),
+                            weight: 50
+                        });
+                    }
+                };
+            },
+            weight: 20,
+        },
+
+        {
+            fn: function()
+            {
+                return {
                     name: "triad",
                     fn: function(hue, hues)
                     {
@@ -431,7 +502,7 @@
         {
             // orange
             hue: 1 / 12,
-            weight: 400
+            weight: 200
         },
         {
             // yellow
@@ -561,10 +632,9 @@
 
             palette.hslStats = calcHslStats(palette.colors);
 
-            ok = palette.hslStats.h.std > minHslStats.h.std &&
-                palette.hslStats.l.std > minHslStats.l.std &&
+            ok = palette.hslStats.l.std > minHslStats.l.std &&
                 palette.hslStats.i.max > minHslStats.i.max &&
-                isHueModeOk(palette.hslStats.h);
+                isHueModeOk(palette.hslStats.h.mode);
 
         }
         while (!ok);
