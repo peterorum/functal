@@ -23,7 +23,7 @@
         },
         i: // intensity
         {
-            max: 0.5
+            max: 0.6
         }
     };
 
