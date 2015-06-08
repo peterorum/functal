@@ -203,6 +203,44 @@
                 };
             },
             weight: 5,
+        },
+        {
+            fn: function()
+            {
+                return {
+                    name: "tetradic",
+                    fn: function(hue, hues)
+                    {
+                        hues.push(
+                        {
+                            h: hue,
+                            weight: 100
+                        });
+
+                        // complimentary
+                        hues.push(
+                        {
+                            h: math.mod(hue + 0.5, 1),
+                            weight: 25
+                        });
+
+                        // along a couple
+                        hues.push(
+                        {
+                            h: math.mod(hue + 2 / 12, 1),
+                            weight: 25
+                        });
+
+                        // its complimentary
+                        hues.push(
+                        {
+                            h: math.mod(hue + 8 / 12, 1),
+                            weight: 25
+                        });
+                    }
+                };
+            },
+            weight: 5,
         }
 
     ];
