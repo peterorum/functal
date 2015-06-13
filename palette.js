@@ -34,22 +34,45 @@
         return il * hsl.s;
     };
 
+    var selectHue = function(except, wues)
+    {
+        var baseHue = Rp.wandomExcept(except, wues).hue;
+
+        var hueFrom = -0.5;
+        var hueTo = 0.5;
+
+        var hue = math.mod(baseHue + math.random(hueFrom, hueTo) / 12, 1);
+
+        return hue;
+    };
+
+    // todo: try eliminating fn by return a function & adding properties to the function
+    // don't use "name" - doesn't work
+
     var schemes = [
         {
             fn: function()
             {
                 return {
                     name: "analagous complimentary",
-                    fn: function(hue, hues)
+                    fn: function(palette, wues)
                     {
-                        // delta to next hue
-                        var d = 1 / 12;
+                        // analogous complementary color scheme (adjacents & complemt)
+
+                        var hue = selectHue([], wues);
+
+                        palette.mainHue = hue * 12;
+
+                        var hues = [];
 
                         hues.push(
                         {
                             h: hue,
                             weight: 100
                         });
+
+                        // delta to next hue
+                        var d = 1 / 12;
 
                         // adjacent
                         hues.push(
@@ -72,6 +95,8 @@
                             h: math.mod(hue + 6 * d, 1),
                             weight: 50
                         });
+
+                        return hues;
                     }
                 };
             },
@@ -83,8 +108,16 @@
             {
                 return {
                     name: "split complimentary",
-                    fn: function(hue, hues)
+                    fn: function(palette, wues)
                     {
+                        // no red+green
+                        var hue = selectHue([0, 11], wues);
+
+                        palette.mainHue = hue * 12;
+
+                        var hues = [];
+
+
                         // delta to next hue
                         var d = 1 / 12;
 
@@ -108,6 +141,10 @@
                             h: math.mod(hue + 7 * d, 1),
                             weight: 25
                         });
+
+
+                        return hues;
+
                     }
                 };
             },
@@ -118,8 +155,14 @@
             {
                 return {
                     name: "analagous",
-                    fn: function(hue, hues)
+                    fn: function(palette, wues)
                     {
+                        var hue = selectHue([], wues);
+
+                        palette.mainHue = hue * 12;
+
+                        var hues = [];
+
                         // delta to next hue
                         var d = 1 / 12;
 
@@ -143,6 +186,9 @@
                             h: math.mod(hue + 1 * d, 1),
                             weight: 50
                         });
+
+                        return hues;
+
                     }
                 };
             },
@@ -154,8 +200,14 @@
             {
                 return {
                     name: "triad",
-                    fn: function(hue, hues)
+                    fn: function(palette, wues)
                     {
+                        var hue = selectHue([], wues);
+
+                        palette.mainHue = hue * 12;
+
+                        var hues = [];
+
                         hues.push(
                         {
                             h: hue,
@@ -173,6 +225,9 @@
                             h: math.mod(hue - 0.3333, 1),
                             weight: 50
                         });
+
+                        return hues;
+
                     }
                 };
             },
@@ -183,8 +238,14 @@
             {
                 return {
                     name: "tetrad",
-                    fn: function(hue, hues)
+                    fn: function(palette, wues)
                     {
+                        var hue = selectHue([], wues);
+
+                        palette.mainHue = hue * 12;
+
+                        var hues = [];
+
                         hues.push(
                         {
                             h: hue,
@@ -199,6 +260,9 @@
                                 weight: 50
                             });
                         }
+
+                        return hues;
+
                     }
                 };
             },
@@ -209,8 +273,14 @@
             {
                 return {
                     name: "tetradic",
-                    fn: function(hue, hues)
+                    fn: function(palette, wues)
                     {
+                        var hue = selectHue([], wues);
+
+                        palette.mainHue = hue * 12;
+
+                        var hues = [];
+
                         hues.push(
                         {
                             h: hue,
@@ -237,6 +307,9 @@
                             h: math.mod(hue + 8 / 12, 1),
                             weight: 25
                         });
+
+                        return hues;
+
                     }
                 };
             },
@@ -610,19 +683,7 @@
                 return sum + n;
             }, 0, weights);
 
-            // analogous complementray color scheme (adjacents & complemt)
-            var hues = [];
-
-            var baseHue = Rp.wandom(wues).hue;
-
-            var hueFrom = -0.5;
-            var hueTo = 0.5;
-
-            var hue = math.mod(baseHue + math.random(hueFrom, hueTo) / 12, 1);
-
-            palette.mainHue = hue * 12;
-
-            palette.scheme.fn(hue, hues);
+            var hues = palette.scheme.fn(palette, wues);
 
             // calc how many palette entries each color will have, and set a random color for this gap
 
