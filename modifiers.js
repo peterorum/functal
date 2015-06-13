@@ -387,63 +387,29 @@
             weight: 1,
         },
 
-        // {
-        //     // grid1 trap
-        //     // closest line to in a square grid
-
-        //     fn: function( /* functal */ )
-        //     {
-        //         var fn = R.curry(function grid1Trap(lines, functal, result)
-        //         {
-        //             var range = functal.limit;
-
-        //             var vals = R.map(function(z)
-        //             {
-        //                 var horizontalDistances = R.times(function(i)
-        //                 {
-        //                     return math.abs(z.im - range * (-1 + 2 / lines * i));
-        //                 }, lines + 1);
-
-        //                 var verticalDistances = R.times(function(i)
-        //                 {
-        //                     return math.abs(z.re - range * (-1 + 2 / lines * i));
-        //                 }, lines + 1);
-
-        //                 var distance = math.min(R.reduce(math.min, 1e6, horizontalDistances), R.reduce(math.min, 1e6, verticalDistances));
-
-        //                 return distance;
-        //             }, result.zs);
-
-        //             return normalize(vals);
-        //         });
-
-        //         var lines = 2 + Rp.bandomInt(20, 1);
-
-        //         return {
-        //             fn: fn(lines),
-        //             params:
-        //             {
-        //                 name: 'grid1 trap',
-        //                 lines: lines
-        //             }
-        //         };
-        //     },
-        //     weight: 0,
-        // },
-
         {
             // grid trap
             // closest line to in a square grid
 
             fn: function( /* functal */ )
             {
-                var fn = R.curry(function gridTrap(lines, distancer, border, bounder, functal, result)
+                var fn = R.curry(function gridTrap(lines, isCheckered, distancer, border, bounder, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
                         var z1 = math.multiply(z, lines);
                         var z2 = math.floor(z1);
-                        var z3 = math.subtract(z1, z2);
+                        var z3;
+
+                        if (isCheckered && z2.re % 2 !== z2.im % 2)
+                        {
+                            z3 = z2;
+                        }
+                        else
+                        {
+                            z3 = math.subtract(z1, z2);
+                        }
+
                         var z4 = math.divide(z3, lines);
 
                         var distance = distancer.fn(z4, lines);
@@ -457,6 +423,8 @@
 
                 var lines = 1 + Rp.bandomInt(4, 1);
 
+                var isCheckered = !!math.randomInt(2);
+
                 var distancer = Rp.wandom(distancers).fn(
                 {});
 
@@ -468,11 +436,12 @@
                 });
 
                 return {
-                    fn: fn(lines, distancer, border, bounder),
+                    fn: fn(lines, isCheckered, distancer, border, bounder),
                     params:
                     {
                         name: 'grid trap',
                         lines: lines,
+                        isCheckered: isCheckered,
                         distancer: distancer,
                         border: border,
                         bounder: bounder
