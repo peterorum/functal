@@ -111,7 +111,7 @@
                     fn: function(palette, wues)
                     {
                         // no red+green
-                        var hue = selectHue([0, 11], wues);
+                        var hue = selectHue([11], wues);
 
                         palette.mainHue = hue * 12;
 
