@@ -17,17 +17,14 @@
         base = math.multiply(base, functal.baseLayer);
 
         // not being passed as an argument for unknown reason. check with ramda
-        var k = 0;
 
-        var blended = R.reduce(function(sum, mod)
+        var blended = R.reduceIndexed(function(sum, mod, k)
         {
             var hsl = pal.getColor(palette, mod);
 
             var modColor = R.values(clr.hsl2rgb(hsl));
 
             modColor = math.multiply(modColor, functal.layers[k]);
-
-            k++;
 
             return math.add(sum, modColor);
 
