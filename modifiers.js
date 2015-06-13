@@ -717,19 +717,21 @@
         {
             // polygon trap
 
-            fn: function( functal  )
+            fn: function(functal)
             {
                 var fn = R.curry(function polygonTrap(lines, border, bounder, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
-
-                        var distance = R.reduce(function(min, line)
+                        var distance = R.reduceIndexed(function(min, line, k)
                         {
-                            var x1 = line.p1.x;
-                            var y1 = line.p1.y;
-                            var x2 = line.p2.x;
-                            var y2 = line.p2.y;
+                            var p1 = line;
+                            var p2 = lines[math.mod(k + 1, lines.length)];
+
+                            var x1 = p1.x;
+                            var y1 = p1.y;
+                            var x2 = p2.x;
+                            var y2 = p2.y;
                             var x0 = z.re;
                             var y0 = z.im;
 
@@ -738,34 +740,50 @@
 
                             min = math.min(min, dist);
 
+                            return min;
+
                         }, Number.MAX_VALUE, lines);
 
-                        return bounder.fn(distance, border);
+                        // return bounder.fn(distance, border);
+
+                        return distance;
 
                     }, result.zs);
 
                     return normalize(vals);
                 });
 
-                var lines = [
+                // create polygon
+
+                var centre = {
+                    x: 0,
+                    y: 0
+                };
+                var points = 3 + Rp.bandomInt(6, 3);
+                var radius1 = math.random(0, functal.limit);
+                var radius2 = radius1; //math.random(0, functal.limit);
+
+                var lines = [];
+
+                for (var p = 0; p < points; p++)
                 {
-                    p1:
+                    var x = centre.x + radius1 * math.cos(math.pi * 2 / points * p);
+                    var y = centre.y + radius2 * math.sin(math.pi * 2 / points * p);
+
+                    // Rotate(pt, fAngle);
+
+                    lines.push(
                     {
-                        x: -0.5 * functal.limit,
-                        y: -0.5 * functal.limit
-                    },
-                    p2:
-                    {
-                        x: 0.5 * functal.limit,
-                        y: 0.5 * functal.limit
-                    },
-                }];
+                        x: x,
+                        y: y
+                    });
+                }
 
                 var border = math.random(1) / lines;
 
                 var bounder = Rp.wandom(bounders).fn(
                 {
-                    maxDistance: border
+                    maxDistance: functal.limit
                 });
 
                 return {
@@ -780,7 +798,7 @@
                     }
                 };
             },
-            weight: 0,
+            weight: 1,
         },
 
     ];

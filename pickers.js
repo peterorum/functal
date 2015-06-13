@@ -97,7 +97,7 @@
         },
         {
             name: 'adjust lightness',
-            weight: 10,
+            weight: 0,//////////////////////////////////////////
             getColor: adjustLightness
         }
     ];
