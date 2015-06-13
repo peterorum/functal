@@ -600,7 +600,7 @@
 
                 };
             },
-            weight: 1000000,
+            weight: 1,
         },
 
         {
@@ -713,5 +713,75 @@
             },
             weight: 4,
         },
+
+        {
+            // polygon trap
+
+            fn: function( functal  )
+            {
+                var fn = R.curry(function polygonTrap(lines, border, bounder, functal, result)
+                {
+                    var vals = R.map(function(z)
+                    {
+
+                        var distance = R.reduce(function(min, line)
+                        {
+                            var x1 = line.p1.x;
+                            var y1 = line.p1.y;
+                            var x2 = line.p2.x;
+                            var y2 = line.p2.y;
+                            var x0 = z.re;
+                            var y0 = z.im;
+
+                            var dist = math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) /
+                                math.sqrt(math.pow(y2 - y1, 2) + math.pow(x2 - x1, 2));
+
+                            min = math.min(min, dist);
+
+                        }, Number.MAX_VALUE, lines);
+
+                        return bounder.fn(distance, border);
+
+                    }, result.zs);
+
+                    return normalize(vals);
+                });
+
+                var lines = [
+                {
+                    p1:
+                    {
+                        x: -0.5 * functal.limit,
+                        y: -0.5 * functal.limit
+                    },
+                    p2:
+                    {
+                        x: 0.5 * functal.limit,
+                        y: 0.5 * functal.limit
+                    },
+                }];
+
+                var border = math.random(1) / lines;
+
+                var bounder = Rp.wandom(bounders).fn(
+                {
+                    maxDistance: border
+                });
+
+                return {
+                    fn: fn(lines, border, bounder),
+                    params:
+                    {
+                        name: 'polygon trap',
+                        lines: lines,
+                        sides: lines.length,
+                        border: border,
+                        bounder: bounder
+                    }
+                };
+            },
+            weight: 00000,
+        },
+
     ];
 }());
