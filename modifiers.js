@@ -719,7 +719,7 @@
 
             fn: function(functal)
             {
-                var fn = R.curry(function polygonTrap(lines, border, bounder, functal, result)
+                var fn = R.curry(function polygonTrap(lines, radius, bounder, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
@@ -744,9 +744,9 @@
 
                         }, Number.MAX_VALUE, lines);
 
-                        // return bounder.fn(distance, border);
+                        return bounder.fn(distance, 0);
 
-                        return distance;
+                        // return distance;
 
                     }, result.zs);
 
@@ -762,6 +762,7 @@
                 var points = 3 + Rp.bandomInt(6, 2);
                 var radius1 = math.random(0, functal.limit);
                 var radius2 = radius1; //math.random(0, functal.limit);
+                var radius = math.max(radius1, radius2);
 
                 var lines = [];
 
@@ -779,21 +780,19 @@
                     });
                 }
 
-                var border = math.random(1) / lines;
-
-                var bounder = Rp.wandom(bounders).fn(
+                var bounder = bander(
                 {
                     maxDistance: functal.limit
                 });
 
                 return {
-                    fn: fn(lines, border, bounder),
+                    fn: fn(lines, radius, bounder),
                     params:
                     {
                         name: 'polygon trap',
                         lines: lines,
                         sides: lines.length,
-                        border: border,
+                        radius: radius,
                         bounder: bounder
                     }
                 };
