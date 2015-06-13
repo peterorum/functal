@@ -17,6 +17,14 @@
         return this.finite(z2);
     };
 
+    var applyFnSubtractC = function(fn, z, c)
+    {
+        var a = fn(z);
+        var z2 = math.subtract(a, c);
+
+        return this.finite(z2);
+    };
+
     var applyFnMultZ = function(fn, z, zr, c)
     {
         var a = fn(zr);
@@ -110,11 +118,19 @@
             }
         },
         {
-            name: 'expzc',
+            name: 'expz*c',
             weight: 1,
             fn: function(z, c)
             {
                 return applyFnMultC.call(this, math.exp, z, c);
+            }
+        },
+        {
+            name: 'expz-c',
+            weight: 1,
+            fn: function(z, c)
+            {
+                return applyFnSubtractC.call(this, math.exp, z, c);
             }
         },
         {
@@ -146,7 +162,7 @@
             }
         },
         {
-            name: 'z2plussinzplusc',
+            name: 'z2+sinz+c',
             weight: 1,
             fn: function(z, c)
             {
@@ -256,18 +272,6 @@
                     return this.finite(z2);
                 };
             })()
-        },
-        {
-            name: 'z2plusc on z - c',
-            weight: 1,
-            fn: function(z, c)
-            {
-                return math.chain(z)
-                    .square()
-                    .add(c)
-                    .divide(z - c)
-                    .done();
-            }
         },
 
     ];
