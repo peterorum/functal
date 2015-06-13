@@ -759,7 +759,7 @@
                     x: 0,
                     y: 0
                 };
-                var points = 3 + Rp.bandomInt(6, 3);
+                var points = 3 + Rp.bandomInt(6, 2);
                 var radius1 = math.random(0, functal.limit);
                 var radius2 = radius1; //math.random(0, functal.limit);
 
