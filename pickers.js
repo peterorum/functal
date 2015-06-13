@@ -16,8 +16,6 @@
         var base = R.values(clr.hsl2rgb(pal.getColor(palette, result.escape)));
         base = math.multiply(base, functal.baseLayer);
 
-        // not being passed as an argument for unknown reason. check with ramda
-
         var blended = R.reduceIndexed(function(sum, mod, k)
         {
             var hsl = pal.getColor(palette, mod);
@@ -35,6 +33,34 @@
         var rgb = R.zipObj(['r', 'g', 'b'], blended);
 
         return rgb;
+    };
+
+    //--------- modifiers adjust lightness of base color
+
+    var adjustLightness = function(functal, mods, result, palette)
+    {
+        var baseHsl = pal.getColor(palette, result.escape);
+
+        var modHsl = R.reduceIndexed(function(hsl, mod, k)
+        {
+            mod *= functal.layers[k] * 0.05;
+
+            mod = math.max(-1, math.min(1, mod));
+
+            if (mod > 0)
+            {
+                hsl.l = hsl.l + (1 - hsl.l) * mod;
+            }
+            else
+            {
+                hsl.l = hsl.l + (hsl.l) * mod;
+            }
+
+            return hsl;
+
+        }, baseHsl, mods);
+
+        return clr.hsl2rgb(modHsl);
     };
 
     //------------ sum the values & use as index
@@ -59,16 +85,21 @@
     //--------- exports
 
     exports.pickers = [
-    {
-        name: 'blend',
-        weight: 85,
-        getColor: blend
-    },
-    {
-        name: 'direct',
-        weight: 15,
-        getColor: direct
-    }
+        {
+            name: 'blend',
+            weight: 100,
+            getColor: blend
+        },
+        {
+            name: 'direct',
+            weight: 20,
+            getColor: direct
+        },
+        {
+            name: 'adjust lightness',
+            weight: 10,
+            getColor: adjustLightness
+        }
     ];
 
 })();

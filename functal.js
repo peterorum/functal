@@ -849,6 +849,8 @@
                 ok = functal.accept &&
                     functal.stdDev > functal.minStdDev &&
                     functal.hslStats.l.std > functal.minHslStats.l.std &&
+                    functal.hslStats.l.mean > functal.minHslStats.l.meanMin &&
+                    functal.hslStats.l.mean < functal.minHslStats.l.meanMax &&
                     functal.hslStats.i.max > functal.minHslStats.i.max &&
                     pal.isHueModeOk(functal.hslStats.h.mode) &&
                     functal.uniques > functal.sampleCount;

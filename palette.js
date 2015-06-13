@@ -19,7 +19,9 @@
         },
         l:
         {
-            std: 0.2
+            std: 0.2,
+            meanMin: 0.4,
+            meanMax: 0.7
         },
         i: // intensity
         {
@@ -732,6 +734,8 @@
             palette.hslStats = calcHslStats(palette.colors);
 
             ok = palette.hslStats.l.std > minHslStats.l.std &&
+                palette.hslStats.l.mean > minHslStats.l.meanMin &&
+                palette.hslStats.l.mean < minHslStats.l.meanMax &&
                 palette.hslStats.i.max > minHslStats.i.max &&
                 isHueModeOk(palette.hslStats.h.mode);
 
