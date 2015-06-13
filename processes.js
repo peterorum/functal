@@ -230,7 +230,7 @@
         {
             // adjust real & imag parts with function of the opposite
             name: 'fxfny',
-            weight: 0.05, // good, but too easily chosen, so reduce weight
+            weight: 0.06, // good, but too easily chosen, so reduce weight
             fn: (function()
             {
                 var funcs = R.times(function()
@@ -257,6 +257,19 @@
                 };
             })()
         },
+        {
+            name: 'z2plusc on z - c',
+            weight: 1,
+            fn: function(z, c)
+            {
+                return math.chain(z)
+                    .square()
+                    .add(c)
+                    .divide(z - c)
+                    .done();
+            }
+        },
+
     ];
 
 }());
