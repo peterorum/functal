@@ -745,11 +745,11 @@
             return math.floor(color * size);
         };
 
-        exports.getColor = function(palette, color, offset)
+        exports.getColor = function(palette, color)
         {
             // color 0..1
 
-            var index = exports.getColorIndex(palette.size, color) + offset;
+            var index = exports.getColorIndex(palette.size, color);
 
             return palette.colors[math.mod(index, palette.size)];
         };

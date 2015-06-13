@@ -13,7 +13,7 @@
     {
         // use [r, g, b]
 
-        var base = R.values(clr.hsl2rgb(pal.getColor(palette, result.escape, functal.baseOffset)));
+        var base = R.values(clr.hsl2rgb(pal.getColor(palette, result.escape)));
         base = math.multiply(base, functal.baseLayer);
 
         // not being passed as an argument for unknown reason. check with ramda
@@ -21,7 +21,7 @@
 
         var blended = R.reduce(function(sum, mod)
         {
-            var hsl = pal.getColor(palette, mod, functal.layerOffsets[k]);
+            var hsl = pal.getColor(palette, mod);
 
             var modColor = R.values(clr.hsl2rgb(hsl));
 
@@ -40,18 +40,6 @@
         return rgb;
     };
 
-    var blendOffsets = function(functal, mods, result, palette)
-    {
-        functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, result.escape);
-
-        functal.layerOffsets = R.map(function(m)
-        {
-            // console.log(palette.lightestIndex, pal.getColorIndex(palette.size, m), palette.lightestIndex - pal.getColorIndex(palette.size, m));
-            return palette.lightestIndex - pal.getColorIndex(palette.size, m);
-
-        }, mods);
-    };
-
     //------------ sum the values & use as index
 
     var direct = function(functal, mods, result, palette)
@@ -64,24 +52,12 @@
 
         }, result.escape * functal.baseLayer, mods);
 
-        var hsl = pal.getColor(palette, total, functal.baseOffset);
+        var hsl = pal.getColor(palette, total);
         var rgb = clr.hsl2rgb(hsl);
 
         return rgb;
     };
 
-    var directOffsets = function(functal, mods, result, palette)
-    {
-        var k = 0;
-
-        var total = R.reduce(function(sum, mod)
-        {
-            return sum + mod * functal.layers[k++];
-
-        }, result.escape * functal.baseLayer, mods);
-
-        functal.baseOffset = palette.lightestIndex - pal.getColorIndex(palette.size, total);
-    };
 
     //--------- exports
 
@@ -89,14 +65,12 @@
     {
         name: 'blend',
         weight: 85,
-        getColor: blend,
-        setOffsets: blendOffsets
+        getColor: blend
     },
     {
         name: 'direct',
         weight: 15,
-        getColor: direct,
-        setOffsets: directOffsets
+        getColor: direct
     }
     ];
 

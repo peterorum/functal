@@ -2,7 +2,7 @@
 {
     "use strict";
 
-    var version = '1.7.5';
+    var version = '1.7.6';
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
@@ -145,23 +145,6 @@
         return mods;
     };
 
-    fractal.setLayerOffsets = function(functal, palette)
-    {
-        // determine palette offsets for each layer such that the desired point is always at the golden mean position.
-        // at this point, want index + offset = lightest
-
-        var goldenMeanx = functal.range.x1 + (1 - 0.618033989) * (functal.range.x2 - functal.range.x1);
-
-        var aspect = functal.width / functal.height;
-        var goldenMeany = goldenMeanx / aspect;
-
-        var result = fractal.escapeCount(functal, goldenMeanx, goldenMeany);
-
-        var mods = fractal.getModifierValues(functal, result);
-
-        functal.picker.setOffsets(functal, mods, result, palette);
-    };
-
     fractal.process = function(functal, palette, sample)
     {
         // sample is undefined for full resolution
@@ -229,7 +212,7 @@
                 }
                 else
                 {
-                    var hsl = pal.getColor(palette, result.escape, functal.baseOffset);
+                    var hsl = pal.getColor(palette, result.escape);
                     rgb = clr.hsl2rgb(hsl);
                 }
 
@@ -400,8 +383,6 @@
     fractal.calcVariation = function(options, palette)
     {
         var functal = fractal.init(options);
-
-        fractal.setLayerOffsets(functal, palette);
 
         // get sampled data
         var data = fractal.process(functal, palette, functal.sampleCount);
@@ -591,8 +572,6 @@
         var options = {
             version: function()
             {
-                // github branch
-
                 return version;
             },
 
@@ -606,11 +585,12 @@
             },
             maxCount: function()
             {
-                return 256;
+                // 16..512, around 256
+                return 256 + Rp.bandomInt(256, 5) - Rp.bandomInt(240, 5);
             },
             limit: function()
             {
-                return 2;
+                return 2 + Rp.bandomInt(8, 3);
             },
             filename: function()
             {
