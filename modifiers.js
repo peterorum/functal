@@ -162,6 +162,46 @@
 
     ];
 
+    // http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+
+    function dist2(v, w)
+    {
+        return math.square(v.x - w.x) + math.square(v.y - w.y)
+    }
+
+    function distToSegmentSquared(p, v, w)
+    {
+        var l2 = dist2(v, w);
+
+        if (l2 === 0)
+        {
+            return dist2(p, v);
+        }
+
+        var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+
+        if (t < 0)
+        {
+            return dist2(p, v);
+        }
+
+        if (t > 1)
+        {
+            return dist2(p, w);
+        }
+
+        return dist2(p,
+        {
+            x: v.x + t * (w.x - v.x),
+            y: v.y + t * (w.y - v.y)
+        });
+    }
+
+    function distToSegment(p, v, w)
+    {
+        return math.sqrt(distToSegmentSquared(p, v, w));
+    }
+
     exports.modifiers = [
         {
             // final angle
@@ -728,15 +768,12 @@
                             var p1 = line;
                             var p2 = lines[math.mod(k + 1, lines.length)];
 
-                            var x1 = p1.x;
-                            var y1 = p1.y;
-                            var x2 = p2.x;
-                            var y2 = p2.y;
-                            var x0 = z.re;
-                            var y0 = z.im;
+                            var p = {
+                                x: z.re,
+                                y: z.im
+                            };
 
-                            var dist = math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) /
-                                math.sqrt(math.pow(y2 - y1, 2) + math.pow(x2 - x1, 2));
+                            var dist = distToSegment(p, p1, p2);
 
                             min = math.min(min, dist);
 
@@ -759,6 +796,7 @@
                     x: 0,
                     y: 0
                 };
+
                 var points = 3 + Rp.bandomInt(6, 2);
                 var radius1 = math.random(0, functal.limit);
                 var radius2 = radius1; //math.random(0, functal.limit);

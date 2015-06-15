@@ -400,23 +400,6 @@
         return ok;
     };
 
-    // find the index of the lightest color
-
-    var findLighestIndex = function(palette)
-    {
-        var lightest = math.max(R.map(function(p)
-        {
-            return p.l;
-        }, palette));
-
-        var lightestIndex = R.findIndex(function(p)
-        {
-            return p.l === lightest;
-        }, palette);
-
-        return lightestIndex;
-    };
-
     // determine colors within the band
 
     var interpolateColors = function(rgb1, rgb2, gap, i)
@@ -766,8 +749,6 @@
         exports.getIntensity = getIntensity;
         exports.calcHslStats = calcHslStats;
         exports.isHueModeOk = isHueModeOk;
-
-        palette.lightestIndex = findLighestIndex(palette.colors);
 
         return palette;
     };
