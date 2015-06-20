@@ -68,7 +68,7 @@
         };
 
         // call at most once every 5 minutes
-        var getImages = debounce(getImageList, 10000,
+        var getImages = debounce(getImageList, 5 * 60000,
         {
             leading: true,
             trailing: false

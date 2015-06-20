@@ -28,6 +28,8 @@ node_modules
 .lock-wscript
 
 functals/small/*
+functals/medium/*
+functals/large/*
 
 admin/downloads/*
 
