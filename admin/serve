@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# nohup ./serve&
+
+source $HOME/.bash_profile
+
+cd $HOME/functal/admin
+
+while :
+do
+    node server-admin.js
+    sleep 1
+done
