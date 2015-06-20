@@ -67,12 +67,16 @@
             });
         };
 
-        // call at most once every 5 minutes
+        // call 5 minutes after last request
+        // and at least every hour
+
         var getImages = debounce(getImageList, 5 * 60000,
         {
-            leading: true,
-            trailing: false
+            leading:true,
+            maxWait: 60 * 60000
         });
+
+        // initial load of image list
 
         getImages();
 
@@ -135,8 +139,6 @@
 
             // debounced update
             getImages();
-
-
         });
 
     }()
