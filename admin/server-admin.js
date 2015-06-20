@@ -23,13 +23,14 @@
         var url = require('url');
         var path = require('path');
         var R = require('ramda');
+        var debounce = require('lodash.debounce');
 
         var s3 = require('../s3client');
 
         var bucket = 'functal-images';
         var bucketJson = 'functal-json';
 
-        http.createServer(app).listen(process.env.PORT || 8083);
+        //--------- serve a file
 
         var sendFile = function(res, filename)
         {
@@ -49,6 +50,43 @@
             });
         };
 
+        //---------- get images on s3
+
+        var getImageList = function()
+        {
+            console.log('load list from s3', (new Date()).toString());
+
+            s3.list(bucket).then(function(result)
+            {
+                // console.log(result.files);
+
+                images = R.pluck('Key', result.files);
+                images = R.reverse(images);
+
+                console.log('images', images.length);
+            });
+        };
+
+        // call at most once every 5 minutes
+        var getImages = debounce(getImageList, 10000,
+        {
+            leading: true,
+            trailing: false
+        });
+
+        getImages();
+
+        // --- start express
+
+        http.createServer(app).listen(process.env.PORT || 8083);
+
+        // load image list
+        var images = [];
+
+        getImages();
+
+        //---
+
         // files
         app.get(/\.(js|css|png|jpg|html)$/, function(req, res)
         {
@@ -63,21 +101,14 @@
             sendFile(res, '/views/index.html');
         });
 
-        // get images on s3
         app.get('/getimages', function(req, res)
         {
-            s3.list(bucket).then(function(result)
+            // debounced - update some time after this call
+            getImages();
+
+            res.jsonp(
             {
-                // console.log(result.files);
-
-                var images = R.pluck('Key', result.files);
-                images = R.reverse(images);
-
-                res.jsonp(
-                {
-                    images: images
-                });
-
+                images: images
             });
         });
 
@@ -95,6 +126,17 @@
                 {
                     res.json(result);
                 });
+
+            // remove from local list
+            images = R.reject(function(img)
+            {
+                return img === key;
+            }, images);
+
+            // debounced update
+            getImages();
+
+
         });
 
     }()
