@@ -2,6 +2,7 @@
 
 # nohup ./serve&
 # also in /etc/rc.local to run after reboot
+# who -b shows last rebbot date
 
 source /home/ec2-user/.bash_profile
 
