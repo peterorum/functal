@@ -30,6 +30,18 @@
         var bucket = 'functal-images';
         var bucketJson = 'functal-json';
 
+        //--------- throttle
+
+        var throttle = function(fn, wait)
+        {
+            return debounce(fn, wait,
+            {
+                leading: true,
+                trailing: true,
+                maxWait: wait
+            });
+        };
+
         //--------- serve a file
 
         var sendFile = function(res, filename)
@@ -67,27 +79,21 @@
             });
         };
 
-        // call 5 minutes after last request
-        // and at least every hour
+        // hourly
+        var getImagesHourly = throttle(getImageList, 60 * 60000);
 
-        var getImages = debounce(getImageList, 5 * 60000,
-        {
-            leading:true,
-            maxWait: 60 * 60000
-        });
+        // after admin
+        var getImagesSoon = debounce(getImageList, 1 * 60000);
 
         // initial load of image list
 
-        getImages();
+        var images = [];
+
+        getImagesHourly();
 
         // --- start express
 
         http.createServer(app).listen(process.env.PORT || 8083);
-
-        // load image list
-        var images = [];
-
-        getImages();
 
         //---
 
@@ -107,8 +113,8 @@
 
         app.get('/getimages', function(req, res)
         {
-            // debounced - update some time after this call
-            getImages();
+            // throttled
+            getImagesHourly();
 
             res.jsonp(
             {
@@ -138,7 +144,7 @@
             }, images);
 
             // debounced update
-            getImages();
+            getImagesSoon();
         });
 
     }()
