@@ -850,8 +850,9 @@
                     functal.stdDev > functal.minStdDev &&
                     functal.hslStats.l.std > functal.minHslStats.l.std &&
                     functal.hslStats.l.mean > functal.minHslStats.l.meanMin &&
-                    functal.hslStats.l.mean < functal.minHslStats.l.meanMax &&
-                    functal.hslStats.i.max > functal.minHslStats.i.max &&
+                    // functal.hslStats.l.mean < functal.minHslStats.l.meanMax &&
+                    // functal.hslStats.i.max > functal.minHslStats.i.max &&
+                    functal.hslStats.s.mean > functal.minHslStats.s.meanMin &&
                     pal.isHueModeOk(functal.hslStats.h.mode) &&
                     functal.uniques > functal.sampleCount;
             }
