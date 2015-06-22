@@ -775,4 +775,5 @@
 
         return palette;
     };
+
 }());
