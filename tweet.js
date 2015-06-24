@@ -22,27 +22,28 @@
         }
         else
         {
-            var oldestKey = result.files[0].Key;
+            var r = Math.floor(Math.random() * result.files.length);
+            var key = result.files[r].Key;
 
-            var tmpFile = '/tmp/tweet-' + oldestKey;
+            var tmpFile = '/tmp/tweet-' + key;
 
-            s3.download(bucket, oldestKey, tmpFile).then(function()
+            s3.download(bucket, key, tmpFile).then(function()
             {
                 twit.tweet(msg, tmpFile, function()
                 {
                     // delete image
-                    s3.delete(bucket, oldestKey)
-                        .then(function()
-                        {
-                            // delete json
-                            return s3.delete(bucketJson, oldestKey.replace(/(png|jpg)$/, 'json'));
-                        })
-                        .then(function()
-                        {
-                            // delete local file
-                            return fsq.unlink(tmpFile);
-                        })
-                        .done();
+                    // s3.delete(bucket, key)
+                    //     .then(function()
+                    //     {
+                    //         // delete json
+                    //         return s3.delete(bucketJson, key.replace(/(png|jpg)$/, 'json'));
+                    //     })
+                    //     .then(function()
+                    //     {
+                    //         // delete local file
+                    //         return fsq.unlink(tmpFile);
+                    //     })
+                    //     .done();
                 });
             });
         }
