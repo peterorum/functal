@@ -784,20 +784,20 @@
         {
             // polygon trap
 
-            fn: function(functal)
+            fn: function(/*functal*/)
             {
                 var fn = R.curry(function polygonTrap(lines, radius, grid, bounder, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
                         var z1 = math.multiply(z, grid);
-                        var z2 = math.floor(z1);
-                        var z3 = math.subtract(z1, z2);
-                        var z4 = math.divide(z3, grid);
+                        var z2 = math.fix(z1);
+                        // -1..1
+                        var z3 = math.chain(z1).subtract(z2).subtract(math.complex(0.5, 0.5)).multiply(2.0).done();
 
                         var p = {
-                            x: z4.re * math.sign(z.re),
-                            y: z4.im * math.sign(z.im)
+                            x: z3.re,
+                            y: z3.im
                         };
 
                         var distance = R.reduceIndexed(function(min, line, k)
@@ -829,8 +829,8 @@
 
                 var grid = 1 + Rp.bandomInt(4, 1); // repetition
                 var points = 3 + Rp.bandomInt(6, 2);
-                var radius1 = math.random(0, functal.limit) / grid;
-                var radius2 = radius1; //math.random(0, functal.limit) / grid;
+                var radius1 = math.random(0, 1);
+                var radius2 = radius1; //math.random(0, 1);
                 var radius = math.max(radius1, radius2);
                 var angle = math.random(0, 2 * math.pi);
 
@@ -853,7 +853,7 @@
 
                 var bounder = bander(
                 {
-                    maxDistance: functal.limit / grid
+                    maxDistance: 1 // functal.limit / grid
                 });
 
                 return {
