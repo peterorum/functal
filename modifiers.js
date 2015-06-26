@@ -112,6 +112,33 @@
         return x;
     };
 
+    var rotate = function(point, centre, angle)
+    {
+        // assumes zero centre
+
+        var x = point.x - centre.x;
+        var y = point.y - centre.y;
+
+        if ((x !== 0) || (y !== 0))
+        {
+            var r = math.sqrt(x * x + y * y);
+            var theta = math.atan2(y, x);
+
+            theta += angle;
+
+            x = r * math.cos(theta);
+            y = r * math.sin(theta);
+
+            x += centre.x;
+            y += centre.y;
+        }
+
+        return {
+            x: x,
+            y: y
+        };
+    };
+
     var normalize = function(vals)
     {
         var max = math.max(R.map(math.abs, vals));
@@ -783,8 +810,6 @@
 
                         return bounder.fn(distance, 0);
 
-                        // return distance;
-
                     }, result.zs);
 
                     return normalize(vals);
@@ -801,6 +826,7 @@
                 var radius1 = math.random(0, functal.limit);
                 var radius2 = radius1; //math.random(0, functal.limit);
                 var radius = math.max(radius1, radius2);
+                var angle = math.random(0, 2 * math.pi);
 
                 var lines = [];
 
@@ -809,13 +835,14 @@
                     var x = centre.x + radius1 * math.cos(math.pi * 2 / points * p);
                     var y = centre.y + radius2 * math.sin(math.pi * 2 / points * p);
 
-                    // Rotate(pt, fAngle);
-
-                    lines.push(
-                    {
+                    var point = {
                         x: x,
                         y: y
-                    });
+                    };
+
+                    point = rotate(point, centre, angle);
+
+                    lines.push(point);
                 }
 
                 var bounder = bander(
@@ -831,12 +858,12 @@
                         lines: lines,
                         sides: lines.length,
                         radius: radius,
+                        angle: angle,
                         bounder: bounder
                     }
                 };
             },
             weight: 2,
         },
-
     ];
 }());
