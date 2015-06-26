@@ -796,8 +796,8 @@
                         var z4 = math.divide(z3, grid);
 
                         var p = {
-                            x: z4.re,
-                            y: z4.im
+                            x: z4.re * math.sign(z.re),
+                            y: z4.im * math.sign(z.im)
                         };
 
                         var distance = R.reduceIndexed(function(min, line, k)
