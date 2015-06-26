@@ -786,19 +786,24 @@
 
             fn: function(functal)
             {
-                var fn = R.curry(function polygonTrap(lines, radius, bounder, functal, result)
+                var fn = R.curry(function polygonTrap(lines, radius, grid, bounder, functal, result)
                 {
                     var vals = R.map(function(z)
                     {
+                        var z1 = math.multiply(z, grid);
+                        var z2 = math.floor(z1);
+                        var z3 = math.subtract(z1, z2);
+                        var z4 = math.divide(z3, grid);
+
+                        var p = {
+                            x: z4.re,
+                            y: z4.im
+                        };
+
                         var distance = R.reduceIndexed(function(min, line, k)
                         {
                             var p1 = line;
                             var p2 = lines[math.mod(k + 1, lines.length)];
-
-                            var p = {
-                                x: z.re,
-                                y: z.im
-                            };
 
                             var dist = distToSegment(p, p1, p2);
 
@@ -822,9 +827,10 @@
                     y: 0
                 };
 
+                var grid = 1 + Rp.bandomInt(4, 1); // repetition
                 var points = 3 + Rp.bandomInt(6, 2);
-                var radius1 = math.random(0, functal.limit);
-                var radius2 = radius1; //math.random(0, functal.limit);
+                var radius1 = math.random(0, functal.limit) / grid;
+                var radius2 = radius1; //math.random(0, functal.limit) / grid;
                 var radius = math.max(radius1, radius2);
                 var angle = math.random(0, 2 * math.pi);
 
@@ -847,17 +853,18 @@
 
                 var bounder = bander(
                 {
-                    maxDistance: functal.limit
+                    maxDistance: functal.limit / grid
                 });
 
                 return {
-                    fn: fn(lines, radius, bounder),
+                    fn: fn(lines, radius, grid, bounder),
                     params:
                     {
                         name: 'polygon trap',
                         lines: lines,
                         sides: lines.length,
                         radius: radius,
+                        grid: grid,
                         angle: angle,
                         bounder: bounder
                     }
