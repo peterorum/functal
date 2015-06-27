@@ -792,6 +792,7 @@
                     {
                         var z1 = math.multiply(z, grid);
                         var z2 = math.fix(z1);
+
                         // -1..1
                         var z3 = math.chain(z1).subtract(z2).subtract(math.complex(0.5, 0.5)).multiply(2.0).done();
 
@@ -853,7 +854,7 @@
 
                 var bounder = bander(
                 {
-                    maxDistance: 1 // functal.limit / grid
+                    maxDistance: math.random(1)
                 });
 
                 return {
