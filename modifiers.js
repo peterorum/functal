@@ -784,7 +784,7 @@
         {
             // polygon trap
 
-            fn: function(/*functal*/)
+            fn: function( /*functal*/ )
             {
                 var fn = R.curry(function polygonTrap(lines, radius, grid, bounder, functal, result)
                 {

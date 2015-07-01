@@ -27,6 +27,8 @@
 
         var s3 = require('../s3client');
 
+        var mongodb = require('mongodb');
+
         var bucket = 'functal-images';
         var bucketJson = 'functal-json';
 
@@ -41,6 +43,67 @@
                 maxWait: wait
             });
         };
+
+        //--------- temp
+
+        var run = function(db)
+        {
+            var adminDb = db.admin();
+
+            adminDb.listDatabases(function(err, results)
+            {
+                console.log(results);
+
+                var dbfunctal = db.db('functal');
+
+                dbfunctal.listCollections().toArray(function(err, items)
+                {
+                    console.log(items);
+                });
+            });
+
+        };
+
+        //--------- database
+
+        var MongoClient = mongodb.MongoClient;
+
+        MongoClient.connect(process.env.mongo_connection,
+        {
+            db:
+            {
+                w: 1,
+                native_parser: false
+            },
+            server:
+            {
+                poolSize: 5,
+                socketOptions:
+                {
+                    connectTimeoutMS: 500
+                },
+                auto_reconnect: true
+            },
+            replSet:
+            {},
+            mongos:
+            {}
+        }, function(err, db)
+        {
+            if (err)
+            {
+                console.log("Connection failed", err);
+            }
+            else
+            {
+                run(db);
+
+                // db.logout(function( /* err, result */ )
+                // {
+                //     db.close();
+                // });
+            }
+        });
 
         //--------- serve a file
 
