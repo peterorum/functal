@@ -27,10 +27,13 @@
 
         var s3 = require('../s3client');
 
-        var mongodb = require('mongodb');
+        var promise = require("bluebird");
+        var mongodb = promise.promisifyAll(require("mongodb"));
 
         var bucket = 'functal-images';
         var bucketJson = 'functal-json';
+
+        var images = [];
 
         //--------- throttle
 
@@ -43,67 +46,6 @@
                 maxWait: wait
             });
         };
-
-        //--------- temp
-
-        var run = function(db)
-        {
-            var adminDb = db.admin();
-
-            adminDb.listDatabases(function(err, results)
-            {
-                console.log(results);
-
-                var dbfunctal = db.db('functal');
-
-                dbfunctal.listCollections().toArray(function(err, items)
-                {
-                    console.log(items);
-                });
-            });
-
-        };
-
-        //--------- database
-
-        var MongoClient = mongodb.MongoClient;
-
-        MongoClient.connect(process.env.mongo_connection,
-        {
-            db:
-            {
-                w: 1,
-                native_parser: false
-            },
-            server:
-            {
-                poolSize: 5,
-                socketOptions:
-                {
-                    connectTimeoutMS: 500
-                },
-                auto_reconnect: true
-            },
-            replSet:
-            {},
-            mongos:
-            {}
-        }, function(err, db)
-        {
-            if (err)
-            {
-                console.log("Connection failed", err);
-            }
-            else
-            {
-                run(db);
-
-                // db.logout(function( /* err, result */ )
-                // {
-                //     db.close();
-                // });
-            }
-        });
 
         //--------- serve a file
 
@@ -142,73 +84,101 @@
             });
         };
 
-        // hourly
-        var getImagesHourly = throttle(getImageList, 60 * 60000);
+        //--------- database
 
-        // after admin
-        var getImagesSoon = debounce(getImageList, 1 * 60000);
-
-        // initial load of image list
-
-        var images = [];
-
-        getImagesHourly();
-
-        // --- start express
-
-        http.createServer(app).listen(process.env.PORT || 8083);
-
-        //---
-
-        // files
-        app.get(/\.(js|css|png|jpg|html)$/, function(req, res)
+        mongodb.connectAsync(process.env.mongo_functal).then(function(db)
         {
-            var uri = url.parse(req.url, true, false);
+            //------- db functions
 
-            sendFile(res, uri.pathname);
-        });
+            var listVotes = function()
+            {
+                var collection = db.collection('images');
 
-        // home page
-        app.get('/', function(req, res)
-        {
-            sendFile(res, '/views/index.html');
-        });
+                collection.find().toArrayAsync().then(function(docs)
+                {
+                    console.log(docs);
+                });
+            };
 
-        app.get('/getimages', function(req, res)
-        {
-            // throttled
+            // temp test
+
+            listVotes();
+
+            //--- image list refresh
+
+            // hourly
+            var getImagesHourly = throttle(getImageList, 60 * 60000);
+
+            // after admin
+            var getImagesSoon = debounce(getImageList, 1 * 60000);
+
+            // initial load of image list
+
             getImagesHourly();
 
-            res.jsonp(
+            // --- start express
+
+            http.createServer(app).listen(process.env.PORT || 8083);
+
+            //--- routing
+
+            // files
+            app.get(/\.(js|css|png|jpg|html)$/, function(req, res)
             {
-                images: images
+                var uri = url.parse(req.url, true, false);
+
+                sendFile(res, uri.pathname);
             });
-        });
 
-        // delete image on s3
-        app.post('/delete', function(req, res)
-        {
-            var key = req.body.key;
-
-            s3.delete(bucket, key)
-                .then(function()
-                {
-                    return s3.delete(bucketJson, key.replace(/(png|jpg)$/, 'json'));
-                })
-                .then(function(result)
-                {
-                    res.json(result);
-                });
-
-            // remove from local list
-            images = R.reject(function(img)
+            // home page
+            app.get('/', function(req, res)
             {
-                return img === key;
-            }, images);
+                listVotes();
 
-            // debounced update
-            getImagesSoon();
+                sendFile(res, '/views/index.html');
+            });
+
+            app.get('/getimages', function(req, res)
+            {
+                // throttled
+                getImagesHourly();
+
+                res.jsonp(
+                {
+                    images: images
+                });
+            });
+
+            // delete image on s3
+            app.post('/delete', function(req, res)
+            {
+                var key = req.body.key;
+
+                s3.delete(bucket, key)
+                    .then(function()
+                    {
+                        return s3.delete(bucketJson, key.replace(/(png|jpg)$/, 'json'));
+                    })
+                    .then(function(result)
+                    {
+                        res.json(result);
+                    });
+
+                // remove from local list
+                images = R.reject(function(img)
+                {
+                    return img === key;
+                }, images);
+
+                // debounced update
+                getImagesSoon();
+            });
+
+        })
+        .catch(function(e)
+        {
+            console.log(e.message);
+            throw e;
         });
-
     }()
 );
