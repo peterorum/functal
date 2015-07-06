@@ -19,8 +19,10 @@
                     });
                 };
 
-                $scope.delete = function(key)
+                $scope.delete = function(image)
                 {
+                    var key = image.name;
+
                     $scope.images = R.filter(function(k)
                     {
                         return k !== key;
@@ -67,7 +69,7 @@
 
                 $scope.showJson = function(image)
                 {
-                    var url = $scope.s3 + image.replace(/\.(png|jpg)$/, '.json');
+                    var url = $scope.s3 + image.name.replace(/\.(png|jpg)$/, '.json');
 
                     $window.open(url);
                 };
