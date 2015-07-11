@@ -125,32 +125,32 @@
                 console.log('load list from s3', (new Date()).toString());
 
                 s3.list(bucket).then(function(result)
-                {
-                    // console.log(result.files);
-
-                    images = R.map(function(img)
                     {
-                        return {
-                            name: img.Key,
-                            likes: 0,
-                            dislikes: 0
-                        };
-                    }, result.files);
+                        // console.log(result.files);
 
-                    images = R.reverse(images);
-
-                    // load votes
-                    loadVotes(db).then(function()
-                    {
-                        var minImagesToKeep = 1000;
-
-                        if (images.length > minImagesToKeep)
+                        images = R.map(function(img)
                         {
+                            return {
+                                name: img.Key,
+                                likes: 0,
+                                dislikes: 0
+                            };
+                        }, result.files);
+
+                        images = R.reverse(images);
+
+                        // load votes
+                        loadVotes(db).then(function()
+                        {
+                            var minImagesToKeep = 1000;
+
                             // delete unpopular
                             var unpopular = R.filter(function(i)
                             {
                                 return i.dislikes > i.likes;
                             }, images);
+
+                            unpopular = R.take(Math.max(0, Math.min(images.length - minImagesToKeep, unpopular.length)), unpopular);
 
                             R.forEach(function(img)
                             {
@@ -168,16 +168,16 @@
                             {
                                 return i.likes >= i.dislikes;
                             }, images);
-                        }
 
-                        resolve();
+                            resolve();
+                        });
+
+                    },
+                    function(err)
+                    {
+                        console.log('error in getImageList', err);
+                        reject('error in getImageList');
                     });
-
-                }, function(err)
-                {
-                    console.log('error in getImageList', err);
-                    reject('error in getImageList');
-                });
             });
         };
 
