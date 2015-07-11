@@ -168,8 +168,9 @@
                         resolve();
                     });
 
-                }, function()
+                }, function(err)
                 {
+                    console.log('error in getImageList', err);
                     reject('error in getImageList');
                 });
             });
@@ -208,6 +209,9 @@
                 getImagesHourly(db).then(function()
                 {
                     console.log('images', images.length);
+                }, function(err)
+                {
+                    console.log('error in initial getImagesHourly', err);
                 });
 
                 // --- start express
@@ -292,8 +296,8 @@
                         }
                         else
                         {
-                            image.likes += data.like;
-                            image.dislikes += data.dislike;
+                            image.likes = Math.max(0, image.likes + data.like);
+                            image.dislikes = Math.max(0, image.dislikes + data.dislike);
                         }
 
                         dbImages.update(
