@@ -3,8 +3,8 @@
     {
         "use strict";
 
-        // must always be running
-        // nohup node server-admin&
+        // must always be running by...
+        // nohup ./serve&
 
         var express = require('express');
 
@@ -82,7 +82,7 @@
                 image.likes = doc.likes;
                 image.dislikes = doc.dislikes;
 
-                console.log("Votes found:", image);
+                // console.log("Votes found:", image);
             }
         };
 
