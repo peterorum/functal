@@ -142,28 +142,33 @@
                     // load votes
                     loadVotes(db).then(function()
                     {
-                        // delete unpopular
-                        var unpopular = R.filter(function(i)
-                        {
-                            return i.dislikes > i.likes;
-                        }, images);
+                        var minImagesToKeep = 1000;
 
-                        R.forEach(function(img)
+                        if (images.length > minImagesToKeep)
                         {
-                            console.log('delete ', img.name, 'dislikes', img.dislikes, 'likes', img.likes);
+                            // delete unpopular
+                            var unpopular = R.filter(function(i)
+                            {
+                                return i.dislikes > i.likes;
+                            }, images);
 
-                            s3.delete(bucket, img.name)
-                                .then(function()
-                                {
-                                    return s3.delete(bucketJson, img.name.replace(/(png|jpg)$/, 'json'));
-                                });
-                        }, unpopular);
+                            R.forEach(function(img)
+                            {
+                                console.log('delete ', img.name, 'dislikes', img.dislikes, 'likes', img.likes);
 
-                        // only return populer
-                        images = R.filter(function(i)
-                        {
-                            return i.likes >= i.dislikes;
-                        }, images);
+                                s3.delete(bucket, img.name)
+                                    .then(function()
+                                    {
+                                        return s3.delete(bucketJson, img.name.replace(/(png|jpg)$/, 'json'));
+                                    });
+                            }, unpopular);
+
+                            // only return populer
+                            images = R.filter(function(i)
+                            {
+                                return i.likes >= i.dislikes;
+                            }, images);
+                        }
 
                         resolve();
                     });
