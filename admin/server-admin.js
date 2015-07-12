@@ -206,9 +206,6 @@
                 // hourly
                 var getImagesHourly = throttle(getImageList, 60 * 60000);
 
-                // after admin
-                var getImagesSoon = debounce(getImageList, 1 * 60000);
-
                 // initial load of image list
 
                 getImagesHourly(db).then(function()
@@ -273,8 +270,6 @@
                         return img === key;
                     }, images);
 
-                    // debounced update
-                    getImagesSoon(db);
                 });
 
                 //---------- vote
@@ -322,10 +317,15 @@
                             image: image
                         });
                     });
+
+                    getImagesHourly(db);
+
                 });
             })
             .catch(function(e)
             {
+                // startup error
+
                 console.log('mongo error', e.message);
                 console.log('did you?:\nmongod --config /usr/local/etc/mongod.conf');
                 throw e;
