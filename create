@@ -13,6 +13,6 @@ cd $HOME/functal
 
 while :
 do
-    node functal
+    node --harmony functal
     sleep 1
 done
