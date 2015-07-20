@@ -159,17 +159,32 @@
     var lines = [];
 
     for (var p = 0; p < points; p++) {
-      var x = centre.x + radius1 * math.cos(math.pi * 2 / points * p);
-      var y = centre.y + radius2 * math.sin(math.pi * 2 / points * p);
+      var x1 = centre.x + radius1 * math.cos(math.pi * 2 / points * p);
+      var y1 = centre.y + radius2 * math.sin(math.pi * 2 / points * p);
 
-      var point = {
-        x: x,
-        y: y
+      var x2 = centre.x + radius1 * math.cos(math.pi * 2 / points * (p + 1));
+      var y2 = centre.y + radius2 * math.sin(math.pi * 2 / points * (p + 1));
+
+      var point1 = {
+        x: x1,
+        y: y1
       };
 
-      point = rotate(point, centre, angle);
+      point1 = rotate(point1, centre, angle);
 
-      lines.push(point);
+      var point2 = {
+        x: x2,
+        y: y2
+      };
+
+      point2 = rotate(point2, centre, angle);
+
+      var line = {
+        p1: point1,
+        p2: point2
+      };
+
+      lines.push(line);
     }
 
     polygon.lines = lines;
@@ -191,7 +206,7 @@
 
         return {
           name: "polygon",
-          fn: () => {
+          make: () => {
 
             return makePolygon();
 
@@ -206,7 +221,7 @@
 
         return {
           name: "crosshatch",
-          fn: () => {
+          make: () => {
 
             let shape = {};
 
@@ -224,20 +239,55 @@
             let lines = [];
 
             for (let p1 = (isBordered ? 0 : 1); p1 < (isBordered ? points1 + 1 : points1); p1++) {
-              let x = radius * (-1 + 2 / points1 * p1);
+              let x1 = radius * (-1 + 2 / points1 * p1);
+              let y1 = -radius;
 
-              for (let p2 = (isBordered ? 0 : 1); p2 < (isBordered ? points2 + 1 : points2); p2++) {
-                let y = radius * (-1 + 2 / points2 * p2);
+              let x2 = x1;
+              let y2 = radius;
 
-                let point = {
-                  x: x,
-                  y: y
-                };
+              let point1 = {
+                x: x1,
+                y: y1
+              };
 
-                point = rotate(point, centre, angle);
+              let point2 = {
+                x: x2,
+                y: y2
+              };
 
-                lines.push(point);
-              }
+              point1 = rotate(point1, centre, angle);
+              point2 = rotate(point2, centre, angle);
+
+              lines.push({
+                p1: point1,
+                p2: point2
+              });
+            }
+
+            for (let p2 = (isBordered ? 0 : 1); p2 < (isBordered ? points2 + 1 : points2); p2++) {
+              let x1 = -radius;
+              let y1 = radius * (-1 + 2 / points2 * p2);
+
+              let x2 = radius;
+              let y2 = y1
+
+              let point1 = {
+                x: x1,
+                y: y1
+              };
+
+              let point2 = {
+                x: x2,
+                y: y2
+              };
+
+              point1 = rotate(point1, centre, angle);
+              point2 = rotate(point2, centre, angle);
+
+              lines.push({
+                p1: point1,
+                p2: point2
+              });
             }
 
             shape.lines = lines;
@@ -259,7 +309,6 @@
       },
       weight: 1,
     }
-
   ];
 
   var normalize = function(vals) {
@@ -948,12 +997,9 @@
               y: z3.im
             };
 
-            var distance = R.reduceIndexed(function(min, line, k) {
+            var distance = R.reduceIndexed(function(min, line) {
 
-              var p1 = line;
-              var p2 = lines[math.mod(k + 1, lines.length)];
-
-              var dist = distToSegment(p, p1, p2);
+              var dist = distToSegment(p, line.p1, line.p2);
 
               min = math.min(min, dist);
 
@@ -975,7 +1021,7 @@
 
         var shaper = Rp.wandom(shapers).fn();
 
-        var shape = shaper.fn();
+        var shape = shaper.make();
 
         var bounder = bander(
           {
