@@ -183,7 +183,7 @@
     };
 
     let radius = math.random(0, 1);
-    let linesCount = 2 + Rp.bandomInt(6, 1);
+    let linesCount = 2 + Rp.bandomInt(7, 1);
     let angle = math.random(0, 2 * math.pi);
 
     let lines = [];
