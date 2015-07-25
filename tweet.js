@@ -9,7 +9,7 @@
     var s3 = require('./s3client');
     var twit = require('./tweet-media');
 
-    var msg = '#fractal #functal #digitalart iPhone App https://bit.ly/dailyfunctal';
+    var msg = '#fractal #functal #digitalart iPhone app https://bit.ly/dailyfunctal';
 
     var bucket = 'functal-images';
     var bucketJson = 'functal-json';
