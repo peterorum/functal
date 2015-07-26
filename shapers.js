@@ -329,6 +329,50 @@
     return shape;
   };
 
+  var makeStar = function() {
+    let shape = {};
+
+    var centre = {
+      x: 0,
+      y: 0
+    };
+
+    let radius1 = math.random(0, 1);
+    let radius2 = math.random(0, 1);
+    let points = 2 * (math.randomInt(3, 26));
+    let angle = math.random(0, 2 * math.pi);
+
+    let lines = [];
+
+    for (let p = 0; p < points; p++) {
+
+      var angle1 = math.pi * 2 / points * p;
+      var angle2 = math.pi * 2 / points * (p + 1);
+
+      var eradius1 = (p % 2 ? radius1 : radius2);
+      var eradius2 = (p % 2 ? radius2 : radius1);
+
+      var x1 = eradius1 * math.cos(angle1);
+      var y1 = eradius1 * math.sin(angle1);
+      var x2 = eradius2 * math.cos(angle2);
+      var y2 = eradius2 * math.sin(angle2);
+
+      lines.push(makeLine(x1, y1, x2, y2, centre, angle));
+    }
+
+    shape.lines = lines;
+
+    shape.params = {
+      radius1: radius1,
+      radius2: radius2,
+      angle: angle
+    };
+
+    shape.name = "star";
+
+    return shape;
+  };
+
   var makeAsterisk = function() {
 
     let shape = {};
@@ -496,7 +540,20 @@
           }
         };
       },
-      weight: 10000000
+      weight: 1
+    },
+    {
+      fn: function() {
+
+        return {
+          name: "star",
+          make: () => {
+
+            return makeStar();
+          }
+        };
+      },
+      weight: 1
     }
   ];
 }());
