@@ -265,7 +265,7 @@
         let y1 = ampl[arc] * math.cos(pif * x1);
         let y2 = ampl[arc] * math.cos(pif * x2);
 
-        if (arc === 1 && isBead){
+        if (arc === 1 && isBead) {
           y1 = -y1;
           y2 = -y2;
         }
@@ -284,6 +284,47 @@
     };
 
     shape.name = "crescent";
+
+    return shape;
+  };
+
+  var makeEllipse = function() {
+    let shape = {};
+
+    var centre = {
+      x: 0,
+      y: 0
+    };
+
+    let radius1 = math.random(0, 1);
+    let radius2 = math.random(0, 1);
+    let points = 50; // segments
+    let angle = math.random(0, 2 * math.pi);
+
+    let lines = [];
+
+    for (let p = 0; p < points; p++) {
+
+      var angle1 = math.pi * 2 / points * p;
+      var angle2 = math.pi * 2 / points * (p + 1);
+
+      var x1 = radius1 * math.cos(angle1);
+      var y1 = radius2 * math.sin(angle1);
+      var x2 = radius1 * math.cos(angle2);
+      var y2 = radius2 * math.sin(angle2);
+
+      lines.push(makeLine(x1, y1, x2, y2, centre, angle));
+    }
+
+    shape.lines = lines;
+
+    shape.params = {
+      radius1: radius1,
+      radius2: radius2,
+      angle: angle
+    };
+
+    shape.name = "ellipse";
 
     return shape;
   };
@@ -431,18 +472,31 @@
       },
       weight: 4
     },
-        {
-          fn: function() {
+    {
+      fn: function() {
 
-            return {
-              name: "crescent",
-              make: () => {
+        return {
+          name: "crescent",
+          make: () => {
 
-                return makeCrescent();
-              }
-            };
-          },
-          weight: 10000000
-        }
+            return makeCrescent();
+          }
+        };
+      },
+      weight: 1
+    },
+    {
+      fn: function() {
+
+        return {
+          name: "ellipse",
+          make: () => {
+
+            return makeEllipse();
+          }
+        };
+      },
+      weight: 10000000
+    }
   ];
 }());
