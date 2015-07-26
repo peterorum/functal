@@ -33,6 +33,27 @@
     };
   };
 
+  var makeLine = function(x1, y1, x2, y2, centre, angle) {
+
+    let point1 = {
+      x: x1,
+      y: y1
+    };
+
+    let point2 = {
+      x: x2,
+      y: y2
+    };
+
+    point1 = rotate(point1, centre, angle);
+    point2 = rotate(point2, centre, angle);
+
+    return {
+      p1: point1,
+      p2: point2
+    };
+  };
+
   var makePolygon = () => {
 
     let polygon = {};
@@ -57,26 +78,7 @@
       var x2 = centre.x + radius1 * math.cos(math.pi * 2 / points * (p + 1));
       var y2 = centre.y + radius2 * math.sin(math.pi * 2 / points * (p + 1));
 
-      var point1 = {
-        x: x1,
-        y: y1
-      };
-
-      point1 = rotate(point1, centre, angle);
-
-      var point2 = {
-        x: x2,
-        y: y2
-      };
-
-      point2 = rotate(point2, centre, angle);
-
-      var line = {
-        p1: point1,
-        p2: point2
-      };
-
-      lines.push(line);
+      lines.push(makeLine(x1, y1, x2, y2, centre, angle));
     }
 
     polygon.lines = lines;
@@ -114,23 +116,7 @@
       let x2 = x1;
       let y2 = radius;
 
-      let point1 = {
-        x: x1,
-        y: y1
-      };
-
-      let point2 = {
-        x: x2,
-        y: y2
-      };
-
-      point1 = rotate(point1, centre, angle);
-      point2 = rotate(point2, centre, angle);
-
-      lines.push({
-        p1: point1,
-        p2: point2
-      });
+      lines.push(makeLine(x1, y1, x2, y2, centre, angle));
     }
 
     for (let p2 = (isBordered ? 0 : 1); p2 < (isBordered ? points2 + 1 : points2); p2++) {
@@ -140,23 +126,7 @@
       let x2 = radius;
       let y2 = y1;
 
-      let point1 = {
-        x: x1,
-        y: y1
-      };
-
-      let point2 = {
-        x: x2,
-        y: y2
-      };
-
-      point1 = rotate(point1, centre, angle);
-      point2 = rotate(point2, centre, angle);
-
-      lines.push({
-        p1: point1,
-        p2: point2
-      });
+      lines.push(makeLine(x1, y1, x2, y2, centre, angle));
     }
 
     shape.lines = lines;
@@ -169,6 +139,89 @@
     };
 
     shape.name = "crosshatch";
+
+    return shape;
+  };
+
+  var makeZigzag = function() {
+    let shape = {};
+
+    var centre = {
+      x: 0,
+      y: 0
+    };
+
+    let radius = math.random(0, 1);
+    let points = 3 + Rp.bandomInt(8, 2);
+    let angle = math.random(0, 2 * math.pi);
+
+    let lines = [];
+
+    for (let p = 0; p < points; p++) {
+
+      let x1 = radius * (p % 2 ? 1 : -1);
+      let x2 = -x1;
+
+      let y1 = radius - (2 * radius) / points * p;
+      let y2 = radius - (2 * radius) / points * (p + 1);
+
+      lines.push(makeLine(x1, y1, x2, y2, centre, angle));
+    }
+
+    shape.lines = lines;
+
+    shape.params = {
+      points: points,
+      angle: angle
+    };
+
+    shape.name = "zigzag";
+
+    return shape;
+  };
+
+  var makeWavy = function() {
+    let shape = {};
+
+    var centre = {
+      x: 0,
+      y: 0
+    };
+
+    let radius = math.random(0, 1);
+    let points = 50; // segments
+    let angle = math.random(0, 2 * math.pi);
+
+    let freq = math.randomInt(1, 9);
+    let ampl = radius;
+    let phase = math.random(0, 2 * math.pi);
+
+    let lines = [];
+
+    var pif = 2 * math.pi * freq / radius  / 2;
+
+    for (let p = 0; p < points; p++) {
+
+      let x1 = -radius + (2 * radius) / points * p;
+      let x2 = -radius + (2 * radius) / points * (p + 1);
+
+      let y1 = ampl * math.sin( pif * x1 + phase);
+      let y2 = ampl * math.sin( pif * x2 + phase);
+
+      lines.push(makeLine(x1, y1, x2, y2, centre, angle));
+    }
+
+    shape.lines = lines;
+
+    shape.params = {
+      freq: freq,
+      ampl: ampl,
+      phase: phase,
+      radius: radius,
+      angle: angle
+    };
+
+    shape.name = "wavy";
 
     return shape;
   };
@@ -189,32 +242,7 @@
     let lines = [];
 
     for (let p1 = 0; p1 < linesCount; p1++) {
-      let x1 = -radius;
-      let y1 = 0;
-
-      let x2 = radius;
-      let y2 = 0;
-
-      let point1 = {
-        x: x1,
-        y: y1
-      };
-
-      let point2 = {
-        x: x2,
-        y: y2
-      };
-
-      point1 = rotate(point1, centre, math.pi * 2 / linesCount * p1);
-      point2 = rotate(point2, centre, math.pi * 2 / linesCount * p1);
-
-      point1 = rotate(point1, centre, angle);
-      point2 = rotate(point2, centre, angle);
-
-      lines.push({
-        p1: point1,
-        p2: point2
-      });
+      lines.push(makeLine(-radius, 0, radius, 0, centre, math.pi * 2 / linesCount * p1 + angle));
     }
 
     shape.lines = lines;
@@ -224,6 +252,38 @@
     };
 
     shape.name = "asterisk";
+
+    return shape;
+  };
+
+  var makeArrow = function() {
+
+    let shape = {};
+
+    var centre = {
+      x: 0,
+      y: 0
+    };
+
+    let radius = math.random(0, 1);
+    let angle = math.random(0, 2 * math.pi);
+
+    let lines = [];
+
+    // stem
+    lines.push(makeLine(-radius, 0, radius, 0, centre, angle));
+
+    // arrow
+    lines.push(makeLine(radius / 2, radius / 2, radius, 0, centre, angle));
+    lines.push(makeLine(radius / 2, -radius / 2, radius, 0, centre, angle));
+
+    shape.lines = lines;
+
+    shape.params = {
+      angle: angle
+    };
+
+    shape.name = "arrow";
 
     return shape;
   };
@@ -269,6 +329,45 @@
         };
       },
       weight: 1,
+    },
+    {
+      fn: function() {
+
+        return {
+          name: "arrow",
+          make: () => {
+
+            return makeArrow();
+          }
+        };
+      },
+      weight: 1,
+    },
+    {
+      fn: function() {
+
+        return {
+          name: "zigzag",
+          make: () => {
+
+            return makeZigzag();
+          }
+        };
+      },
+      weight: 1
+    },
+    {
+      fn: function() {
+
+        return {
+          name: "wavy",
+          make: () => {
+
+            return makeWavy();
+          }
+        };
+      },
+      weight: 4
     }
   ];
 }());
