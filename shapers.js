@@ -196,19 +196,26 @@
     let ampl = radius;
     let phase = math.random(0, 2 * math.pi);
 
+    // reverse image
+    let isHelix = (math.random() < 0.1);
+
     let lines = [];
 
-    var pif = 2 * math.pi * freq / radius  / 2;
+    var pif = 2 * math.pi * freq / radius / 2;
 
     for (let p = 0; p < points; p++) {
 
       let x1 = -radius + (2 * radius) / points * p;
       let x2 = -radius + (2 * radius) / points * (p + 1);
 
-      let y1 = ampl * math.sin( pif * x1 + phase);
-      let y2 = ampl * math.sin( pif * x2 + phase);
+      let y1 = ampl * math.sin(pif * x1 + phase);
+      let y2 = ampl * math.sin(pif * x2 + phase);
 
       lines.push(makeLine(x1, y1, x2, y2, centre, angle));
+
+      if (isHelix) {
+        lines.push(makeLine(x1, -y1, x2, -y2, centre, angle));
+      }
     }
 
     shape.lines = lines;
@@ -218,6 +225,7 @@
       ampl: ampl,
       phase: phase,
       radius: radius,
+      helix: isHelix,
       angle: angle
     };
 
