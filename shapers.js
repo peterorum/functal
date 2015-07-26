@@ -193,7 +193,7 @@
     let angle = math.random(0, 2 * math.pi);
 
     let freq = math.randomInt(1, 9);
-    let ampl = radius;
+    let ampl = math.random(0, 1);
     let phase = math.random(0, 2 * math.pi);
 
     // reverse image
@@ -208,8 +208,8 @@
       let x1 = -radius + (2 * radius) / points * p;
       let x2 = -radius + (2 * radius) / points * (p + 1);
 
-      let y1 = ampl * math.sin(pif * x1 + phase);
-      let y2 = ampl * math.sin(pif * x2 + phase);
+      let y1 = ampl * math.cos(pif * x1 + phase);
+      let y2 = ampl * math.cos(pif * x2 + phase);
 
       lines.push(makeLine(x1, y1, x2, y2, centre, angle));
 
@@ -230,6 +230,52 @@
     };
 
     shape.name = "wavy";
+
+    return shape;
+  };
+
+  var makeCrescent = function() {
+    let shape = {};
+
+    var centre = {
+      x: 0,
+      y: 0
+    };
+
+    let radius = math.random(0, 1);
+    let points = 50; // segments
+    let angle = math.random(0, 2 * math.pi);
+
+    let freq = 0.5;
+    let ampl = [math.random(0, 1), math.random(0, 1)];
+
+    let lines = [];
+
+    var pif = 2 * math.pi * freq / radius / 2;
+
+    for (let arc = 0; arc < 2; arc++) {
+
+      for (let p = 0; p < points; p++) {
+
+        let x1 = -radius + (2 * radius) / points * p;
+        let x2 = -radius + (2 * radius) / points * (p + 1);
+
+        let y1 = ampl[arc] * math.cos(pif * x1);
+        let y2 = ampl[arc] * math.cos(pif * x2);
+
+        lines.push(makeLine(x1, y1, x2, y2, centre, angle));
+      }
+    }
+
+    shape.lines = lines;
+
+    shape.params = {
+      ampl: ampl,
+      radius: radius,
+      angle: angle
+    };
+
+    shape.name = "crescent";
 
     return shape;
   };
@@ -376,6 +422,19 @@
         };
       },
       weight: 4
-    }
+    },
+        {
+          fn: function() {
+
+            return {
+              name: "crescent",
+              make: () => {
+
+                return makeCrescent();
+              }
+            };
+          },
+          weight: 1
+        }
   ];
 }());
