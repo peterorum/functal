@@ -249,6 +249,8 @@
     let freq = 0.5;
     let ampl = [math.random(0, 1), math.random(0, 1)];
 
+    let isBead = (math.random() < 0.1);
+
     let lines = [];
 
     var pif = 2 * math.pi * freq / radius / 2;
@@ -263,6 +265,11 @@
         let y1 = ampl[arc] * math.cos(pif * x1);
         let y2 = ampl[arc] * math.cos(pif * x2);
 
+        if (arc === 1 && isBead){
+          y1 = -y1;
+          y2 = -y2;
+        }
+
         lines.push(makeLine(x1, y1, x2, y2, centre, angle));
       }
     }
@@ -272,6 +279,7 @@
     shape.params = {
       ampl: ampl,
       radius: radius,
+      bead: isBead,
       angle: angle
     };
 
@@ -434,7 +442,7 @@
               }
             };
           },
-          weight: 1
+          weight: 10000000
         }
   ];
 }());
