@@ -65,7 +65,7 @@
 
     var points = 3 + Rp.bandomInt(6, 2);
     var radius1 = math.random(0, 1);
-    var radius2 = radius1; //math.random(0, 1);
+    var radius2 = math.random(0, 1);
     var radius = math.max(radius1, radius2);
     var angle = math.random(0, 2 * math.pi);
 
