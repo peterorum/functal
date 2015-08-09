@@ -63,9 +63,8 @@
       // less brown
       changed = true;
 
-      // map to 0.5..1
-      hsl.s = 0.5 + hsl.s / 2;
-      hsl.l = 0.5 + hsl.l / 2;
+      hsl.s = math.sqrt(hsl.s);
+      hsl.l = math.sqrt(hsl.l);
     }
 
     return  (changed ? clr.hsl2rgb(hsl) : rgb);
