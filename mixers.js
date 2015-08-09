@@ -149,6 +149,11 @@
     return hsl1.l < hsl2.l ? hsl1 : hsl2;
   };
 
+  var brighter = function(hsl1, hsl2) {
+
+    return hsl1.s > hsl2.s ? hsl1 : hsl2;
+  };
+
   //--------- mix modifier colors onto base color
 
   var mix = function(functal, mods, result, palette) {
@@ -283,6 +288,11 @@
       name: 'darker',
       weight: 100,
       mix: darker
+    },
+    {
+      name: 'brighter',
+      weight: 100,
+      mix: brighter
     }
   ];
 
