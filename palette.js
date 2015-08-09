@@ -49,7 +49,29 @@
 
   };
 
-  // todo: try eliminating fn by return a function & adding properties to the function
+  var fixColor = function(rgb) {
+
+    // make color acceptable;
+
+    let changed = false;
+
+    var hsl = clr.rgb2hsl(rgb);
+
+    var h12 = hsl.h * 12;
+
+    if (h12 >= 1 && h12 <= 2) {
+      // less brown
+      changed = true;
+
+      // map to 0.5..1
+      hsl.s = 0.5 + hsl.s / 2;
+      hsl.l = 0.5 + hsl.l / 2;
+    }
+
+    return  (changed ? clr.hsl2rgb(hsl) : rgb);
+  };
+
+  // todo: try eliminating fn by returning a function & adding properties to the function
   // don't use "name" - doesn't work
 
   var schemes = [
@@ -437,7 +459,7 @@
     var h12 = hue * 12;
 
     // brighter orange
-    if (h12 > 1 && h12 < 2) {
+    if (h12 >= 1 && h12 <= 2) {
       l = Rp.bandom(1, -3);
     }
     else {
@@ -795,6 +817,7 @@
     exports.getIntensity = getIntensity;
     exports.calcHslStats = calcHslStats;
     exports.isHueModeOk = isHueModeOk;
+    exports.fixColor = fixColor;
 
     return palette;
 

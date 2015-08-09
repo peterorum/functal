@@ -2,7 +2,7 @@
 
   "use strict";
 
-  var version = '2.0.2';
+  var version = '2.1.0';
 
   var seedrandom = require('seedrandom');
   var randomSeed = (new Date()).getTime();
@@ -27,6 +27,7 @@
   var clr = require('./color');
   var pal = require('./palette');
   var pickers = require('./pickers');
+  var mixers = require('./mixers');
   var limitTests = require('./limitTests');
   var processes = require('./processes');
   var modifiers = require('./modifiers');
@@ -215,7 +216,6 @@
 
           var mods = fractal.getModifierValues(functal, result);
           rgb = functal.picker.getColor(functal, mods, result, palette);
-
         }
         else {
 
@@ -363,6 +363,8 @@
     var picker = Rp.wandom(pickers.pickers);
 
     functal.picker = picker;
+
+    functal.mixers = functal.picker.getMixers(functal.modifiers);
 
     // weight factors
     functal.layers = [];

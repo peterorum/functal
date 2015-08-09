@@ -4,8 +4,10 @@
 
   var clr = require('./color');
   var pal = require('./palette');
+  var mixers = require('./mixers');
   var math = require('mathjs');
   var R = require('ramda');
+  var Rp = require('./plus-fp/plus-fp');
 
   //--------- blend modifiers onto base color
 
@@ -25,42 +27,15 @@
       modColor = math.multiply(modColor, functal.layers[k]);
 
       return math.add(sum, modColor);
-
     }, base, mods);
 
     blended = math.floor(blended);
 
     var rgb = R.zipObj(['r', 'g', 'b'], blended);
 
+    rgb = pal.fixColor(rgb);
+
     return rgb;
-
-  };
-
-  //--------- modifiers adjust lightness of base color
-
-  var adjustLightness = function(functal, mods, result, palette) {
-
-    var baseHsl = pal.getColor(palette, result.escape);
-
-    var modHsl = R.reduceIndexed(function(hsl, mod, k) {
-
-      mod *= functal.layers[k] * 0.05;
-
-      mod = math.max(-1, math.min(1, mod));
-
-      if (mod > 0) {
-        hsl.l = hsl.l + (1 - hsl.l) * mod;
-      }
-      else {
-        hsl.l = hsl.l + (hsl.l) * mod;
-      }
-
-      return hsl;
-
-    }, baseHsl, mods);
-
-    return clr.hsl2rgb(modHsl);
-
   };
 
   //------------ sum the values & use as index
@@ -72,16 +47,19 @@
     var total = R.reduce(function(sum, mod) {
 
       return sum + mod * functal.layers[k++];
-
     }, result.escape * functal.baseLayer, mods);
 
     var hsl = pal.getColor(palette, total);
     var rgb = clr.hsl2rgb(hsl);
 
     return rgb;
-
   };
 
+  var getMixers = function(modifiers) {
+    return R.map(function() {
+      return Rp.wandom(mixers.mixers);
+    }, modifiers);
+  };
 
   //--------- exports
 
@@ -89,17 +67,20 @@
     {
       name: 'blend',
       weight: 100,
-      getColor: blend
+      getColor: blend,
+      getMixers: () => {}
     },
     {
       name: 'direct',
       weight: 20,
-      getColor: direct
+      getColor: direct,
+      getMixers: () => {}
     },
     {
-      name: 'adjust lightness',
-      weight: 0, //////////////////////////////////////////
-      getColor: adjustLightness
+      name: 'mix',
+      weight: 100,
+      getColor: mixers.mix,
+      getMixers: (modifiers) => getMixers(modifiers)
     }
   ];
 
