@@ -249,28 +249,28 @@
                     });
                 });
 
-                //------------- delete image on s3
-                app.post('/delete', function(req, res)
-                {
-                    var key = req.body.key;
+                // //------------- delete image on s3
+                // app.post('/delete', function(req, res)
+                // {
+                //     var key = req.body.key;
 
-                    s3.delete(bucket, key)
-                        .then(function()
-                        {
-                            return s3.delete(bucketJson, key.replace(/(png|jpg)$/, 'json'));
-                        })
-                        .then(function(result)
-                        {
-                            res.json(result);
-                        });
+                //     s3.delete(bucket, key)
+                //         .then(function()
+                //         {
+                //             return s3.delete(bucketJson, key.replace(/(png|jpg)$/, 'json'));
+                //         })
+                //         .then(function(result)
+                //         {
+                //             res.json(result);
+                //         });
 
-                    // remove from local list
-                    images = R.reject(function(img)
-                    {
-                        return img === key;
-                    }, images);
+                //     // remove from local list
+                //     images = R.reject(function(img)
+                //     {
+                //         return img.name === key;
+                //     }, images);
 
-                });
+                // });
 
                 //---------- vote
                 app.get('/vote', function(req, res)

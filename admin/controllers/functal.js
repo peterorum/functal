@@ -19,32 +19,32 @@
                     });
                 };
 
-                $scope.delete = function(image)
-                {
-                    var key = image.name;
+                // $scope.delete = function(image)
+                // {
+                //     var key = image.name;
 
-                    $scope.images = R.filter(function(k)
-                    {
-                        return k.name !== key;
-                    }, $scope.images);
+                //     $scope.images = R.filter(function(k)
+                //     {
+                //         return k.name !== key;
+                //     }, $scope.images);
 
-                    $http(
-                    {
-                        method: 'POST',
-                        url: '/delete',
-                        data:
-                        {
-                            key: key
-                        }
-                    }).then(function(result)
-                    {
-                        if (result.error)
-                        {
-                            $window.alert(result.error);
-                        }
-                    });
+                //     $http(
+                //     {
+                //         method: 'POST',
+                //         url: '/delete',
+                //         data:
+                //         {
+                //             key: key
+                //         }
+                //     }).then(function(result)
+                //     {
+                //         if (result.error)
+                //         {
+                //             $window.alert(result.error);
+                //         }
+                //     });
 
-                };
+                // };
 
                 $scope.gotoTop = function()
                 {

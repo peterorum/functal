@@ -139,6 +139,16 @@
     return clr.rgb2hsl(rgb);
   };
 
+  var lighter = function(hsl1, hsl2) {
+
+    return hsl1.l > hsl2.l ? hsl1 : hsl2;
+  };
+
+  var darker = function(hsl1, hsl2) {
+
+    return hsl1.l < hsl2.l ? hsl1 : hsl2;
+  };
+
   //--------- mix modifier colors onto base color
 
   var mix = function(functal, mods, result, palette) {
@@ -263,6 +273,16 @@
       name: 'lightness difference',
       weight: 100,
       mix: differencel
+    },
+    {
+      name: 'lighter',
+      weight: 50,
+      mix: lighter
+    },
+    {
+      name: 'darker',
+      weight: 100,
+      mix: darker
     }
   ];
 
