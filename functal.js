@@ -27,7 +27,6 @@
   var clr = require('./color');
   var pal = require('./palette');
   var pickers = require('./pickers');
-  var mixers = require('./mixers');
   var limitTests = require('./limitTests');
   var processes = require('./processes');
   var modifiers = require('./modifiers');
@@ -897,12 +896,11 @@
         ok = functal.accept &&
           functal.stdDev > functal.minStdDev &&
           functal.hslStats.l.std > functal.minHslStats.l.std &&
-          functal.hslStats.l.mean > functal.minHslStats.l.meanMin &&
-          // functal.hslStats.l.mean < functal.minHslStats.l.meanMax &&
-          // functal.hslStats.i.max > functal.minHslStats.i.max &&
-          functal.hslStats.s.mean > functal.minHslStats.s.meanMin &&
+          // functal.hslStats.l.mean > functal.minHslStats.l.meanMin &&
+          // functal.hslStats.s.mean > functal.minHslStats.s.meanMin &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
-          functal.uniques > functal.sampleCount;
+          functal.uniques > functal.sampleCount &&
+          true;
       } catch (ex) {
 
         ok = false;

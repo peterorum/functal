@@ -66,19 +66,19 @@
   exports.pickers = [
     {
       name: 'blend',
-      weight: 200,
+      weight: 100,
       getColor: blend,
       getMixers: () => {}
     },
     {
       name: 'direct',
-      weight: 10, // too easily picker
+      weight: 20, // too easily picker
       getColor: direct,
       getMixers: () => {}
     },
     {
       name: 'mix',
-      weight: 80,
+      weight: 100,
       getColor: mixers.mix,
       getMixers: (modifiers) => getMixers(modifiers)
     }
