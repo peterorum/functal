@@ -66,7 +66,7 @@
   exports.pickers = [
     {
       name: 'blend',
-      weight: 100,
+      weight: 200,
       getColor: blend,
       getMixers: () => {}
     },
