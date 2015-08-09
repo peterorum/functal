@@ -25,7 +25,7 @@
 
                     $scope.images = R.filter(function(k)
                     {
-                        return k !== key;
+                        return k.name !== key;
                     }, $scope.images);
 
                     $http(
