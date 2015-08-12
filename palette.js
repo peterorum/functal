@@ -782,7 +782,7 @@
 
       ok = palette.hslStats.l.std > minHslStats.l.std &&
            palette.hslStats.s.std > minHslStats.s.std &&
-        // palette.hslStats.l.mean > minHslStats.l.meanMin &&
+          palette.hslStats.l.mean > minHslStats.l.meanMin &&
         // palette.hslStats.l.mean < minHslStats.l.meanMax &&
         // palette.hslStats.s.mean > minHslStats.s.meanMin &&
         // palette.hslStats.i.max > minHslStats.i.max &&
