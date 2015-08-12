@@ -13,11 +13,11 @@
       std: 0.08
     },
     s: {
-      std: 0,
+      std: 0.2,
       meanMin: 0.5,
     },
     l: {
-      std: 0.1,
+      std: 0.2,
       meanMin: 0.5,
       meanMax: 0.7
     },
@@ -781,6 +781,7 @@
       palette.hslStats = calcHslStats(palette.colors);
 
       ok = palette.hslStats.l.std > minHslStats.l.std &&
+           palette.hslStats.s.std > minHslStats.s.std &&
         // palette.hslStats.l.mean > minHslStats.l.meanMin &&
         // palette.hslStats.l.mean < minHslStats.l.meanMax &&
         // palette.hslStats.s.mean > minHslStats.s.meanMin &&
