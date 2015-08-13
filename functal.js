@@ -898,6 +898,7 @@
           functal.hslStats.l.std > functal.minHslStats.l.std &&
           functal.hslStats.s.std > functal.minHslStats.s.std &&
           functal.hslStats.l.mean > functal.minHslStats.l.meanMin &&
+          functal.hslStats.l.mean < functal.minHslStats.l.meanMax &&
           // functal.hslStats.s.mean > functal.minHslStats.s.meanMin &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount &&

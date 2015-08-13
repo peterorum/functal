@@ -72,7 +72,7 @@
     },
     {
       name: 'direct',
-      weight: 20, // too easily picked
+      weight: 10, // too easily picked
       getColor: direct,
       getMixers: () => {}
     },

@@ -18,8 +18,8 @@
     },
     l: {
       std: 0.2,
-      meanMin: 0.5,
-      meanMax: 0.7
+      meanMin: 0.4,
+      meanMax: 0.8
     },
     i: // intensity
     {
@@ -33,7 +33,6 @@
     var il = 1 - 2 * math.abs(0.5 - hsl.l); // 0.5 = 1, 0,1 = 0
 
     return il * hsl.s;
-
   };
 
   var selectHue = function(except, wues) {
@@ -46,7 +45,6 @@
     var hue = math.mod(baseHue + math.random(hueFrom, hueTo) / 12, 1);
 
     return hue;
-
   };
 
   var fixColor = function(rgb) {
@@ -67,7 +65,7 @@
       hsl.l = math.sqrt(hsl.l);
     }
 
-    return  (changed ? clr.hsl2rgb(hsl) : rgb);
+    return (changed ? clr.hsl2rgb(hsl) : rgb);
   };
 
   // todo: try eliminating fn by returning a function & adding properties to the function
@@ -121,10 +119,8 @@
               });
 
             return hues;
-
           }
         };
-
       },
       weight: 100,
     },
@@ -169,10 +165,8 @@
               });
 
             return hues;
-
           }
         };
-
       },
       weight: 100,
     },
@@ -214,10 +208,8 @@
               });
 
             return hues;
-
           }
         };
-
       },
       weight: 20,
     },
@@ -254,10 +246,8 @@
               });
 
             return hues;
-
           }
         };
-
       },
       weight: 10,
     },
@@ -290,10 +280,8 @@
             }
 
             return hues;
-
           }
         };
-
       },
       weight: 5,
     },
@@ -338,10 +326,8 @@
               });
 
             return hues;
-
           }
         };
-
       },
       weight: 5,
     }
@@ -363,11 +349,9 @@
         var x = math[statFn](R.map(function(hsl) {
 
           return hsl[hslkey];
-
         }, hsls));
 
         return math.round(x, 3);
-
       }, statFns));
 
 
@@ -376,7 +360,6 @@
     hslStats.h.mode = calcHueMode(hsls);
 
     return hslStats;
-
   };
 
   var calcHueMode = function(hsls) {
@@ -384,7 +367,6 @@
     var dist = R.map(function() {
 
       return 0;
-
     }, R.range(0, 25));
 
     R.forEach(function(hsl) {
@@ -409,14 +391,12 @@
     var mode = R.findIndex(function(h) {
 
       return h === max;
-
     }, dist);
 
     // 0..12
     mode = mode / 2;
 
     return mode;
-
   };
 
   var isHueModeOk = function(h12) {
@@ -428,7 +408,6 @@
     ok = ok && !(h12 >= 8.5 && h12 <= 11);
 
     return ok;
-
   };
 
   // determine colors within the band
@@ -446,7 +425,6 @@
     var hsl = clr.rgb2hsl(rgb);
 
     return hsl;
-
   };
 
   var getLightness = function(index, hue, contrast) {
@@ -466,7 +444,6 @@
     }
 
     return l;
-
   };
 
   var getSaturation = function(hue) {
@@ -483,7 +460,6 @@
     }
 
     return s;
-
   };
 
   var interpolateWithBlackLine = function(rgb1, rgb2, gap, i, palette) {
@@ -504,7 +480,6 @@
     }
 
     return hsl;
-
   };
 
   var solidColors = function(rgb1 /*, rgb2, gap, i*/ ) {
@@ -514,7 +489,6 @@
     var hsl = clr.rgb2hsl(rgb1);
 
     return hsl;
-
   };
 
   // color band
@@ -537,7 +511,6 @@
           };
 
           return hsl;
-
         };
 
         return {
@@ -545,7 +518,6 @@
           fn: fn,
           bandColor: interpolateColors
         };
-
       },
       weight: 500
     },
@@ -566,7 +538,6 @@
           };
 
           return hsl;
-
         };
 
         return {
@@ -574,7 +545,6 @@
           fn: fn,
           bandColor: interpolateWithBlackLine
         };
-
       },
       weight: 25
     },
@@ -594,7 +564,6 @@
           };
 
           return hsl;
-
         });
 
         var blackness = 2 + Rp.bandomInt(6, 1);
@@ -605,7 +574,6 @@
           blackness: blackness,
           bandColor: interpolateColors
         };
-
       },
       weight: 25
     },
@@ -623,7 +591,6 @@
           };
 
           return hsl;
-
         };
 
         return {
@@ -631,7 +598,6 @@
           fn: fn,
           bandColor: solidColors
         };
-
       },
 
       weight: 0.1
@@ -728,7 +694,6 @@
       var sum = R.reduce(function(sum, n) {
 
         return sum + n;
-
       }, 0, weights);
 
       var hues = palette.scheme.fn(palette, wues);
@@ -751,14 +716,12 @@
         index++;
 
         return gap;
-
       }, weights);
 
       // adj last one so that sum is exactly size
       R.last(gaps).gap += math.max(0, (size - R.reduce(function(sum, n) {
 
           return sum + n;
-
         }, 0, R.pluck('gap', gaps))));
 
       R.forEachIndexed(function(g, k) {
@@ -781,9 +744,9 @@
       palette.hslStats = calcHslStats(palette.colors);
 
       ok = palette.hslStats.l.std > minHslStats.l.std &&
-           palette.hslStats.s.std > minHslStats.s.std &&
-          palette.hslStats.l.mean > minHslStats.l.meanMin &&
-        // palette.hslStats.l.mean < minHslStats.l.meanMax &&
+        palette.hslStats.s.std > minHslStats.s.std &&
+        palette.hslStats.l.mean > minHslStats.l.meanMin &&
+        palette.hslStats.l.mean < minHslStats.l.meanMax &&
         // palette.hslStats.s.mean > minHslStats.s.meanMin &&
         // palette.hslStats.i.max > minHslStats.i.max &&
         isHueModeOk(palette.hslStats.h.mode);
@@ -795,7 +758,6 @@
     exports.getColorIndex = function(size, color) {
 
       return math.floor(color * size);
-
     };
 
     exports.getColor = function(palette, color) {
@@ -805,13 +767,11 @@
       var index = exports.getColorIndex(palette.size, color);
 
       return palette.colors[math.mod(index, palette.size)];
-
     };
 
     exports.getExpectedHslStats = function() {
 
       return minHslStats;
-
     };
 
     exports.getIntensity = getIntensity;
@@ -820,7 +780,6 @@
     exports.fixColor = fixColor;
 
     return palette;
-
   };
 
 }());
