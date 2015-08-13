@@ -620,12 +620,12 @@
       {
         // warm red
         hue: 0 / 12,
-        weight: 50
+        weight: 25
       },
       {
         // orange
         hue: 1 / 12,
-        weight: 50
+        weight: 25
       },
       {
         // yellow
