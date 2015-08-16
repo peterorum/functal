@@ -14,7 +14,7 @@ import twitter
 # pu.db
 
 from pymongo import MongoClient
-client = MongoClient(os.getenv('mongo_client'))
+client = MongoClient(os.getenv('mongo_functal'))
 
 # --- get_tweets
 
