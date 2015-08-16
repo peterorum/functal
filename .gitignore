@@ -41,3 +41,5 @@ admin/downloads/*
 nohup.out
 
 ~$*.xlsx
+
+dump/

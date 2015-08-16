@@ -1,335 +1,300 @@
-(
-    function()
+(function() {
+  "use strict";
+
+  // must always be running by...
+  // nohup ./serve&
+
+  var express = require('express');
+
+  var app = express();
+  var bodyParser = require("body-parser");
+
+  app.disable('view cache');
+  app.set('json spaces', 4);
+  app.use(bodyParser.urlencoded(
     {
-        "use strict";
+      extended: true
+    }));
+  app.use(bodyParser.json());
 
-        // must always be running by...
-        // nohup ./serve&
+  var http = require('http');
+  var url = require('url');
+  var queryString = require('querystring');
+  var path = require('path');
+  var R = require('ramda');
+  var debounce = require('lodash.debounce');
 
-        var express = require('express');
+  var s3 = require('../s3client');
 
-        var app = express();
-        var bodyParser = require("body-parser");
+  var promise = require("bluebird");
+  var mongodb = promise.promisifyAll(require("mongodb"));
 
-        app.disable('view cache');
-        app.set('json spaces', 4);
-        app.use(bodyParser.urlencoded(
+  var bucket = 'functal-images';
+  var bucketJson = 'functal-json';
+
+  var images = [];
+
+  //--------- throttle
+
+  var throttle = function(fn, wait) {
+    return debounce(fn, wait,
+      {
+        leading: true,
+        trailing: true,
+        maxWait: wait
+      });
+  };
+
+  //--------- serve a file
+
+  var sendFile = function(res, filename) {
+    var filepath = path.join(process.cwd(), filename);
+
+    res.sendFile(filepath, function(err) {
+      if (err) {
+        console.log(err);
+        res.status(err.status).end();
+      }
+      else {
+        // console.log('Sent:', filename);
+      }
+    });
+  };
+
+  //--------- sync votes
+
+  var updateMemoryImage = function(doc) {
+    var image = R.find(function(i) {
+      return i.name === doc.name;
+    }, images);
+
+    if (image) {
+      image.likes = doc.likes;
+      image.dislikes = doc.dislikes;
+    }
+  };
+
+  //--------- load votes
+
+  var loadVotes = function(db) {
+    return new Promise(function(resolve, reject) {
+      var dbImages = db.collection('images');
+
+      dbImages.find(
         {
-            extended: true
-        }));
-        app.use(bodyParser.json());
+          name: {
+            $in: R.pluck('name', images)
+          }
+        }).toArrayAsync().then(function(docs) {
+        // set votes in memory
 
-        var http = require('http');
-        var url = require('url');
-        var queryString = require('querystring');
-        var path = require('path');
-        var R = require('ramda');
-        var debounce = require('lodash.debounce');
+        R.forEach(function(doc) {
+          updateMemoryImage(doc);
 
-        var s3 = require('../s3client');
+        }, docs);
 
-        var promise = require("bluebird");
-        var mongodb = promise.promisifyAll(require("mongodb"));
+        resolve();
+      }, function(err) {
+        reject("error in loadVotes:" + err);
+      });
+    });
+  };
 
-        var bucket = 'functal-images';
-        var bucketJson = 'functal-json';
+  //---------- get images on s3
 
-        var images = [];
+  var getImageList = function(db) {
+    return new Promise(function(resolve, reject) {
+      console.log('load list from s3', (new Date()).toString());
 
-        //--------- throttle
+      s3.list(bucket).then(function(result) {
+        // console.log(result.files);
 
-        var throttle = function(fn, wait)
+        images = R.map(function(img) {
+          return {
+            name: img.Key,
+            likes: 0,
+            dislikes: 0
+          };
+        }, result.files);
+
+        images = R.reverse(images);
+
+        // load votes
+        loadVotes(db).then(function() {
+          var minImagesToKeep = 1000;
+
+          // delete unpopular
+          var unpopular = R.filter(function(i) {
+            return i.dislikes > i.likes;
+          }, images);
+
+          unpopular = R.take(Math.max(0, Math.min(images.length - minImagesToKeep, unpopular.length)), unpopular);
+
+          R.forEach(function(img) {
+            console.log('delete ', img.name, 'dislikes', img.dislikes, 'likes', img.likes);
+
+            s3.delete(bucket, img.name)
+              .then(function() {
+                return s3.delete(bucketJson, img.name.replace(/(png|jpg)$/, 'json'));
+              });
+          }, unpopular);
+
+          // only return populer
+          images = R.filter(function(i) {
+            return i.likes >= i.dislikes;
+          }, images);
+
+          resolve();
+        });
+
+      },
+        function(err) {
+          console.log('error in getImageList', err);
+          reject('error in getImageList');
+        });
+    });
+  };
+
+  //--------- database
+
+  mongodb.connectAsync(process.env.mongo_functal).then(function(db) {
+    //------- db functions
+
+    var dbImages = db.collection('images');
+
+    // db setup
+    // db.images.createIndex({name: 1})
+
+    // debug
+    var listVotes = function() {
+      dbImages.find().toArrayAsync().then(function(docs) {
+        console.log(docs);
+      });
+    };
+
+    //--- image list refresh
+
+    // hourly
+    var getImagesHourly = throttle(getImageList, 60 * 60000);
+
+    // initial load of image list
+
+    getImagesHourly(db).then(function() {
+      console.log('images', images.length);
+    }, function(err) {
+      console.log('error in initial getImagesHourly', err);
+    });
+
+    // --- start express
+
+    http.createServer(app).listen(process.env.PORT || 8083);
+
+    //--- routing
+
+    //------------ files
+    app.get(/\.(js|css|png|jpg|html)$/, function(req, res) {
+      var uri = url.parse(req.url, true, false);
+
+      sendFile(res, uri.pathname);
+    });
+
+    //------------- home page
+    app.get('/', function(req, res) {
+      listVotes();
+
+      sendFile(res, '/views/index.html');
+    });
+
+    app.get('/getimages', function(req, res) {
+      // throttled
+      getImagesHourly(db);
+
+      res.jsonp(
         {
-            return debounce(fn, wait,
-            {
-                leading: true,
-                trailing: true,
-                maxWait: wait
-            });
-        };
+          images: images
+        });
+    });
 
-        //--------- serve a file
+    // //------------- delete image on s3
+    // app.post('/delete', function(req, res)
+    // {
+    //     var key = req.body.key;
 
-        var sendFile = function(res, filename)
+    //     s3.delete(bucket, key)
+    //         .then(function()
+    //         {
+    //             return s3.delete(bucketJson, key.replace(/(png|jpg)$/, 'json'));
+    //         })
+    //         .then(function(result)
+    //         {
+    //             res.json(result);
+    //         });
+
+    //     // remove from local list
+    //     images = R.reject(function(img)
+    //     {
+    //         return img.name === key;
+    //     }, images);
+
+    // });
+
+    //---------- vote
+    app.get('/vote', function(req, res) {
+      var uri = url.parse(req.url);
+      var query = queryString.parse(uri.query);
+      var data = JSON.parse(query.data);
+
+      // updates image votes, adding to db if necessary
+
+      dbImages.findOneAsync(
         {
-            var filepath = path.join(process.cwd(), filename);
+          name: data.name
+        }).then(function(image) {
+        if (!image) {
+          image = {
+            name: data.name,
+            likes: data.like,
+            dislikes: data.dislike,
+            dateLastVote: new Date()
+          };
+        }
+        else {
+          image.likes = Math.max(0, image.likes + data.like);
+          image.dislikes = Math.max(0, image.dislikes + data.dislike);
 
-            res.sendFile(filepath, function(err)
-            {
-                if (err)
-                {
-                    console.log(err);
-                    res.status(err.status).end();
-                }
-                else
-                {
-                    // console.log('Sent:', filename);
-                }
-            });
-        };
+          if (image.likes >= image.dislikes) {
+            image.dateLastVote = new Date();
+          }
+        }
 
-        //--------- sync votes
 
-        var updateMemoryImage = function(doc)
-        {
-            var image = R.find(function(i)
-            {
-                return i.name === doc.name;
-            }, images);
+        dbImages.update(
+          {
+            name: image.name
+          },
+          image,
+          {
+            upsert: true
+          });
 
-            if (image)
-            {
-                image.likes = doc.likes;
-                image.dislikes = doc.dislikes;
-            }
-        };
+        updateMemoryImage(image);
 
-        //--------- load votes
+        res.jsonp(
+          {
+            status: 'ok',
+            image: image
+          });
+      });
 
-        var loadVotes = function(db)
-        {
-            return new Promise(function(resolve, reject)
-            {
-                var dbImages = db.collection('images');
+      getImagesHourly(db);
 
-                dbImages.find(
-                {
-                    name:
-                    {
-                        $in: R.pluck('name', images)
-                    }
-                }).toArrayAsync().then(function(docs)
-                {
-                    // set votes in memory
+    });
+  })
+    .catch(function(e) {
+      // startup error
 
-                    R.forEach(function(doc)
-                    {
-                        updateMemoryImage(doc);
-
-                    }, docs);
-
-                    resolve();
-                }, function(err)
-                {
-                    reject("error in loadVotes:" + err);
-                });
-            });
-        };
-
-        //---------- get images on s3
-
-        var getImageList = function(db)
-        {
-            return new Promise(function(resolve, reject)
-            {
-                console.log('load list from s3', (new Date()).toString());
-
-                s3.list(bucket).then(function(result)
-                    {
-                        // console.log(result.files);
-
-                        images = R.map(function(img)
-                        {
-                            return {
-                                name: img.Key,
-                                likes: 0,
-                                dislikes: 0
-                            };
-                        }, result.files);
-
-                        images = R.reverse(images);
-
-                        // load votes
-                        loadVotes(db).then(function()
-                        {
-                            var minImagesToKeep = 1000;
-
-                            // delete unpopular
-                            var unpopular = R.filter(function(i)
-                            {
-                                return i.dislikes > i.likes;
-                            }, images);
-
-                            unpopular = R.take(Math.max(0, Math.min(images.length - minImagesToKeep, unpopular.length)), unpopular);
-
-                            R.forEach(function(img)
-                            {
-                                console.log('delete ', img.name, 'dislikes', img.dislikes, 'likes', img.likes);
-
-                                s3.delete(bucket, img.name)
-                                    .then(function()
-                                    {
-                                        return s3.delete(bucketJson, img.name.replace(/(png|jpg)$/, 'json'));
-                                    });
-                            }, unpopular);
-
-                            // only return populer
-                            images = R.filter(function(i)
-                            {
-                                return i.likes >= i.dislikes;
-                            }, images);
-
-                            resolve();
-                        });
-
-                    },
-                    function(err)
-                    {
-                        console.log('error in getImageList', err);
-                        reject('error in getImageList');
-                    });
-            });
-        };
-
-        //--------- database
-
-        mongodb.connectAsync(process.env.mongo_functal).then(function(db)
-            {
-                //------- db functions
-
-                var dbImages = db.collection('images');
-
-                // db setup
-                // db.images.createIndex({name: 1})
-
-                // debug
-                var listVotes = function()
-                {
-                    dbImages.find().toArrayAsync().then(function(docs)
-                    {
-                        console.log(docs);
-                    });
-                };
-
-                //--- image list refresh
-
-                // hourly
-                var getImagesHourly = throttle(getImageList, 60 * 60000);
-
-                // initial load of image list
-
-                getImagesHourly(db).then(function()
-                {
-                    console.log('images', images.length);
-                }, function(err)
-                {
-                    console.log('error in initial getImagesHourly', err);
-                });
-
-                // --- start express
-
-                http.createServer(app).listen(process.env.PORT || 8083);
-
-                //--- routing
-
-                //------------ files
-                app.get(/\.(js|css|png|jpg|html)$/, function(req, res)
-                {
-                    var uri = url.parse(req.url, true, false);
-
-                    sendFile(res, uri.pathname);
-                });
-
-                //------------- home page
-                app.get('/', function(req, res)
-                {
-                    listVotes();
-
-                    sendFile(res, '/views/index.html');
-                });
-
-                app.get('/getimages', function(req, res)
-                {
-                    // throttled
-                    getImagesHourly(db);
-
-                    res.jsonp(
-                    {
-                        images: images
-                    });
-                });
-
-                // //------------- delete image on s3
-                // app.post('/delete', function(req, res)
-                // {
-                //     var key = req.body.key;
-
-                //     s3.delete(bucket, key)
-                //         .then(function()
-                //         {
-                //             return s3.delete(bucketJson, key.replace(/(png|jpg)$/, 'json'));
-                //         })
-                //         .then(function(result)
-                //         {
-                //             res.json(result);
-                //         });
-
-                //     // remove from local list
-                //     images = R.reject(function(img)
-                //     {
-                //         return img.name === key;
-                //     }, images);
-
-                // });
-
-                //---------- vote
-                app.get('/vote', function(req, res)
-                {
-                    var uri = url.parse(req.url);
-                    var query = queryString.parse(uri.query);
-                    var data = JSON.parse(query.data);
-
-                    // updates image votes, adding to db if necessary
-
-                    dbImages.findOneAsync(
-                    {
-                        name: data.name
-                    }).then(function(image)
-                    {
-                        if (!image)
-                        {
-                            image = {
-                                name: data.name,
-                                likes: data.like,
-                                dislikes: data.dislike
-                            };
-                        }
-                        else
-                        {
-                            image.likes = Math.max(0, image.likes + data.like);
-                            image.dislikes = Math.max(0, image.dislikes + data.dislike);
-                        }
-
-                        image.dateLastVote = new Date();
-
-                        dbImages.update(
-                            {
-                                name: image.name
-                            },
-                            image,
-                            {
-                                upsert: true
-                            });
-
-                        updateMemoryImage(image);
-
-                        res.jsonp(
-                        {
-                            status: 'ok',
-                            image: image
-                        });
-                    });
-
-                    getImagesHourly(db);
-
-                });
-            })
-            .catch(function(e)
-            {
-                // startup error
-
-                console.log('mongo error', e.message);
-                console.log('did you?:\nmongod --config /usr/local/etc/mongod.conf');
-                throw e;
-            });
-    }());
+      console.log('mongo error', e.message);
+      console.log('did you?:\nmongod --config /usr/local/etc/mongod.conf');
+      throw e;
+    });
+}());
