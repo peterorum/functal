@@ -300,6 +300,8 @@
                             image.dislikes = Math.max(0, image.dislikes + data.dislike);
                         }
 
+                        image.dateLastVote = new Date();
+
                         dbImages.update(
                             {
                                 name: image.name
