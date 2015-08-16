@@ -23,36 +23,31 @@ client = pymongo.MongoClient(os.getenv('mongo_functal'))
 def get_tweets(topic):
     print('topic : ' + topic)
 
-    try:
-        search_results = twit.search.tweets(q=topic, lang='en', result_type='popular')
-        # print('search_results')
-        # pp.pprint(search_results)
+    db = client['topics']
+    tweets = db['tweets']
 
-        # 'user': tweet['user']['name']
-        texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
-                 for tweet in search_results['statuses'] if topic in tweet['text']]
+    search_results = twit.search.tweets(q=topic, lang='en', result_type='popular')
+    # print('search_results')
+    # pp.pprint(search_results)
 
-        print('tweets: ' + str(len(texts)))
+    # 'user': tweet['user']['name']
+    texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
+             for tweet in search_results['statuses'] if topic in tweet['text'] and tweets.find({'_id': tweet['id_str']}).count() == 0]
 
-        if len(texts) > 0:
-            pp.pprint(texts)
+    print('tweets: ' + str(len(texts)))
 
-            # store
-            db = client['topics']
-            tweets = db['tweets']
+    if len(texts) > 0:
+        pp.pprint(texts)
 
-            # ignore dup key error
-            try:
-                result = tweets.insert(texts, {'ordered': False})
-                print(str(len(result)) + ' tweets inserted')
-            except pymongo.errors.DuplicateKeyError as e:
-                print('db error')
-                print(e)
+        # store
 
-    except Exception as e:
-        print('api error')
-        print(type(e))
-        print(e)
+        # ignore dup key error
+        try:
+            result = tweets.insert(texts, {'ordered': False})
+            print(str(len(result)) + ' tweets inserted')
+        except pymongo.errors.PyMongoError:
+            print(type(e))
+            print(e)
 
 #--- global
 
@@ -67,11 +62,15 @@ twit = twitter.Twitter(auth=auth)
 def main():
 
     topics = ["red", "orange", "yellow", "green", "blue", "purple",
-              "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star"]
+              "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star",
+              "sunset", "gold", "golden"]
 
     while True:
         try:
             get_tweets(topics[random.randint(0, len(topics) - 1)])
+        except Exception as e:
+            print(type(e))
+            print(e)
         finally:
             time.sleep(60)
 
