@@ -16,9 +16,6 @@ import twitter
 from pymongo import MongoClient
 client = MongoClient(os.getenv('mongo_functal'))
 
-print(os.getenv('mongo_functal'))
-sys.exit()
-
 # --- get_tweets
 
 
