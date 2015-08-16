@@ -4,7 +4,7 @@ import os
 import random
 import time
 # import re
-# import sys
+import sys
 # import json
 import pprint
 
@@ -16,7 +16,8 @@ import twitter
 from pymongo import MongoClient
 client = MongoClient(os.getenv('mongo_functal'))
 
-echo os.getenv('mongo_functal')
+print(os.getenv('mongo_functal'))
+sys.exit()
 
 # --- get_tweets
 
