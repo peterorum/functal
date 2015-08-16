@@ -13,8 +13,9 @@ import twitter
 # import pudb
 # pu.db
 
-from pymongo import MongoClient
-client = MongoClient(os.getenv('mongo_functal'))
+import pymongo
+
+client = pymongo.MongoClient(os.getenv('mongo_functal'))
 
 # --- get_tweets
 
@@ -44,7 +45,7 @@ def get_tweets(topic):
             try:
                 result = tweets.insert(texts, {'ordered': False})
                 print(str(len(result)) + ' tweets inserted')
-            except Exception as e:
+            except pymongo.errors.DuplicateKeyError as e:
                 print('db error')
                 print(type(e))
                 print(e)
