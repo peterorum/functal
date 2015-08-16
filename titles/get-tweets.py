@@ -43,8 +43,8 @@ def get_tweets(topic):
         try:
             result = tweets.insert(texts, {'ordered': False})
             print(str(len(result)) + ' tweets inserted')
-        except:
-            print('db insert error ignored')
+        except Exception as e:
+            print(e)
 
 #--- global
 
