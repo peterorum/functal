@@ -46,6 +46,8 @@ def get_tweets(topic):
             except pymongo.errors.PyMongoError as e:
                 print(type(e))
                 print(e)
+        else:
+            print('No new tweets')
 
     except urllib.error.URLError as e:
         print(e)
@@ -63,6 +65,8 @@ twit = twitter.Twitter(auth=auth)
 
 def main():
 
+    # pylint: disable=W0703
+
     topics = ["red", "orange", "yellow", "green", "blue", "purple",
               "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star",
               "sunset", "gold", "golden"]
@@ -70,13 +74,13 @@ def main():
     while True:
         try:
             get_tweets(topics[random.randint(0, len(topics) - 1)])
-        # pylint: disable=W0703
         except Exception as e:
             print(type(e))
             print(e)
-        # pylint: enable=W0703
         finally:
             time.sleep(60)
+
+    # pylint: enable=W0703
 
 #--- run
 
