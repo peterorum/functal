@@ -23,31 +23,35 @@ client = pymongo.MongoClient(os.getenv('mongo_functal'))
 def get_tweets(topic):
     print('topic : ' + topic)
 
-    db = client['topics']
-    tweets = db['tweets']
+    try:
+        search_results = twit.search.tweets(q=topic, lang='en', result_type='popular')
+        # print('search_results')
+        # pp.pprint(search_results)
 
-    search_results = twit.search.tweets(q=topic, lang='en', result_type='popular')
-    # print('search_results')
-    # pp.pprint(search_results)
+        db = client['topics']
+        tweets = db['tweets']
 
-    # 'user': tweet['user']['name']
-    texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
-             for tweet in search_results['statuses'] if topic in tweet['text'] and tweets.find({'_id': tweet['id_str']}).count() == 0]
+        # 'user': tweet['user']['name']
+        texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
+                 for tweet in search_results['statuses'] if topic in tweet['text'] and tweets.find({'_id': tweet['id_str']}).count() == 0]
 
-    print('tweets: ' + str(len(texts)))
+        print('tweets: ' + str(len(texts)))
 
-    if len(texts) > 0:
-        pp.pprint(texts)
+        if len(texts) > 0:
+            pp.pprint(texts)
 
-        # store
+            # store
 
-        # ignore dup key error
-        try:
-            result = tweets.insert(texts, {'ordered': False})
-            print(str(len(result)) + ' tweets inserted')
-        except pymongo.errors.PyMongoError:
-            print(type(e))
-            print(e)
+            # ignore dup key error
+            try:
+                result = tweets.insert(texts, {'ordered': False})
+                print(str(len(result)) + ' tweets inserted')
+            except pymongo.errors.PyMongoError as e:
+                print(type(e))
+                print(e)
+    except urllib.error.URLError as e:
+        print(e)
+
 
 #--- global
 
