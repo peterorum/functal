@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# nohup ./serve&
+# nohup ./get-tweets&
 # also in /etc/rc.local to run after reboot
 
 source /home/ec2-user/.bash_profile
