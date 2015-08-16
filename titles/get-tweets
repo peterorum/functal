@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# nohup ./serve&
+# also in /etc/rc.local to run after reboot
+
+source /home/ec2-user/.bash_profile
+
+cd /home/ec2-user/functal/titles
+
+while :
+do
+    ./get-tweets.py
+    sleep 1
+done
