@@ -4,7 +4,8 @@ import os
 import random
 import time
 # import re
-import sys
+#import sys
+import urllib
 # import json
 import pprint
 
@@ -35,20 +36,17 @@ def get_tweets(topic):
         texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
                  for tweet in search_results['statuses'] if topic in tweet['text'] and tweets.find({'_id': tweet['id_str']}).count() == 0]
 
-        print('tweets: ' + str(len(texts)))
-
         if len(texts) > 0:
             pp.pprint(texts)
 
             # store
-
-            # ignore dup key error
             try:
                 result = tweets.insert(texts, {'ordered': False})
                 print(str(len(result)) + ' tweets inserted')
             except pymongo.errors.PyMongoError as e:
                 print(type(e))
                 print(e)
+
     except urllib.error.URLError as e:
         print(e)
 
@@ -72,9 +70,11 @@ def main():
     while True:
         try:
             get_tweets(topics[random.randint(0, len(topics) - 1)])
+        # pylint: disable=W0703
         except Exception as e:
             print(type(e))
             print(e)
+        # pylint: enable=W0703
         finally:
             time.sleep(60)
 
