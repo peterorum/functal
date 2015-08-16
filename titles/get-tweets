@@ -9,6 +9,6 @@ cd /home/ec2-user/functal/titles
 
 while :
 do
-    ./get-tweets.py
+    python3 -u ./get-tweets.py
     sleep 1
 done
