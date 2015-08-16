@@ -47,7 +47,7 @@ def get_tweets(topic):
                 print(type(e))
                 print(e)
         else:
-            print('No new tweets')
+            print('no new tweets')
 
     except urllib.error.URLError as e:
         print(e)
