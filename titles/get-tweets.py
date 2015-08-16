@@ -47,7 +47,6 @@ def get_tweets(topic):
                 print(str(len(result)) + ' tweets inserted')
             except pymongo.errors.DuplicateKeyError as e:
                 print('db error')
-                print(type(e))
                 print(e)
 
     except Exception as e:
@@ -71,9 +70,10 @@ def main():
               "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star"]
 
     while True:
-        # get_tweets('red')
-        get_tweets(topics[random.randint(0, len(topics) - 1)])
-        time.sleep(60)
+        try:
+            get_tweets(topics[random.randint(0, len(topics) - 1)])
+        finally:
+            time.sleep(60)
 
 #--- run
 
