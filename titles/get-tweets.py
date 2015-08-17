@@ -71,6 +71,7 @@ def main():
 
     while True:
         try:
+            # try random.choice(topics)
             get_tweets(topics[random.randint(0, len(topics) - 1)])
         except Exception as e:
             print(type(e))
