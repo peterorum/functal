@@ -65,10 +65,8 @@ twit = twitter.Twitter(auth=auth)
 
 def main():
 
-    # pylint: disable=W0703
-
     topics = ["red", "orange", "yellow", "green", "blue", "purple",
-              "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star",
+              "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "grid",
               "sunset", "gold", "golden"]
 
     while True:
@@ -79,8 +77,6 @@ def main():
             print(e)
         finally:
             time.sleep(60)
-
-    # pylint: enable=W0703
 
 #--- run
 
