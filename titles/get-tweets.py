@@ -25,7 +25,7 @@ def get_tweets(topic):
     print('topic : ' + topic)
 
     try:
-        search_results = twit.search.tweets(q=topic, lang='en', result_type='popular')
+        search_results = twit.search.tweets(q=topic, lang='en', result_type='mixed', count=100)
         # print('search_results')
         # pp.pprint(search_results)
 
@@ -67,7 +67,7 @@ def main():
 
     topics = ["red", "orange", "yellow", "green", "blue", "purple",
               "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "grid",
-              "sunset", "gold", "golden"]
+              "sunset", "gold", "golden", 'galaxy']
 
     while True:
         try:
