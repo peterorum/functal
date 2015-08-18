@@ -25,6 +25,7 @@ def get_tweets(topic):
     print('topic : ' + topic)
 
     try:
+        # todo - use since_id as max id from db for topic
         search_results = twit.search.tweets(q=topic, lang='en', result_type='mixed', count=100)
         # print('search_results')
         # pp.pprint(search_results)
