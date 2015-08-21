@@ -68,7 +68,7 @@ def main():
 
     topics = ["red", "orange", "yellow", "green", "blue", "purple",
               "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "grid",
-              "sunset", "gold", "golden", 'galaxy']
+              "sunset", "gold", "golden", 'ball']
 
     while True:
         try:
