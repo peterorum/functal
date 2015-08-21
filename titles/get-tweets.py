@@ -66,6 +66,8 @@ twit = twitter.Twitter(auth=auth)
 
 def main():
 
+    # todo - delete galaxy data
+
     topics = ["red", "orange", "yellow", "green", "blue", "purple",
               "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "grid",
               "sunset", "gold", "golden", 'ball']
