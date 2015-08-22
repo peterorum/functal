@@ -861,9 +861,6 @@
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount &&
           true;
-
-        ok = true; /////////////////
-
       } catch (ex) {
 
         ok = false;
@@ -916,35 +913,28 @@
             title: doc.title
           };
 
+          // delete topic & save title
           return dbTopics.collection('titles').removeAsync(doc).then(function() {
             return dbFunctal.collection('images').insertAsync(image);
           });
         })
         .then(function() {
-
           if (!isDev) {
-
             return s3.upload('functal-images', functal.filename + '.jpg', functal.file + '.jpg');
           }
         })
         .then(function() {
-
           if (!isDev) {
-
             return s3.upload('functal-json', functal.filename + '.json', functal.file + '.json');
           }
         })
         .then(function() {
-
           if (!isDev) {
-
             return fsq.unlink(functal.file + '.jpg');
           }
         })
         .then(function() {
-
           if (!isDev) {
-
             return fsq.unlink(functal.file + '.json');
           }
         })
@@ -971,19 +961,29 @@
 
     fractal.isOkToMake().then(function(ok) {
 
-      if (!ok) {
+      if (ok) {
+        // make fractal
 
+        var count = (isDev ? 12 : 1);
+
+        var result = Q(); // jshint ignore:line
+
+        for (var i = 0; i < count; i++) {
+          result = result.then(function() {
+            return fractal.create(dbFunctal, dbTopics);
+          });
+        }
+
+        result.then(function() {
+          client.close();
+        });
+      }
+      else {
         // sleep for a little while if enough files already & then exit for shell script to restart
 
         setTimeout(function() {
           client.close();
         }, 60 * 1000);
-
-      }
-      else {
-        fractal.create(dbFunctal, dbTopics).then(function(){
-          client.close();
-        });
       }
     });
   });
