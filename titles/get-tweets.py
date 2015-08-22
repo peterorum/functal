@@ -18,6 +18,8 @@ import pymongo
 
 client = pymongo.MongoClient(os.getenv('mongo_functal'))
 
+db = client['topics']
+
 # --- get_tweets
 
 
@@ -30,9 +32,6 @@ def get_tweets(topic):
         # print('search_results')
         # pp.pprint(search_results)
 
-        db = client['topics']
-        tweets = db['tweets']
-
         # 'user': tweet['user']['name']
         texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
                  for tweet in search_results['statuses'] if topic in tweet['text'] and tweets.find({'_id': tweet['id_str']}).count() == 0]
@@ -42,7 +41,7 @@ def get_tweets(topic):
 
             # store
             try:
-                result = tweets.insert(texts, {'ordered': False})
+                result = db.tweets.insert(texts, {'ordered': False})
                 #print(str(len(result)) + ' tweets inserted')
             except pymongo.errors.PyMongoError as e:
                 print(type(e))
