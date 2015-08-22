@@ -2,7 +2,7 @@
 
   "use strict";
 
-  var version = '2.1.0';
+  var version = '2.2.0';
 
   var seedrandom = require('seedrandom');
   var randomSeed = (new Date()).getTime();
@@ -23,6 +23,7 @@
   var R = require('ramda');
   var Rp = require('./plus-fp/plus-fp');
   var s3 = require('./s3client');
+  // var util = require('util')
 
   var clr = require('./color');
   var pal = require('./palette');
@@ -30,6 +31,11 @@
   var limitTests = require('./limitTests');
   var processes = require('./processes');
   var modifiers = require('./modifiers');
+
+  var promise = require("bluebird");
+  var mongodb = promise.promisifyAll(require("mongodb"));
+  var mongoClient = promise.promisifyAll(mongodb.MongoClient);
+
 
   // smaller image, no tweet
   var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
@@ -66,7 +72,6 @@
     }
 
     return z;
-
   });
 
   fractal.isOkToMake = function() {
@@ -90,13 +95,11 @@
     }
 
     return deferred.promise;
-
   };
 
   fractal.isDone = function(functal, z) {
 
     return functal.test(z);
-
   };
 
   fractal.escapeCount = function(functal, x, y) {
@@ -136,7 +139,6 @@
     };
 
     return result;
-
   };
 
   fractal.getModifierValues = function(functal, result) {
@@ -144,11 +146,9 @@
     var mods = R.map(function(m) {
 
       return m(functal, result);
-
     }, functal.modifiers);
 
     return mods;
-
   };
 
   fractal.process = function(functal, palette, sample) {
@@ -256,7 +256,6 @@
     }
 
     return data;
-
   };
 
   fractal.init = function(options) {
@@ -297,7 +296,6 @@
     functal.adjzs = R.times(function() {
 
       return Rp.wandom(options.z2zfns).fn();
-
     }, Rp.bandomInt(4, 2));
 
     // wrap with finite
@@ -332,7 +330,6 @@
         fn: R.curry(function cospi(x) {
 
           return math.cos(math.pi * x);
-
         }),
         weight: 1
       },];
@@ -356,7 +353,6 @@
       functal.modifierParams.push(modifier.params);
 
       return modfn;
-
     }, modifierCount);
 
     var picker = Rp.wandom(pickers.pickers);
@@ -387,7 +383,6 @@
     functal.baseLayer = 1.0 - layerSum;
 
     return functal;
-
   };
 
   // ---------- sample a functal
@@ -408,7 +403,6 @@
       var escapes = R.map(function(d) {
 
         return d.escape;
-
       }, flatData);
 
       // store in object to facilitate dumping
@@ -422,7 +416,6 @@
         hsl.i = pal.getIntensity(hsl);
 
         return hsl;
-
       }, flatData);
 
       functal.hslStats = pal.calcHslStats(hsls);
@@ -431,7 +424,6 @@
     }
 
     return functal;
-
   };
 
   // ---------- make a functal
@@ -501,7 +493,6 @@
     });
 
     return deferred.promise;
-
   };
 
   // ------------ output to a jpeg image
@@ -558,7 +549,6 @@
     });
 
     return deferred.promise;
-
   };
 
   fractal.setOptions = function(size) {
@@ -585,57 +575,47 @@
       version: function() {
 
         return version;
-
       },
 
       width: function() {
 
         return sizes[size].width;
-
       },
       height: function() {
 
         return sizes[size].height;
-
       },
       maxCount: function() {
 
         // 16..512, around 256
 
         return 256 + Rp.bandomInt(256, 5) - Rp.bandomInt(240, 5);
-
       },
       limit: function() {
 
         return 2 + Rp.bandomInt(8, 3);
-
       },
       filename: function() {
 
         return filename;
-
       },
       file: function() {
 
         // filename with utc time
 
         return functalsFolder + '/' + size + '/' + filename;
-
       },
       minStdDev: function() {
 
         return 0.004;
-
       },
       minHslStats: function() {
 
         return pal.getExpectedHslStats();
-
       },
       pow: function() {
 
         return math.random(2, 10);
-
       }
     };
 
@@ -665,7 +645,6 @@
         y1: y1,
         y2: y2
       };
-
     };
 
     // types of fractals with different initial z & c.
@@ -675,17 +654,14 @@
         z: function() {
 
           return math.complex(0, 0);
-
         },
         c: function(x, y) {
 
           return math.complex(x, y);
-
         },
         params: function() {
 
           return {};
-
         }
       },
       {
@@ -693,7 +669,6 @@
         z: function(x, y) {
 
           return math.complex(x, y);
-
         },
         c: R.once(function() {
 
@@ -702,7 +677,6 @@
           var c = math.complex(math.random(-cmax, cmax), math.random(-cmax, cmax));
 
           return c;
-
         }),
         params: function() {
 
@@ -711,7 +685,6 @@
           return {
             c: this.c()
           };
-
         }
       }];
 
@@ -726,7 +699,6 @@
             name: "square",
             fn: math.square
           };
-
         },
         weight: 1
       },
@@ -737,7 +709,6 @@
             name: "sqrt",
             fn: math.sqrt,
           };
-
         },
         weight: 1
       },
@@ -748,7 +719,6 @@
             name: "sin",
             fn: math.sin
           };
-
         },
         weight: 1
       },
@@ -759,7 +729,6 @@
             name: "cos",
             fn: math.cos
           };
-
         },
         weight: 1
       },
@@ -770,7 +739,6 @@
             name: "log",
             fn: math.log
           };
-
         },
         weight: 1
       },
@@ -785,10 +753,8 @@
             fn: R.curry(function(f, z) {
 
               return math.chain(z).multiply(f).floor().divide(f).done();
-
             })(factor)
           };
-
         },
         weight: 1,
       },
@@ -800,10 +766,8 @@
             fn: function reciprocal(z) {
 
               return math.divide(math.complex(1, 0), z);
-
             }
           };
-
         },
 
         weight: 1
@@ -830,16 +794,13 @@
               var fn = function trigxy(z) {
 
                 return math.complex(fxy.trig1(math.mod(fxy.freq1 * z.re, math.pi * 2)), fxy.trig2(math.mod(fxy.freq2 * z.im, math.pi * 2)));
-
               };
 
               fn.params = fxy;
 
               return fn;
-
             })()
           };
-
         },
         weight: 1
       },
@@ -851,22 +812,19 @@
             fn: function fraction(z) {
 
               return math.complex(z.re - math.floor(z.re), z.im - math.floor(z.im));
-
             }
           };
-
         },
         weight: 1
       },];
 
     return options;
-
   };
 
   // ------------ make a functal
 
 
-  fractal.create = function() {
+  fractal.create = function(dbFunctal, dbTopics) {
 
     var deferred = Q.defer();
 
@@ -903,6 +861,9 @@
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount &&
           true;
+
+        ok = true; /////////////////
+
       } catch (ex) {
 
         ok = false;
@@ -942,22 +903,28 @@
         .then(function() {
 
           // save jpg
-
           return fractal.jpg(functal);
-
         })
-        // .then(function()
-        // {
-        //     // save png
-        //     return fractal.png(functal);
+        .then(function() {
 
-        // })
+          // get title
+          return dbTopics.collection('titles').findOneAsync();
+        })
+        .then(function(doc) {
+          var image = {
+            name: functal.filename + '.jpg',
+            title: doc.title
+          };
+
+          return dbTopics.collection('titles').removeAsync(doc).then(function() {
+            return dbFunctal.collection('images').insertAsync(image);
+          });
+        })
         .then(function() {
 
           if (!isDev) {
 
             return s3.upload('functal-images', functal.filename + '.jpg', functal.file + '.jpg');
-
           }
         })
         .then(function() {
@@ -965,7 +932,6 @@
           if (!isDev) {
 
             return s3.upload('functal-json', functal.filename + '.json', functal.file + '.json');
-
           }
         })
         .then(function() {
@@ -973,7 +939,6 @@
           if (!isDev) {
 
             return fsq.unlink(functal.file + '.jpg');
-
           }
         })
         .then(function() {
@@ -981,11 +946,9 @@
           if (!isDev) {
 
             return fsq.unlink(functal.file + '.json');
-
           }
         })
         .done(function() {
-
           deferred.resolve();
         }, function() {
 
@@ -998,46 +961,31 @@
     }
 
     return deferred.promise;
-
   };
 
   // kick off
 
-  fractal.isOkToMake().then(function(ok) {
+  mongoClient.connectAsync(process.env.mongo_functal).then(function(client) {
+    var dbFunctal = client.db('functal');
+    var dbTopics = client.db('topics');
 
-    if (!ok) {
+    fractal.isOkToMake().then(function(ok) {
 
-      // sleep for a little while if enough files already & then exit for shell script to restart
-      console.log('sleeping');
+      if (!ok) {
 
-      setTimeout(function() {
+        // sleep for a little while if enough files already & then exit for shell script to restart
 
-        console.log('slept');
+        setTimeout(function() {
+          client.close();
+        }, 60 * 1000);
 
-      }, 60 * 1000);
-
-    }
-    else {
-
-      // make an array with the create function repeated
-
-      var creators = R.times(function() {
-
-        return fractal.create;
-
-      }, isDev ? 12 : 1);
-
-      // run sequentially
-
-      // initial promise
-      var result = Q(); // jshint ignore:line
-
-      R.forEach(function(f) {
-
-        result = result.then(f);
-
-      }, creators);
-    }
+      }
+      else {
+        fractal.create(dbFunctal, dbTopics).then(function(){
+          client.close();
+        });
+      }
+    });
   });
 
 }());

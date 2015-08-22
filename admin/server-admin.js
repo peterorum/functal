@@ -259,8 +259,8 @@
           };
         }
         else {
-          image.likes = Math.max(0, image.likes + data.like);
-          image.dislikes = Math.max(0, image.dislikes + data.dislike);
+          image.likes = Math.max(0, (image.likes || 0) + data.like);
+          image.dislikes = Math.max(0, (image.dislikes || 0) + data.dislike);
 
           if (image.likes >= image.dislikes) {
             image.dateLastVote = new Date();
