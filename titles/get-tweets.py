@@ -22,7 +22,7 @@ client = pymongo.MongoClient(os.getenv('mongo_functal'))
 
 
 def get_tweets(topic):
-    print('topic : ' + topic)
+    #print('topic : ' + topic)
 
     try:
         # todo - use since_id as max id from db for topic
@@ -38,17 +38,17 @@ def get_tweets(topic):
                  for tweet in search_results['statuses'] if topic in tweet['text'] and tweets.find({'_id': tweet['id_str']}).count() == 0]
 
         if len(texts) > 0:
-            pp.pprint(texts)
+            # pp.pprint(texts)
 
             # store
             try:
                 result = tweets.insert(texts, {'ordered': False})
-                print(str(len(result)) + ' tweets inserted')
+                #print(str(len(result)) + ' tweets inserted')
             except pymongo.errors.PyMongoError as e:
                 print(type(e))
                 print(e)
-        else:
-            print('no new tweets')
+        # else:
+            #print('no new tweets')
 
     except urllib.error.URLError as e:
         print(e)
@@ -66,11 +66,9 @@ twit = twitter.Twitter(auth=auth)
 
 def main():
 
-    # todo - delete galaxy data
-
     topics = ["red", "orange", "yellow", "green", "blue", "purple",
               "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "grid",
-              "sunset", "gold", "golden", 'ball']
+              "sunset", "gold", "golden"]
 
     while True:
         try:
