@@ -821,6 +821,17 @@
     return options;
   };
 
+  //------------- get topic for title
+
+  fractal.getTopic = function(functal) {
+    var topic;
+
+    // based on most common hue
+    topic = pal.getHueName(functal.hslStats.h.mode);
+
+    return topic;
+  };
+
   // ------------ make a functal
 
 
@@ -861,6 +872,8 @@
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount &&
           true;
+
+          ok = true;/////////////////
       } catch (ex) {
 
         ok = false;
@@ -905,9 +918,18 @@
         .then(function() {
 
           // get title
-          return dbTopics.collection('titles').findOneAsync();
+
+          var topic = fractal.getTopic(functal);
+
+          console.log('topic: ' + topic);
+
+          return dbTopics.collection('titles').findOneAsync({
+            topic: topic
+          });
         })
         .then(function(doc) {
+          console.log(doc.title);
+
           var image = {
             name: functal.filename + '.jpg',
             title: doc.title
@@ -964,7 +986,7 @@
       if (ok) {
         // make fractal
 
-        var count = (isDev ? 12 : 1);
+        var count = (isDev ? 1 : 1);
 
         var result = Q(); // jshint ignore:line
 

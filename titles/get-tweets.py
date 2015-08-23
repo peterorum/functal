@@ -65,8 +65,8 @@ twit = twitter.Twitter(auth=auth)
 
 def main():
 
-    topics = ["red", "orange", "yellow", "green", "blue", "purple",
-              "pink", "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "grid",
+    topics = ["red", "orange", "yellow", "green", "blue", "purple", 'cyan', 'magenta', 'turquoise', 'jade', 'violet', 'crimson', 'ruby', 'pink',
+              "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "grid",
               "sunset", "gold", "golden"]
 
     while True:
