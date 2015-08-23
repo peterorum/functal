@@ -70,8 +70,8 @@
     }, images);
 
     if (image) {
-      image.likes = doc.likes;
-      image.dislikes = doc.dislikes;
+      image.likes = doc.likes || 0;
+      image.dislikes = doc.dislikes || 0;
       image.title = doc.title;
     }
   };
