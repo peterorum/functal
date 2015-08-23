@@ -919,6 +919,8 @@
 
           // get title
 
+          console.log('getting topic');
+
           var topic = fractal.getTopic(functal);
 
           console.log('topic: ' + topic);
