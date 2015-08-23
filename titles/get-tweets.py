@@ -34,14 +34,14 @@ def get_tweets(topic):
 
         # 'user': tweet['user']['name']
         texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
-                 for tweet in search_results['statuses'] if topic in tweet['text'] and tweets.find({'_id': tweet['id_str']}).count() == 0]
+                 for tweet in search_results['statuses'] if topic in tweet['text'] and db.tweets.find({'_id': tweet['id_str']}).count() == 0]
 
         if len(texts) > 0:
             # pp.pprint(texts)
 
             # store
             try:
-                result = db.tweets.insert(texts, {'ordered': False})
+                db.tweets.insert(texts, {'ordered': False})
                 #print(str(len(result)) + ' tweets inserted')
             except pymongo.errors.PyMongoError as e:
                 print(type(e))
