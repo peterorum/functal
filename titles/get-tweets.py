@@ -8,6 +8,7 @@ import time
 import urllib
 # import json
 import pprint
+from datetime import datetime
 
 import twitter
 
@@ -72,7 +73,9 @@ def main():
     while True:
         try:
             # try random.choice(topics)
-            get_tweets(topics[random.randint(0, len(topics) - 1)])
+            topic = topics[random.randint(0, len(topics) - 1)]
+            print(datetime.now() + ' ' + topic)
+            get_tweets(topic)
         except Exception as e:
             print(type(e))
             print(e)
