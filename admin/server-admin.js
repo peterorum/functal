@@ -71,6 +71,7 @@
     if (image) {
       image.likes = doc.likes;
       image.dislikes = doc.dislikes;
+      image.title = doc.title;
     }
   };
 
