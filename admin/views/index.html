@@ -28,6 +28,9 @@
                     <img class="img-responsive" ng-src="{{cdn}}{{image.name}}" />
                 </div>
                 <div class="col-xs-12 text-center">
+                    {{ image.title }}
+                </div>
+                <div class="col-xs-12 text-center">
                     <button class="btn btn-primary btn-xl" ng-click="gotoTop()">top</button>
                     <button class="btn btn-info btn-xl" ng-click="showJson(image)">json</button>
                     <!-- <button class="btn btn-danger btn-xl" ng-click="delete(image)">delete</button> -->

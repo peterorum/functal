@@ -42,8 +42,8 @@ def get_tweets(topic):
 
             # store
             try:
-                db.tweets.insert(texts, {'ordered': False})
-                #print(str(len(result)) + ' tweets inserted')
+                result = db.tweets.insert(texts, {'ordered': False})
+                print(str(len(result)) + ' tweets inserted')
             except pymongo.errors.PyMongoError as e:
                 print(type(e))
                 print(e)
