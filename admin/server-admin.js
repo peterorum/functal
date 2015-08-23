@@ -28,6 +28,7 @@
 
   var promise = require("bluebird");
   var mongodb = promise.promisifyAll(require("mongodb"));
+  var mongoClient = promise.promisifyAll(mongodb.MongoClient);
 
   var bucket = 'functal-images';
   var bucketJson = 'functal-json';
@@ -79,9 +80,8 @@
 
   var loadVotes = function(db) {
     return new Promise(function(resolve, reject) {
-      var dbImages = db.collection('images');
 
-      dbImages.find(
+      db.collection('images').find(
         {
           name: {
             $in: R.pluck('name', images)
@@ -158,17 +158,17 @@
 
   //--------- database
 
-  mongodb.connectAsync(process.env.mongo_functal).then(function(db) {
+  mongoClient.connectAsync(process.env.mongo_functal).then(function(client) {
     //------- db functions
 
-    var dbImages = db.collection('images');
+    var db = client.db('functal');
 
     // db setup
     // db.images.createIndex({name: 1})
 
     // debug
     var listVotes = function() {
-      dbImages.find().toArrayAsync().then(function(docs) {
+      db.collection('images').find().toArrayAsync().then(function(docs) {
         console.log(docs);
       });
     };
@@ -247,7 +247,7 @@
 
       // updates image votes, adding to db if necessary
 
-      dbImages.findOneAsync(
+      db.collection('images').findOneAsync(
         {
           name: data.name
         }).then(function(image) {
@@ -269,7 +269,7 @@
         }
 
 
-        dbImages.update(
+        db.collection('images').update(
           {
             name: image.name
           },

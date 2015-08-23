@@ -36,7 +36,6 @@
   var mongodb = promise.promisifyAll(require("mongodb"));
   var mongoClient = promise.promisifyAll(mongodb.MongoClient);
 
-
   // smaller image, no tweet
   var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
