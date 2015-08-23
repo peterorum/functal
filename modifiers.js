@@ -553,7 +553,7 @@
         return {
           fn: fn(bounder, size, centre),
           params: {
-            name: 'boxTrap',
+            name: 'box trap',
             size: size,
             centre: centre,
             bounder: bounder

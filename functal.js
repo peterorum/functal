@@ -90,6 +90,11 @@
         var ok = result.count < fractal.maxCount;
 
         deferred.resolve(ok);
+      }, function(ex){
+        console.log('error reading buckets', ex);
+
+        // proceed anyway
+        deferred.resolve(true);
       });
     }
 
@@ -823,11 +828,30 @@
   //------------- get topic for title
 
   fractal.getTopic = function(functal) {
-    var topic;
+    var topic = null;
 
-    // based on most common hue
+    // // use first shape trap
 
-    topic = pal.getHueName(functal.hslStats.h.mode);
+    // var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
+
+    // if (trap) {
+    //   var trackedShapes = ['wavy', 'asterisk', 'star', 'arrow', 'grid'];
+
+    //   if (R.indexOf(trap.name, trackedShapes) >= 0) {
+    //     topic = trap.name;
+    //   }
+    // }
+
+    // if (!topic) {
+    //   if (R.find((m) => m.name === 'grid trap', functal.modifierParams) {
+    //     topic = grid;
+    //   }
+    // }
+
+    if (! topic) {
+        // based on most common hue
+        topic = pal.getHueName(functal.hslStats.h.mode);
+    }
 
     return topic;
   };
@@ -997,7 +1021,7 @@
       if (ok) {
         // make fractal
 
-        var count = (isDev ? 1 : 1);
+        var count = (isDev ? 12 : 1);
 
         var result = Q(); // jshint ignore:line
 

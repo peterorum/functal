@@ -93,7 +93,7 @@
     return polygon;
   };
 
-  var makeCrosshatch = function() {
+  var makeGrid = function() {
     let shape = {};
 
     var centre = {
@@ -138,7 +138,7 @@
       angle: angle
     };
 
-    shape.name = "crosshatch";
+    shape.name = "grid";
 
     return shape;
   };
@@ -455,10 +455,10 @@
       fn: function() {
 
         return {
-          name: "crosshatch",
+          name: "grid",
           make: () => {
 
-            return makeCrosshatch();
+            return makeGrid();
           }
         };
       },
