@@ -827,6 +827,7 @@
     var topic;
 
     // based on most common hue
+
     topic = pal.getHueName(functal.hslStats.h.mode);
 
     return topic;
@@ -873,7 +874,7 @@
           functal.uniques > functal.sampleCount &&
           true;
 
-          ok = true;/////////////////
+        ok = true; /////////////////
       } catch (ex) {
 
         ok = false;
@@ -928,17 +929,24 @@
           });
         })
         .then(function(doc) {
-          console.log(doc.title);
 
-          var image = {
-            name: functal.filename + '.jpg',
-            title: doc.title
-          };
+          if (doc) {
 
-          // delete topic & save title
-          return dbTopics.collection('titles').removeAsync(doc).then(function() {
-            return dbFunctal.collection('images').insertAsync(image);
-          });
+            console.log(doc.title);
+
+            var image = {
+              name: functal.filename + '.jpg',
+              title: doc.title
+            };
+
+            // delete topic & save title
+            return dbTopics.collection('titles').removeAsync(doc).then(function() {
+              return dbFunctal.collection('images').insertAsync(image);
+            });
+          }
+          else {
+            console.log('no title for topic');
+          }
         })
         .then(function() {
           if (!isDev) {
