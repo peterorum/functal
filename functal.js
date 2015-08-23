@@ -970,7 +970,10 @@
         })
         .done(function() {
           deferred.resolve();
-        }, function() {
+        }, function(ex) {
+
+          console.log('error - rejecting promise');
+          console.log(ex);
 
           deferred.reject();
         });
@@ -1001,10 +1004,13 @@
         for (var i = 0; i < count; i++) {
           result = result.then(function() {
             return fractal.create(dbFunctal, dbTopics);
+          }, function(){
+            console.log('fail - rejected');
           });
         }
 
-        result.then(function() {
+        result.finally(function() {
+          console.log('close');
           client.close();
         });
       }
