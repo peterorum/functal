@@ -108,13 +108,15 @@
       console.log('load list from s3', (new Date()).toString());
 
       s3.list(bucket).then(function(result) {
+
         console.log('count: ' + result.files.length);
 
         images = R.map(function(img) {
           return {
             name: img.Key,
             likes: 0,
-            dislikes: 0
+            dislikes: 0,
+            title: ''
           };
         }, result.files);
 
@@ -142,7 +144,7 @@
 
           // only return populer
           images = R.filter(function(i) {
-            return i.likes >= i.dislikes;
+            return typeof i.likes === 'undefined' || i.likes >= i.dislikes;
           }, images);
 
           resolve();
@@ -169,7 +171,7 @@
     // debug
     var listVotes = function() {
       db.collection('images').find().toArrayAsync().then(function(docs) {
-        console.log(docs);
+        // console.log(docs);
       });
     };
 
@@ -267,7 +269,6 @@
             image.dateLastVote = new Date();
           }
         }
-
 
         db.collection('images').update(
           {

@@ -1055,7 +1055,7 @@
       if (ok) {
         // make fractal
 
-        var count = (isDev ? 1 : 1);
+        var count = (isDev ? 12 : 1);
 
         var result = Q(); // jshint ignore:line
 
@@ -1073,11 +1073,11 @@
         });
       }
       else {
-        // sleep for a little while if enough files already & then exit for shell script to restart
+        // sleep for an hour if enough files already & then exit for shell script to restart
 
         setTimeout(function() {
           client.close();
-        }, 60 * 1000);
+        }, 60 * 60 * 1000);
       }
     });
   });
