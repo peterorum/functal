@@ -74,7 +74,7 @@ def main():
         try:
             # try random.choice(topics)
             topic = topics[random.randint(0, len(topics) - 1)]
-            print(datetime.now() + ' ' + topic)
+            print(str(datetime.now()) + ' ' + topic)
             get_tweets(topic)
         except Exception as e:
             print(type(e))
