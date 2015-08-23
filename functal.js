@@ -90,7 +90,7 @@
         var ok = result.count < fractal.maxCount;
 
         deferred.resolve(ok);
-      }, function(ex){
+      }, function(ex) {
         console.log('error reading buckets', ex);
 
         // proceed anyway
@@ -837,45 +837,54 @@
     if (trap) {
       var trackedShapes = ['wavy', 'asterisk', 'star', 'arrow', 'grid'];
 
-      if (R.indexOf(trap.name, trackedShapes) >= 0) {
-        topic = trap.name;
+      if (R.indexOf(trap.shape, trackedShapes) >= 0) {
+        topic = trap.shape;
+      }
+      else {
+        if (trap.shape === 'polygon') {
+          if (trap.count === 4) {
+            topic = 'square';
+          } else if (trap.count === 3) {
+            topic = 'triangle';
+          }
+        }
       }
     }
 
     if (!topic) {
-      if (R.find( (m) => m.name === 'grid trap', functal.modifierParams)) {
+      if (R.find((m) => m.name === 'grid trap', functal.modifierParams)) {
         topic = 'grid';
       }
     }
 
 
     if (!topic) {
-      if (R.find( (m) => m.name === 'box trap', functal.modifierParams)) {
+      if (R.find((m) => m.name === 'box trap', functal.modifierParams)) {
         topic = 'square';
       }
     }
 
     if (!topic) {
-      if (R.find( (m) => m.name === 'circle trap', functal.modifierParams)) {
+      if (R.find((m) => m.name === 'circle trap', functal.modifierParams)) {
         topic = 'circle';
       }
     }
 
     if (!topic) {
-      if (R.find( (m) => m.name === 'spiral trap', functal.modifierParams)) {
+      if (R.find((m) => m.name === 'spiral trap', functal.modifierParams)) {
         topic = 'spiral';
       }
     }
 
     if (!topic) {
-      if (R.find( (m) => m.name === 'sin', functal.modifierParams)) {
+      if (R.find((m) => m.name === 'sin', functal.modifierParams)) {
         topic = 'wavy';
       }
     }
 
-    if (! topic) {
-        // based on most common hue
-        topic = pal.getHueName(functal.hslStats.h.mode);
+    if (!topic) {
+      // based on most common hue
+      topic = pal.getHueName(functal.hslStats.h.mode);
     }
 
     return topic;
@@ -1053,7 +1062,7 @@
         for (var i = 0; i < count; i++) {
           result = result.then(function() {
             return fractal.create(dbFunctal, dbTopics);
-          }, function(){
+          }, function() {
             console.log('fail - rejected');
           });
         }
