@@ -108,7 +108,7 @@
       console.log('load list from s3', (new Date()).toString());
 
       s3.list(bucket).then(function(result) {
-        // console.log(result.files);
+        console.log('count: ' + result.files.length);
 
         images = R.map(function(img) {
           return {
