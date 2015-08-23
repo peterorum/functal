@@ -830,23 +830,48 @@
   fractal.getTopic = function(functal) {
     var topic = null;
 
-    // // use first shape trap
+    // use first shape trap
 
-    // var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
+    var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
 
-    // if (trap) {
-    //   var trackedShapes = ['wavy', 'asterisk', 'star', 'arrow', 'grid'];
+    if (trap) {
+      var trackedShapes = ['wavy', 'asterisk', 'star', 'arrow', 'grid'];
 
-    //   if (R.indexOf(trap.name, trackedShapes) >= 0) {
-    //     topic = trap.name;
-    //   }
-    // }
+      if (R.indexOf(trap.name, trackedShapes) >= 0) {
+        topic = trap.name;
+      }
+    }
 
-    // if (!topic) {
-    //   if (R.find((m) => m.name === 'grid trap', functal.modifierParams) {
-    //     topic = grid;
-    //   }
-    // }
+    if (!topic) {
+      if (R.find( (m) => m.name === 'grid trap', functal.modifierParams)) {
+        topic = 'grid';
+      }
+    }
+
+
+    if (!topic) {
+      if (R.find( (m) => m.name === 'box trap', functal.modifierParams)) {
+        topic = 'square';
+      }
+    }
+
+    if (!topic) {
+      if (R.find( (m) => m.name === 'circle trap', functal.modifierParams)) {
+        topic = 'circle';
+      }
+    }
+
+    if (!topic) {
+      if (R.find( (m) => m.name === 'spiral trap', functal.modifierParams)) {
+        topic = 'spiral';
+      }
+    }
+
+    if (!topic) {
+      if (R.find( (m) => m.name === 'sin', functal.modifierParams)) {
+        topic = 'wavy';
+      }
+    }
 
     if (! topic) {
         // based on most common hue
@@ -1021,7 +1046,7 @@
       if (ok) {
         // make fractal
 
-        var count = (isDev ? 12 : 1);
+        var count = (isDev ? 1 : 1);
 
         var result = Q(); // jshint ignore:line
 

@@ -704,7 +704,7 @@
         return {
           fn: fn(bounder, diameter, centre),
           params: {
-            name: 'circleTrap',
+            name: 'circle trap',
             centre: centre,
             diameter: diameter,
             bounder: bounder
