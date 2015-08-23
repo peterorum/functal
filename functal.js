@@ -874,7 +874,6 @@
           functal.uniques > functal.sampleCount &&
           true;
 
-        ok = true; /////////////////
       } catch (ex) {
 
         ok = false;
