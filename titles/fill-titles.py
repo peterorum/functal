@@ -36,8 +36,6 @@ def get_functals_without_title():
 def run():
     functals = get_functals_without_title()
 
-    print(len(functals))
-
     for functal in functals:
         pprint(functal)
 
