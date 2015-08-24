@@ -15,7 +15,7 @@
   var modifiers = require('../modifiers');
 
   var setTopics = function(db) {
-    return new Promise(function(resolve) {
+    return new Promise(function(resolve, reject) {
 
       db.collection('images').find({
         topic: {
@@ -29,7 +29,7 @@
 
         var updates = R.map(function(image) {
 
-          return new Promise(function(updateResolve) {
+          return new Promise(function(updateResolve, updateReject) {
 
             console.log(image.name);
 
@@ -66,15 +66,15 @@
                 updateResolve();
               });
             }, function(err) {
-              console.log('error: ' + err);
-              updateResolve();
+              console.log('mongo error: ' + err);
+              updateReject();
             });
           });
-        }, R.take(100, docs));
+        }, R.take(1000, docs));
 
         promise.all(updates).then(function() {
           resolve();
-        });
+        }, function(){reject();});
       });
     });
 
@@ -86,7 +86,7 @@
 
     var db = client.db('functal');
 
-    setTopics(db).then(function() {
+    setTopics(db).finally(function() {
       client.close();
     });
 
