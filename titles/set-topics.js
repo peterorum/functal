@@ -62,7 +62,9 @@
 
               image.topic = topic;
 
-              db.collection('images').updateAsync({name: image.name}, image).then(function(){
+              db.collection('images').updateAsync({
+                name: image.name
+              }, image).then(function() {
                 updateResolve();
               });
             }, function(err) {
@@ -74,10 +76,11 @@
 
         promise.all(updates).then(function() {
           resolve();
-        }, function(){reject();});
+        }).catch(function() {
+          reject();
+        });
       });
     });
-
   };
 
   //--------- database
@@ -86,7 +89,9 @@
 
     var db = client.db('functal');
 
-    setTopics(db).finally(function() {
+    setTopics(db).then(function() {
+      client.close();
+    }).catch(function() {
       client.close();
     });
 
