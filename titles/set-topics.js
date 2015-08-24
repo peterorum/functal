@@ -31,7 +31,7 @@
 
           return new Promise(function(updateResolve, updateReject) {
 
-            console.log(image.name);
+            // console.log(image.name);
 
             var jsonUrl = 'https://s3.amazonaws.com/functal-json/' + image.name.replace(/jpg/, 'json');
 
@@ -58,7 +58,7 @@
                 topic = (math.random() < 0.5 ? 'grid' : 'spiral');
               }
 
-              console.log(topic);
+              console.log(image.name + ': ' + topic);
 
               image.topic = topic;
 
@@ -68,11 +68,11 @@
                 updateResolve();
               });
             }, function(err) {
-              console.log('mongo error: ' + err);
-              updateReject();
+              console.log('http request error: ' + err);
+              updateResolve();
             });
           });
-        }, docs);
+        }, R.take(2000, docs));
 
         promise.all(updates).then(function() {
           resolve();
