@@ -70,28 +70,13 @@
               updateResolve();
             });
           });
-        }, docs);
+        }, R.take(100, docs));
 
         promise.all(updates).then(function() {
           resolve();
         });
       });
     });
-    //   db.collection('images').updateAsync(
-    //     {
-    //       name: image.name
-    //     },
-    //     image,
-    //     {
-    //       upsert: true
-    //     }).then(function() {
-    //     addResolve();
-    //   });
-
-    // promise.all(adds).then(function() {
-    //   console.log('all done');
-    //   resolve();
-    // });
 
   };
 
