@@ -168,13 +168,6 @@
     // db setup
     // db.images.createIndex({name: 1})
 
-    // debug
-    var listVotes = function() {
-      db.collection('images').find().toArrayAsync().then(function(docs) {
-        // console.log(docs);
-      });
-    };
-
     //--- image list refresh
 
     // hourly
@@ -203,7 +196,6 @@
 
     //------------- home page
     app.get('/', function(req, res) {
-      listVotes();
 
       sendFile(res, '/views/index.html');
     });
