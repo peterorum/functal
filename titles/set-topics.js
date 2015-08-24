@@ -72,7 +72,7 @@
               updateResolve();
             });
           });
-        }, R.take(2000, docs));
+        }, R.take(3000, docs));
 
         promise.all(updates).then(function() {
           resolve();
