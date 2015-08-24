@@ -27,6 +27,7 @@
 
   var clr = require('./color');
   var pal = require('./palette');
+
   var pickers = require('./pickers');
   var limitTests = require('./limitTests');
   var processes = require('./processes');
@@ -825,70 +826,6 @@
     return options;
   };
 
-  //------------- get topic for title
-
-  fractal.getTopic = function(functal) {
-    var topic = null;
-
-    // use first shape trap
-
-    var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
-
-    if (trap) {
-      var trackedShapes = ['wavy', 'asterisk', 'star', 'arrow', 'grid'];
-
-      if (R.indexOf(trap.shape, trackedShapes) >= 0) {
-        topic = trap.shape;
-      }
-      else {
-        if (trap.shape === 'polygon') {
-          if (trap.count === 4) {
-            topic = 'square';
-          } else if (trap.count === 3) {
-            topic = 'triangle';
-          }
-        }
-      }
-    }
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'grid trap', functal.modifierParams)) {
-        topic = 'grid';
-      }
-    }
-
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'box trap', functal.modifierParams)) {
-        topic = 'square';
-      }
-    }
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'circle trap', functal.modifierParams)) {
-        topic = 'circle';
-      }
-    }
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'spiral trap', functal.modifierParams)) {
-        topic = 'spiral';
-      }
-    }
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'sin', functal.modifierParams)) {
-        topic = 'wavy';
-      }
-    }
-
-    if (!topic) {
-      // based on most common hue
-      topic = pal.getHueName(functal.hslStats.h.mode);
-    }
-
-    return topic;
-  };
 
   // ------------ make a functal
 
@@ -978,7 +915,7 @@
 
           console.log('getting topic');
 
-          var topic = fractal.getTopic(functal);
+          var topic = modifiers.getTopic(functal);
 
           console.log('topic: ' + topic);
 

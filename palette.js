@@ -68,19 +68,6 @@
     return (changed ? clr.hsl2rgb(hsl) : rgb);
   };
 
-  var getHueName = function(h12) {
-
-    //////////// remove dup pink from magenta
-    var hues = [['red'], ['orange', 'sunset'], ['yellow', 'gold', 'golden'], ['green'], ['green'], ['green', 'jade', 'turquoise'], ['sky', 'cyan' ], ['blue'], ['blue'], ['purple', 'violet'], ['pink', 'magenta'], ['pink', 'rose', 'crimson', 'ruby' ]];
-
-    var hue = hues[math.mod(math.round(h12), 12) ];
-
-    ////////// chose rand
-    hue = hue[0];
-
-    return hue;
-  };
-
   // todo: try eliminating fn by returning a function & adding properties to the function
   // don't use "name" - doesn't work
 
@@ -791,7 +778,6 @@
     exports.calcHslStats = calcHslStats;
     exports.isHueModeOk = isHueModeOk;
     exports.fixColor = fixColor;
-    exports.getHueName = getHueName;
 
     return palette;
   };

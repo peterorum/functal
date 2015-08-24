@@ -6,6 +6,7 @@
 
   var R = require('ramda');
   var Rp = require('./plus-fp/plus-fp');
+  var clr = require('./color');
 
   var shapers = require('./shapers').shapers;
 
@@ -173,6 +174,71 @@
     },
 
   ];
+
+  //------------- get topic for title
+
+  exports.getTopic = function(functal) {
+    var topic = null;
+
+    // use first shape trap
+
+    var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
+
+    if (trap) {
+      var trackedShapes = ['wavy', 'asterisk', 'star', 'arrow', 'grid'];
+
+      if (R.indexOf(trap.shape, trackedShapes) >= 0) {
+        topic = trap.shape;
+      }
+      else {
+        if (trap.shape === 'polygon') {
+          if (trap.count === 4) {
+            topic = 'square';
+          } else if (trap.count === 3) {
+            topic = 'triangle';
+          }
+        }
+      }
+    }
+
+    if (!topic) {
+      if (R.find((m) => m.name === 'grid trap', functal.modifierParams)) {
+        topic = 'grid';
+      }
+    }
+
+
+    if (!topic) {
+      if (R.find((m) => m.name === 'box trap', functal.modifierParams)) {
+        topic = 'square';
+      }
+    }
+
+    if (!topic) {
+      if (R.find((m) => m.name === 'circle trap', functal.modifierParams)) {
+        topic = 'circle';
+      }
+    }
+
+    if (!topic) {
+      if (R.find((m) => m.name === 'spiral trap', functal.modifierParams)) {
+        topic = 'spiral';
+      }
+    }
+
+    if (!topic) {
+      if (R.find((m) => m.name === 'sin', functal.modifierParams)) {
+        topic = 'wavy';
+      }
+    }
+
+    if (!topic && functal.hslStats && functal.hslStats.h && functal.hslStats.h.mode) {
+      // based on most common hue
+      topic = clr.getHueName(functal.hslStats.h.mode);
+    }
+
+    return topic;
+  };
 
   // http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 
