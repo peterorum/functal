@@ -34,15 +34,16 @@ def get_functals_without_title():
 
 
 def run():
-    functals = get_functals_without_title()
+    #functals = get_functals_without_title()
+    functals = get_functals()
 
     for functal in functals:
-        pprint(functal)
+        # pprint(functal)
 
         topic = functal['topic']
 
         title = db_topics.titles.find_one({'topic': topic})
-        pprint(title['title'])
+        pprint(topic + ': ' + title['title'])
 
         functal['title'] = title['title']
 
