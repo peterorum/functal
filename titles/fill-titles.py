@@ -18,7 +18,7 @@ client = pymongo.MongoClient(os.getenv('mongo_functal'))
 db_topics = client['topics']
 db_functal = client['functal']
 
-#--- find sll functals
+#--- find all functals
 
 
 def get_functals():
