@@ -51,6 +51,8 @@ def run():
         # remove used title
         db_topics.titles.remove(title)
 
+    client.close()
+
 #---
 
 run()
