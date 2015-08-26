@@ -32,7 +32,7 @@
 
         docs.reverse();
 
-        var delay = 500;
+        var delay = 5000;
         var counter = 0;
 
         var updates = R.map(function(image) {
@@ -66,7 +66,7 @@
                   topic = (math.random() < 0.5 ? 'grid' : 'spiral');
                 }
 
-                console.log(counter + ' ' + image.name + ': ' + topic);
+                console.log(image.name + ': ' + topic);
 
                 image.topic = topic;
 
