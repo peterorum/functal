@@ -52,7 +52,6 @@
       }
 
       return x;
-
     });
 
     var band = Rp.bandom(options.maxDistance, 2);
@@ -62,7 +61,6 @@
       band: band,
       fn: fn(band)
     };
-
   };
 
   var bounders = [
@@ -74,10 +72,8 @@
           fn: function(distance, maxDistance) {
 
             return (distance < maxDistance ? (distance - maxDistance) % 1 : 0);
-
           }
         };
-
       },
       weight: 1,
     },
@@ -90,10 +86,8 @@
           fn: function(distance, maxDistance) {
 
             return (distance > maxDistance ? (distance - maxDistance) % 1 : 0);
-
           }
         };
-
       },
       weight: 1,
     },
@@ -114,7 +108,6 @@
     }
 
     return x;
-
   };
 
 
@@ -123,7 +116,6 @@
     var max = math.max(R.map(math.abs, vals));
 
     return math.divide(vals, max);
-
   };
 
   var distancers = [
@@ -135,10 +127,8 @@
           fn: function(z /*, lines*/ ) {
 
             return math.min(z.re, z.im);
-
           }
         };
-
       },
       weight: 1,
     },
@@ -150,10 +140,8 @@
           fn: function(z, lines) {
 
             return math.min(z.re, z.im, 1 / lines - z.re, 1 / lines - z.im);
-
           }
         };
-
       },
       weight: 1,
     },
@@ -165,10 +153,8 @@
           fn: function(z, lines) {
 
             return math.sqrt(math.norm(math.subtract(z, math.complex(0.5 / lines, 0.5 / lines))));
-
           }
         };
-
       },
       weight: 1,
     },
@@ -180,57 +166,80 @@
   exports.getTopic = function(functal) {
     var topic = null;
 
-    // use first shape trap
+    var prob = math.random() < 0.5;
 
-    var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
+    //------------ try to use first shape trap
 
-    if (trap) {
-      var trackedShapes = ['wavy', 'asterisk', 'star', 'arrow', 'grid'];
+    if (prob < 0.5) {
+      var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
 
-      if (R.indexOf(trap.shape, trackedShapes) >= 0) {
-        topic = trap.shape;
-      }
-      else {
-        if (trap.shape === 'polygon') {
-          if (trap.count === 4) {
-            topic = 'square';
-          } else if (trap.count === 3) {
-            topic = 'triangle';
+      if (trap) {
+        var trackedShapes = ['wavy', 'asterisk', 'star', 'arrow', 'grid'];
+
+        if (R.indexOf(trap.shape, trackedShapes) >= 0) {
+          topic = trap.shape;
+        }
+        else {
+          if (trap.shape === 'polygon') {
+            if (trap.count === 4) {
+              topic = 'square';
+            } else if (trap.count === 3) {
+              topic = 'triangle';
+            }
           }
+        }
+      }
+
+      if (!topic) {
+        if (R.find((m) => m.name === 'grid trap', functal.modifierParams)) {
+          topic = 'grid';
+        }
+      }
+
+
+      if (!topic) {
+        if (R.find((m) => m.name === 'box trap', functal.modifierParams)) {
+          topic = 'square';
+        }
+      }
+
+      if (!topic) {
+        if (R.find((m) => m.name === 'circle trap', functal.modifierParams)) {
+          topic = 'circle';
+        }
+      }
+
+      if (!topic) {
+        if (R.find((m) => m.name === 'spiral trap', functal.modifierParams)) {
+          topic = 'spiral';
+        }
+      }
+
+      if (!topic) {
+        if (R.find((m) => m.name === 'sin', functal.modifierParams)) {
+          topic = 'wavy';
         }
       }
     }
 
-    if (!topic) {
-      if (R.find((m) => m.name === 'grid trap', functal.modifierParams)) {
-        topic = 'grid';
+    //-------- try light/dark
+
+    if (!topic && prob < 0.65) {
+
+      if (functal.hslStats && functal.hslStats.l && functal.hslStats.l.mean > 0.7) {
+
+        var lightTopics = ['light'];
+
+        topic = lightTopics[math.randomInt(0, lightTopics.length)];
+      }
+      else if (functal.hslStats && functal.hslStats.l && functal.hslStats.l.mean < 0.5){
+        var darkTopics = ['dark', 'black', 'night', 'storm'];
+
+        topic = darkTopics[math.randomInt(0, darkTopics.length)];
       }
     }
 
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'box trap', functal.modifierParams)) {
-        topic = 'square';
-      }
-    }
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'circle trap', functal.modifierParams)) {
-        topic = 'circle';
-      }
-    }
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'spiral trap', functal.modifierParams)) {
-        topic = 'spiral';
-      }
-    }
-
-    if (!topic) {
-      if (R.find((m) => m.name === 'sin', functal.modifierParams)) {
-        topic = 'wavy';
-      }
-    }
+    //--------- else try color
 
     if (!topic && functal.hslStats && functal.hslStats.h && functal.hslStats.h.mode) {
       // based on most common hue
@@ -245,7 +254,6 @@
   function dist2(v, w) {
 
     return math.square(v.x - w.x) + math.square(v.y - w.y);
-
   }
 
   function distToSegmentSquared(p, v, w) {
@@ -254,19 +262,16 @@
 
     if (l2 === 0) {
       return dist2(p, v);
-
     }
 
     var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
 
     if (t < 0) {
       return dist2(p, v);
-
     }
 
     if (t > 1) {
       return dist2(p, w);
-
     }
 
     return dist2(p,
@@ -274,13 +279,11 @@
         x: v.x + t * (w.x - v.x),
         y: v.y + t * (w.y - v.y)
       });
-
   }
 
   function distToSegment(p, v, w) {
 
     return math.sqrt(distToSegmentSquared(p, v, w));
-
   }
 
   exports.modifiers = [
@@ -298,11 +301,9 @@
             var x = math.atan2(z1.re, z1.im) / math.pi;
 
             return x;
-
           }, result.zs);
 
           return vals;
-
         });
 
         var point = math.complex(math.random(-functal.limit, functal.limit), math.random(-functal.limit, functal.limit));
@@ -314,7 +315,6 @@
             point: point
           }
         };
-
       },
       weight: 1,
     },
@@ -328,11 +328,9 @@
           var vals = R.map(function(z) {
 
             return z.re + offset;
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var offset = math.random(-functal.limit, functal.limit);
@@ -344,7 +342,6 @@
             offset: offset
           }
         };
-
       },
       weight: 1,
     },
@@ -359,17 +356,14 @@
           var max = math.max(R.map(function(z) {
 
             return math.abs(z.re);
-
           }, result.zs));
 
           var vals = R.map(function(z) {
 
             return adjx(max ? z.re / max : 1, offset);
-
           }, result.zs);
 
           return vals;
-
         });
 
         var offset = math.random(-1, 1);
@@ -381,7 +375,6 @@
             offset: offset
           }
         };
-
       },
       weight: 1,
     },
@@ -397,11 +390,9 @@
             var x = functal.finite(math.norm(z)) / functal.limit;
 
             return adjx(x, offset);
-
           }, result.zs);
 
           return vals;
-
         });
 
         var offset = math.random(-1, 1);
@@ -413,7 +404,6 @@
             offset: offset
           }
         };
-
       },
       weight: 1,
     },
@@ -432,11 +422,9 @@
             var distance = math.sqrt(functal.finite(math.norm(z1)));
 
             return distance;
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var point = math.complex(math.random(-functal.limit, functal.limit), math.random(-functal.limit, functal.limit));
@@ -450,7 +438,6 @@
             point: point
           }
         };
-
       },
       weight: 0.5,
     },
@@ -467,11 +454,9 @@
             var distance = math.abs(z.re - x);
 
             return distance;
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var x = math.random(-functal.limit, functal.limit);
@@ -483,7 +468,6 @@
             x: x
           }
         };
-
       },
       weight: 1,
     },
@@ -500,11 +484,9 @@
             var distance = math.abs(z.im - y);
 
             return distance;
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var y = math.random(-functal.limit, functal.limit);
@@ -516,7 +498,6 @@
             y: y
           }
         };
-
       },
       weight: 1,
     },
@@ -547,11 +528,9 @@
             var distance = distancer.fn(z4, lines);
 
             return bounder.fn(distance, border);
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var lines = 1 + Rp.bandomInt(4, 1);
@@ -579,7 +558,6 @@
             bounder: bounder
           }
         };
-
       },
       weight: 2,
     },
@@ -602,11 +580,9 @@
             var distance = math.max(x, y);
 
             return bounder.fn(distance, size);
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var size = Rp.bandom(1, -2);
@@ -626,7 +602,6 @@
           }
 
         };
-
       },
       weight: 2,
     },
@@ -640,11 +615,9 @@
           var vals = R.map(function(z) {
 
             return z.im + ampl * math.sin(freq * z.re);
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var diameter = Rp.bandom(1, -2);
@@ -662,7 +635,6 @@
             ampl: ampl
           }
         };
-
       },
       weight: 1,
     },
@@ -679,11 +651,9 @@
             var y = functal.finite(z.im + a * z.re - b);
 
             return y;
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var a = math.random(-functal.limit, functal.limit);
@@ -698,7 +668,6 @@
           }
 
         };
-
       },
       weight: 0.5,
     },
@@ -715,11 +684,9 @@
             var y = functal.finite(z.im * z.re) - offset;
 
             return y;
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var offset = Rp.bandom(1, -2);
@@ -732,7 +699,6 @@
           }
 
         };
-
       },
       weight: 1,
     },
@@ -751,11 +717,9 @@
             var distance = math.sqrt(functal.finite(math.norm(z1)));
 
             return bounder.fn(distance, diameter);
-
           }, result.zs);
 
           return vals;
-
         });
 
         var diameter = Rp.bandom(functal.limit, -2);
@@ -776,7 +740,6 @@
             bounder: bounder
           }
         };
-
       },
       weight: 2,
     },
@@ -816,11 +779,9 @@
             }
 
             return bounder.fn(minDistance, diameter);
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         var freq = 1 + Rp.bandomInt(50, 3);
@@ -844,7 +805,6 @@
           }
 
         };
-
       },
       weight: 4,
     },
@@ -876,15 +836,12 @@
               min = math.min(min, dist);
 
               return min;
-
             }, Number.MAX_VALUE, lines);
 
             return bounder.fn(distance, 0);
-
           }, result.zs);
 
           return normalize(vals);
-
         });
 
         // create shape
@@ -912,7 +869,6 @@
             bounder: bounder
           }
         };
-
       },
       weight: 2,
     },

@@ -902,6 +902,8 @@
 
     if (functal.accept) {
 
+      functal.topic = modifiers.getTopic(functal);
+
       // save options spec
       fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'modifiers'], functal), null, 4))
         .then(function() {
@@ -915,19 +917,15 @@
 
           console.log('getting topic');
 
-          var topic = modifiers.getTopic(functal);
-
-          console.log('topic: ' + topic);
-
           return dbTopics.collection('titles').findOneAsync({
-            topic: topic
+            topic: functal.topic
           });
         })
         .then(function(doc) {
 
           if (doc) {
 
-            console.log(doc.title);
+            console.log(functal.topic + ': ' + doc.title);
 
             var image = {
               name: functal.filename + '.jpg',

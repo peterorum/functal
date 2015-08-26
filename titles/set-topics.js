@@ -65,11 +65,17 @@
               db.collection('images').updateAsync({
                 name: image.name
               }, image).then(function() {
-                updateResolve();
+
+                setTimeout(function() {
+                  updateResolve();
+                }, 500);
+
               });
             }, function(err) {
               console.log('http request error: ' + err);
-              updateResolve();
+              setTimeout(function() {
+                updateResolve();
+              }, 5000);
             });
           });
         }, R.take(1000, docs));
