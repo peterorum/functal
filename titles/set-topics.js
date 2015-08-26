@@ -27,58 +27,57 @@
 
         docs.reverse();
 
+        var delay = 500;
+        var i = 0;
+
         var updates = R.map(function(image) {
 
-          return new Promise(function(updateResolve, updateReject) {
+          return new Promise(function(updateResolve) {
+            i++;
+            setTimeout(function() {
 
-            // console.log(image.name);
+              var jsonUrl = 'https://s3.amazonaws.com/functal-json/' + image.name.replace(/jpg/, 'json');
 
-            var jsonUrl = 'https://s3.amazonaws.com/functal-json/' + image.name.replace(/jpg/, 'json');
+              // jsonUrl = 'https://s3.amazonaws.com/functal-json/functal-20150704155915238.json';
 
-            // jsonUrl = 'https://s3.amazonaws.com/functal-json/functal-20150704155915238.json';
+              // console.log(jsonUrl);
 
-            // console.log(jsonUrl);
+              request.getAsync(jsonUrl).then(function(data) {
+                var response = data[0];
+                var topic;
 
-            request.getAsync(jsonUrl).then(function(data) {
-              var response = data[0];
-              var topic;
+                if (response.statusCode === 200) {
+                  // json found
+                  var json = response.body;
 
-              if (response.statusCode === 200) {
-                // json found
-                var json = response.body;
+                  var functal = JSON.parse(json);
 
-                var functal = JSON.parse(json);
+                  functal.hslStats = functal.palette.hslStats;
 
-                functal.hslStats = functal.palette.hslStats;
+                  topic = modifiers.getTopic(functal);
+                }
 
-                topic = modifiers.getTopic(functal);
-              }
+                if (!topic) {
+                  topic = (math.random() < 0.5 ? 'grid' : 'spiral');
+                }
 
-              if (!topic) {
-                topic = (math.random() < 0.5 ? 'grid' : 'spiral');
-              }
+                console.log(image.name + ': ' + topic);
 
-              console.log(image.name + ': ' + topic);
+                image.topic = topic;
 
-              image.topic = topic;
-
-              db.collection('images').updateAsync({
-                name: image.name
-              }, image).then(function() {
-
-                setTimeout(function() {
+                db.collection('images').updateAsync({
+                  name: image.name
+                }, image).then(function() {
                   updateResolve();
-                }, 500);
-
-              });
-            }, function(err) {
-              console.log('http request error: ' + err);
-              setTimeout(function() {
+                });
+              }, function(err) {
+                console.log('http request error: ' + err);
                 updateResolve();
-              }, 5000);
-            });
+              });
+            }, i * delay);
           });
-        }, R.take(1000, docs));
+        }, docs);
+        // }, R.take(1000, docs));
 
         promise.all(updates).then(function() {
           resolve();
