@@ -28,12 +28,12 @@
         docs.reverse();
 
         var delay = 500;
-        var i = 0;
+        var counter = 0;
 
         var updates = R.map(function(image) {
 
           return new Promise(function(updateResolve) {
-            i++;
+            counter++;
             setTimeout(function() {
 
               var jsonUrl = 'https://s3.amazonaws.com/functal-json/' + image.name.replace(/jpg/, 'json');
@@ -61,7 +61,7 @@
                   topic = (math.random() < 0.5 ? 'grid' : 'spiral');
                 }
 
-                console.log(image.name + ': ' + topic);
+                console.log(counter + ' ' + image.name + ': ' + topic);
 
                 image.topic = topic;
 
@@ -74,7 +74,7 @@
                 console.log('http request error: ' + err);
                 updateResolve();
               });
-            }, i * delay);
+            }, counter * delay);
           });
         }, docs);
         // }, R.take(1000, docs));
