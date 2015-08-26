@@ -17,11 +17,16 @@
   var setTopics = function(db) {
     return new Promise(function(resolve, reject) {
 
-      db.collection('images').find({
+      // no topic
+      var query = {
         topic: {
           $exists: false
         }
-      }).toArrayAsync().then(function(docs) {
+      };
+
+      query = {}; // all
+
+      db.collection('images').find(query).toArrayAsync().then(function(docs) {
 
         console.log('count: ' + docs.length);
 
