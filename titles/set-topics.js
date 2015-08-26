@@ -32,7 +32,7 @@
 
         docs.reverse();
 
-        var delay = 5000;
+        var delay = 500;
         var counter = 0;
 
         var updates = R.map(function(image) {
