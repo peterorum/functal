@@ -14,7 +14,8 @@
 
   var modifiers = require('../modifiers');
 
-  var genericTopics = ['curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise'];
+  var genericTopics = ['curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
+    'universe'];
 
   var setTopics = function(db) {
     return new Promise(function(resolve, reject) {
@@ -81,7 +82,7 @@
                 console.log('http request error: ' + err);
                 updateResolve();
               });
-              // shedule the delay
+            // shedule the delay
             }, counter * delay);
           });
         }, docs);

@@ -23,13 +23,13 @@ db_functal = client['functal']
 
 
 def get_functals():
-    return db_functal.images.find()
+    return list(db_functal.images.find())
 
 #--- find untitled
 
 
 def get_functals_without_title():
-    return db_functal.images.find({'title': {'$exists': False}})
+    return list(db_functal.images.find({'title': {'$exists': False}}))
 
 #--- run
 
