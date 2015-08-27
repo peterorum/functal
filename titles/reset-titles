@@ -6,4 +6,4 @@ cd $HOME/functal/titles
 
 node --harmony set-topics
 
-./fill-titles.py
+python3 -u ./fill-titles.py
