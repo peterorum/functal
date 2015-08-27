@@ -40,17 +40,18 @@ def run():
     for functal in functals:
         # pprint(functal)
 
-        topic = functal['topic']
+        topic = functal.get('topic', None)
 
-        title = db_topics.titles.find_one({'topic': topic})
-        pprint(topic + ': ' + title['title'])
+        if (topic not is None):
+            title = db_topics.titles.find_one({'topic': topic})
+            pprint(topic + ': ' + title['title'])
 
-        functal['title'] = title['title']
+            functal['title'] = title['title']
 
-        db_functal.images.update({'_id': functal['_id']}, {'$set': functal}, upsert=False)
+            db_functal.images.update({'_id': functal['_id']}, {'$set': functal}, upsert=False)
 
-        # remove used title
-        db_topics.titles.remove(title)
+            # remove used title
+            db_topics.titles.remove(title)
 
     client.close()
 
