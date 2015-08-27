@@ -42,7 +42,7 @@ def run():
 
         topic = functal.get('topic', None)
 
-        if (topic not is None):
+        if (topic is not None):
             title = db_topics.titles.find_one({'topic': topic})
             pprint(topic + ': ' + title['title'])
 
