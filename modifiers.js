@@ -228,7 +228,7 @@
 
       if (functal.hslStats && functal.hslStats.l && functal.hslStats.l.mean > 0.7) {
 
-        var lightTopics = ['light'];
+        var lightTopics = ['light', 'sunshine'];
 
         topic = lightTopics[math.randomInt(0, lightTopics.length)];
       }

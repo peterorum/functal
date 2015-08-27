@@ -14,6 +14,8 @@
 
   var modifiers = require('../modifiers');
 
+  var genericTopics = ['grid', 'spiral', 'curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise'];
+
   var setTopics = function(db) {
     return new Promise(function(resolve, reject) {
 
