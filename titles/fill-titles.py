@@ -8,6 +8,7 @@ import os
 # import json
 #import random
 #import collections
+import time
 
 from pprint import pprint
 # pp = pprint.PrettyPrinter(indent=4)
@@ -42,7 +43,7 @@ def run():
 
         topic = functal.get('topic', None)
 
-        if (topic is not None):
+        if topic is not None:
             title = db_topics.titles.find_one({'topic': topic})
 
             if title is not None:
