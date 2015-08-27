@@ -65,7 +65,7 @@
                 }
 
                 if (!topic) {
-                  topic = (math.random() < 0.5 ? 'grid' : 'spiral');
+                  topic = genericTopics[math.randomInt(0, genericTopics.length)];
                 }
 
                 console.log(image.name + ': ' + topic);
