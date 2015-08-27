@@ -41,12 +41,10 @@
               name: key
             }).then(function(image) {
             if (image && image.title) {
-              msg = '"' + image.title + '"" ' + msg;
+              msg = '"' + image.title + '" ' + msg;
             }
 
-            console.log(msg);
-
-            // twit.tweet(msg, tmpFile, function() {});
+            twit.tweet(msg, tmpFile, function() {});
 
             client.close();
           });
