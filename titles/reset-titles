@@ -1,0 +1,11 @@
+#!/bin/sh
+
+source $HOME/.bash_profile
+
+cd $HOME/functal/titles
+
+node --harmony set-topics
+
+./get-titles.py
+
+./fill-titles.py
