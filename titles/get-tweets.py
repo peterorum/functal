@@ -4,7 +4,8 @@ import os
 import random
 import time
 # import re
-# import sys
+import sys
+import getopt
 import urllib
 # import json
 import pprint
@@ -64,7 +65,20 @@ twit = twitter.Twitter(auth=auth)
 #--- main
 
 
-def main():
+def main(argv):
+
+    opts, args = getopt.getopt(argv, "ht:", ["help", "topic="])
+
+    topic = None
+
+    for opt, arg in opts:
+        print('opt:' + opt)
+        print('arg:' + arg)
+        if opt == '-h':
+            print('get-tweets -t topic')
+            sys.exit()
+        elif opt in ("-t", "--topic"):
+            topic = arg
 
     topics = ["red", "orange", "yellow", "green", "blue", "purple", 'cyan', 'magenta', 'turquoise', 'jade', 'violet', 'crimson', 'ruby', 'pink',
               "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "sky", "target", "silver',"
@@ -73,7 +87,10 @@ def main():
               'universe', 'weather']
     try:
         # try random.choice(topics)
-        topic = topics[random.randint(0, len(topics) - 1)]
+
+        if topic is None:
+            topic = topics[random.randint(0, len(topics) - 1)]
+
         print(str(datetime.now()) + ' ' + topic)
         get_tweets(topic)
     except Exception as e:
@@ -84,4 +101,4 @@ def main():
 
 #--- run
 
-main()
+main(sys.argv[1:])
