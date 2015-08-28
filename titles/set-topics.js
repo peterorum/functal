@@ -63,7 +63,7 @@
                 }
 
                 if (!topic) {
-                  topic = modifiers.genericTopics[math.randomInt(0, genericTopics.length)];
+                  topic = modifiers.genericTopics[math.randomInt(0, modifiers.genericTopics.length)];
                 }
 
                 console.log(image.name + ': ' + topic);
