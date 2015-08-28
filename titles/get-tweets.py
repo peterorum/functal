@@ -72,8 +72,6 @@ def main(argv):
     topic = None
 
     for opt, arg in opts:
-        print('opt:' + opt)
-        print('arg:' + arg)
         if opt == '-h':
             print('get-tweets -t topic')
             sys.exit()
