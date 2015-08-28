@@ -70,20 +70,17 @@ def main():
               "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "sky", "target", "silver',"
               "sunset", "gold", "golden", "angle", "dark", "black", "night", "light", "storm", "sunshine", "fire", "solar",
               'grid', 'spiral', 'curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
-              'universe', 'weather'
-              ]
-
-    while True:
-        try:
-            # try random.choice(topics)
-            topic = topics[random.randint(0, len(topics) - 1)]
-            print(str(datetime.now()) + ' ' + topic)
-            get_tweets(topic)
-        except Exception as e:
-            print(type(e))
-            print(e)
-        finally:
-            time.sleep(60)
+              'universe', 'weather']
+    try:
+        # try random.choice(topics)
+        topic = topics[random.randint(0, len(topics) - 1)]
+        print(str(datetime.now()) + ' ' + topic)
+        get_tweets(topic)
+    except Exception as e:
+        print(type(e))
+        print(e)
+    finally:
+        client.close()
 
 #--- run
 
