@@ -4,7 +4,7 @@ import os
 import random
 import time
 # import re
-#import sys
+# import sys
 import urllib
 # import json
 import pprint
@@ -25,13 +25,19 @@ db = client['topics']
 
 
 def get_tweets(topic):
-    #print('topic : ' + topic)
+    # print('topic : ' + topic)
 
     try:
         # todo - use since_id as max id from db for topic
         search_results = twit.search.tweets(q=topic, lang='en', result_type='mixed', count=100)
         # print('search_results')
-        pp.pprint(search_results)
+        # pp.pprint(search_results)
+
+        print('sensitive')
+        pp.pprint(['text': tweet['text'], 'topic': topic}
+                 for tweet in search_results['statuses'] if tweet['possibly_sensitive']]);
+
+
 
         # 'user': tweet['user']['name']
         texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
@@ -48,7 +54,7 @@ def get_tweets(topic):
                 print(type(e))
                 print(e)
         # else:
-            #print('no new tweets')
+            # print('no new tweets')
 
     except urllib.error.URLError as e:
         print(e)
