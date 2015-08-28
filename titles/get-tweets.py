@@ -74,9 +74,11 @@ def main(argv):
     for opt, arg in opts:
         if opt == '-h':
             print('get-tweets -t topic')
+            client.close()
             sys.exit()
         elif opt in ("-t", "--topic"):
             topic = arg
+            print('topic arg: ' + topic)
 
     topics = ["red", "orange", "yellow", "green", "blue", "purple", 'cyan', 'magenta', 'turquoise', 'jade', 'violet', 'crimson', 'ruby', 'pink',
               "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "sky", "target", "silver',"
