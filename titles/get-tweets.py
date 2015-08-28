@@ -31,7 +31,7 @@ def get_tweets(topic):
         # todo - use since_id as max id from db for topic
         search_results = twit.search.tweets(q=topic, lang='en', result_type='mixed', count=100)
         # print('search_results')
-        # pp.pprint(search_results)
+        pp.pprint(search_results)
 
         # 'user': tweet['user']['name']
         texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
@@ -70,7 +70,7 @@ def main():
               "triangle", "square", "circle", "arrow", "asterisk", "wavy", "star", "sky", "target", "silver',"
               "sunset", "gold", "golden", "angle", "dark", "black", "night", "light", "storm", "sunshine", "fire",
               'grid', 'spiral', 'curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
-              'universe'
+              'universe', 'weather'
               ]
 
     while True:

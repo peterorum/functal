@@ -163,6 +163,10 @@
 
   //------------- get topic for title
 
+  exports.genericTopics = ['curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
+    'universe', 'weather'];
+
+
   exports.getTopic = function(functal) {
     var topic = null;
 
@@ -170,7 +174,11 @@
 
     //------------ try to use first shape trap
 
-    if (prob < 0.5) {
+    if (prob < 0.2) {
+      topic = exports.genericTopics[math.random(0, exports.genericTopics.length)];
+    }
+
+    if (! topic && prob < 0.5) {
       var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
 
       if (trap) {

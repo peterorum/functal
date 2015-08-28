@@ -14,9 +14,6 @@
 
   var modifiers = require('../modifiers');
 
-  var genericTopics = ['curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
-    'universe'];
-
   var setTopics = function(db) {
     return new Promise(function(resolve, reject) {
 
@@ -66,7 +63,7 @@
                 }
 
                 if (!topic) {
-                  topic = genericTopics[math.randomInt(0, genericTopics.length)];
+                  topic = modifiers.genericTopics[math.randomInt(0, genericTopics.length)];
                 }
 
                 console.log(image.name + ': ' + topic);
