@@ -34,10 +34,8 @@ def get_tweets(topic):
         # pp.pprint(search_results)
 
         print('sensitive')
-        pp.pprint(['text': tweet['text'], 'topic': topic}
-                 for tweet in search_results['statuses'] if tweet['possibly_sensitive']]);
-
-
+        pp.pprint([{'text': tweet['text'], 'topic': topic}
+                   for tweet in search_results['statuses'] if tweet['possibly_sensitive']])
 
         # 'user': tweet['user']['name']
         texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
