@@ -58,6 +58,8 @@ def main(argv):
     else
         functals = get_functals()
 
+    print('count: ' + str(len(functals)))
+
     for functal in functals:
         # pprint(functal)
 
