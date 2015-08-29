@@ -151,11 +151,24 @@
 
   exports.getHueName = function(h12) {
 
-    var hues = [['red'], ['orange', 'sunset', 'fire'], ['yellow', 'gold', 'golden', 'solar'], ['green'], ['green'], ['green', 'jade', 'turquoise'], ['sky', 'cyan' ], ['blue'], ['blue'], ['purple', 'violet'], ['magenta'], ['pink', 'rose', 'crimson', 'ruby' ]];
+    var hues = [
+      ['red'],
+      ['orange', 'sunset', 'fire'],
+      ['yellow', 'gold', 'golden', 'solar'],
+      ['green'],
+      ['green'],
+      ['green', 'jade', 'turquoise'],
+      ['sky', 'cyan'],
+      ['blue'],
+      ['blue'],
+      ['purple', 'violet'],
+      ['magenta'],
+      ['pink', 'rose', 'crimson', 'ruby']
+    ];
 
-    var hue = hues[math.mod(math.round(h12 || 0), 12) ];
+    var hue = hues[math.mod(math.round(h12 || 0), 12)];
 
-    hue = hue[ math.randomInt(hue.length)];
+    hue = hue[math.randomInt(hue.length)];
 
     return hue;
   };

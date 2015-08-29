@@ -915,7 +915,7 @@
 
           // get title
 
-          console.log('getting topic');
+          console.log('getting title for topic:' + functal.topic);
 
           return dbTopics.collection('titles').findOneAsync({
             topic: functal.topic

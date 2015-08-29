@@ -254,6 +254,11 @@
       topic = clr.getHueName(functal.hslStats.h.mode);
     }
 
+    if (! topic) {
+      console.log('unexpected lack of topic');
+      topic = exports.genericTopics[math.random(0, exports.genericTopics.length)];
+    }
+
     return topic;
   };
 
