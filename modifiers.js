@@ -163,7 +163,7 @@
 
   //------------- get topic for title
 
-  exports.genericTopics = ['curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
+  exports.genericTopics = ['curve', 'spider', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
     'universe', 'weather'];
 
 
@@ -255,8 +255,8 @@
     }
 
     if (! topic) {
-      console.log('unexpected lack of topic');
-      topic = exports.genericTopics[math.random(0, exports.genericTopics.length)];
+      console.log('unexpected lack of topic - force to watch');
+      topic = 'watch';
     }
 
     return topic;
