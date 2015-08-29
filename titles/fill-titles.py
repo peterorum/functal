@@ -36,14 +36,15 @@ def get_functals_without_title():
 #--- run
 
 
-def main():
-
-
 def main(argv):
 
-    opts, args = getopt.getopt(argv, "ht:", ["help", "topic="])
+    try:
+        opts, remainder = getopt.getopt(argv, "ht:", ["help", "topic="])
+    except getopt.GetoptError as err:
+        print(err)
+        sys.exit(2)
 
-    doUntitled = false
+    doUntitled = False
 
     for opt, arg in opts:
         if opt == '-h':
@@ -55,7 +56,7 @@ def main(argv):
 
     if doUntitled:
         functals = get_functals_without_title()
-    else
+    else:
         functals = get_functals()
 
     print('count: ' + str(len(functals)))
