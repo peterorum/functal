@@ -5,6 +5,7 @@
 import os
 # import re
 import sys
+import getopt
 # import json
 # import random
 # import collections
@@ -37,13 +38,30 @@ def get_functals_without_title():
 
 def main():
 
-    # functals = get_functals_without_title()
-    functals = get_functals()
+
+def main(argv):
+
+    opts, args = getopt.getopt(argv, "ht:", ["help", "topic="])
+
+    doUntitled = false
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print('fill-titles.py -u --untitled')
+            client.close()
+            sys.exit()
+        elif opt in ("-u", "--untitled"):
+            doUntitled = True
+
+    if doUntitled:
+        functals = get_functals_without_title()
+    else
+        functals = get_functals()
 
     for functal in functals:
         # pprint(functal)
 
-        topic = functal.get('topic', None)
+        topic = functal.get('topic', 'watch')
 
         if topic is not None:
             title = db_topics.titles.find_one({'topic': topic})
@@ -74,4 +92,4 @@ def main():
 
 #---
 
-main()
+main(sys.argv[1:])
