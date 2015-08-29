@@ -929,7 +929,8 @@
 
             var image = {
               name: functal.filename + '.jpg',
-              title: doc.title
+              title: doc.title,
+              topic: functal.topic
             };
 
             // delete topic & save title
