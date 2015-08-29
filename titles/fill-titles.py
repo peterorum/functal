@@ -39,7 +39,7 @@ def get_functals_without_title():
 def main(argv):
 
     try:
-        opts, remainder = getopt.getopt(argv, "ht:", ["help", "topic="])
+        opts, remainder = getopt.getopt(argv, "hu", ["help", "untitled"])
     except getopt.GetoptError as err:
         print(err)
         sys.exit(2)
