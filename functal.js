@@ -78,7 +78,7 @@
 
     var deferred = Q.defer();
 
-    if (isDev) {
+    if (1){ // isDev) {
 
       deferred.resolve(true);
     }
@@ -91,8 +91,8 @@
         var ok = result.count < fractal.maxCount;
 
         deferred.resolve(ok);
-      }, function(ex) {
-        console.log('error reading buckets', ex);
+      }, function() {
+        console.log('error reading buckets');
 
         // proceed anyway
         deferred.resolve(true);
