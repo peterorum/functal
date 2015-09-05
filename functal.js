@@ -38,7 +38,7 @@
   var mongoClient = promise.promisifyAll(mongodb.MongoClient);
 
   // smaller image, no tweet
-  var isDev = true; ///////////// /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
+  var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
   var functalsFolder = 'functals';
 
@@ -866,9 +866,6 @@
           // functal.hslStats.s.mean > functal.minHslStats.s.meanMin &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount;
-
-          ok = true;/////////////////////////////////////
-
       } catch (ex) {
 
         ok = false;
