@@ -2,12 +2,14 @@
 
 import nltk
 import os
-#import re
-#import sys
-#import random
-#import collections
+# import re
+# import sys
+# import random
+# import collections
 
 from pprint import pprint
+
+from nltk.tokenize import word_tokenize
 
 import pymongo
 client = pymongo.MongoClient(os.getenv('mongo_functal'))
@@ -26,12 +28,26 @@ def get_topics():
 
 
 def get_tweets(topic):
-    tweets = set([tweet['text'] for tweet in db.tweets.find({'topic': topic})])
+    tweets = list([tweet['text'] for tweet in db.tweets.find({'topic': topic})])
 
     return tweets
 
-#--- get words
+#--- get words by flattening
 
+
+def get_words(tweets):
+
+    # words = [w for w in [word_tokenize(tweet) for tweet in tweets]]
+    wordsLists = [word_tokenize(tweet) for tweet in tweets]
+
+    words = [word.lower() for wordList in wordsLists
+             for word in wordList]
+
+    return words
+
+
+def lexical_diversity(words):
+    return len(words) / len(set(words))
 
 #--- main
 
@@ -40,12 +56,17 @@ def main():
 
     topics = get_topics()
 
-    for topic in topics[0]:
+    for topic in topics[:1]:
         print('topic: ' + topic)
 
         tweets = get_tweets(topic)
 
-        pprint(tweets)
+        words = get_words(tweets)
+
+        print('total words: ' + str(len(words)))
+        print('unique words: ' + str(len(set(words))))
+        print('lexical diversity: ' + str(lexical_diversity(words)))
+
 #---
 
 main()
