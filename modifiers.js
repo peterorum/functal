@@ -241,7 +241,7 @@
         topic = lightTopics[math.randomInt(0, lightTopics.length)];
       }
       else if (functal.hslStats && functal.hslStats.l && functal.hslStats.l.mean < 0.5){
-        var darkTopics = ['dark', 'black', 'night', 'storm'];
+        var darkTopics = ['dark', 'night', 'storm'];
 
         topic = darkTopics[math.randomInt(0, darkTopics.length)];
       }

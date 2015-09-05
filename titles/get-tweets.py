@@ -82,7 +82,7 @@ def main(argv):
 
     topics = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'cyan', 'magenta', 'turquoise', 'jade', 'violet', 'crimson', 'ruby', 'pink',
               'triangle', 'square', 'circle', 'arrow', 'asterisk', 'wavy', 'star', 'sky', 'target', 'silver',
-              'sunset', 'gold', 'golden', 'angle', 'dark', 'black', 'night', 'light', 'storm', 'sunshine', 'fire', 'solar', 'flame',
+              'sunset', 'gold', 'golden', 'angle', 'dark', 'night', 'light', 'storm', 'sunshine', 'fire', 'solar', 'flame',
               'grid', 'spiral', 'curve', 'spider', 'watch', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
               'universe', 'weather']
     try:
