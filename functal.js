@@ -38,7 +38,7 @@
   var mongoClient = promise.promisifyAll(mongodb.MongoClient);
 
   // smaller image, no tweet
-  var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
+  var isDev = true; ///////////// /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
   var functalsFolder = 'functals';
 
@@ -78,7 +78,7 @@
 
     var deferred = Q.defer();
 
-    if (1){ // isDev) {
+    if (isDev) {
 
       deferred.resolve(true);
     }
