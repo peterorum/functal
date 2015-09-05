@@ -71,7 +71,7 @@ def get_words(tweets, dictionary):
 
         # print(text)
 
-        words = nltk.tokenize.word_tokenize(text)
+        words = nltk.tokenize.WhitespaceTokenizer().tokenize(text)
 
         # print('words')
         # print(text)
@@ -80,9 +80,21 @@ def get_words(tweets, dictionary):
         # init to start of line
         word1 = "^"
 
+        # . is tokenized separately as it assumes text has already been broekn into sentences
+        # for word in words:
+        #    if word == '.':
+        #        updateWordCount(dic, word1, '$', dictionary)
+        #        word1 = '^'
+        #    else:
+        #        updateWordCount(dic, word1, word, dictionary)
+        #        word1 = word
+
+        # assumes end of sentence work includes dot
         for word in words:
-            if word == '.':
-                updateWordCount(dic, word1, '$', dictionary)
+            if word.endswith('.'):
+                word = word.replace('.', '')
+                updateWordCount(dic, word1, word, dictionary)
+                updateWordCount(dic, word, '$', dictionary)
                 word1 = '^'
             else:
                 updateWordCount(dic, word1, word, dictionary)
