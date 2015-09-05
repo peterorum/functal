@@ -67,7 +67,7 @@ twit = twitter.Twitter(auth=auth)
 
 def main(argv):
 
-    opts, args = getopt.getopt(argv, "ht:", ["help", "topic="])
+    opts, _ = getopt.getopt(argv, "ht:", ["help", "topic="])
 
     topic = None
 

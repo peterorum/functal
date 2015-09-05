@@ -153,7 +153,7 @@
 
     var hues = [
       ['red'],
-      ['orange', 'sunset', 'fire'],
+      ['orange', 'sunset', 'fire', 'flame'],
       ['yellow', 'gold', 'golden', 'solar'],
       ['green'],
       ['green'],

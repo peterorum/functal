@@ -164,7 +164,7 @@
   //------------- get topic for title
 
   exports.genericTopics = ['curve', 'spider', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
-    'universe', 'weather'];
+    'universe', 'weather', 'imagination', 'web'];
 
 
   exports.getTopic = function(functal) {
