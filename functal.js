@@ -865,8 +865,9 @@
           functal.hslStats.l.mean < functal.minHslStats.l.meanMax &&
           // functal.hslStats.s.mean > functal.minHslStats.s.meanMin &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
-          functal.uniques > functal.sampleCount &&
-          true;
+          functal.uniques > functal.sampleCount;
+
+          ok = true;/////////////////////////////////////
 
       } catch (ex) {
 
