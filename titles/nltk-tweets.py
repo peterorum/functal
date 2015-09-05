@@ -9,8 +9,6 @@ import os
 
 from pprint import pprint
 
-from nltk.tokenize import word_tokenize
-
 import pymongo
 client = pymongo.MongoClient(os.getenv('mongo_functal'))
 
@@ -38,7 +36,7 @@ def get_tweets(topic):
 def get_words(tweets):
 
     # words = [w for w in [word_tokenize(tweet) for tweet in tweets]]
-    wordsLists = [word_tokenize(tweet) for tweet in tweets]
+    wordsLists = [nltk.tokenize.word_tokenize(tweet) for tweet in tweets]
 
     words = [word.lower() for wordList in wordsLists
              for word in wordList]
