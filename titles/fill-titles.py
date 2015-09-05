@@ -72,7 +72,7 @@ def main(argv):
             # make more titles
             print('out of titles for ' + topic + ' - shelling')
             subprocess.call(['./get-tweets.py', '-t', topic])
-            subprocess.call(['./get-titles.py'])
+            subprocess.call(['./get-titles-nltk.py'])
             title = db_topics.titles.find_one({'topic': topic})
 
         if title is not None:

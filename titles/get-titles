@@ -4,4 +4,4 @@ source $HOME/.bash_profile
 
 cd $HOME/functal/titles
 
-./get-titles.py
+./get-titles-nltk.py
