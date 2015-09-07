@@ -81,6 +81,8 @@ def get_words(tweets, dictionary):
         word1 = "^"
 
         # . is tokenized separately as it assumes text has already been broekn into sentences
+        # todo - first parse text into sentences using punkt sentence parser
+
         # for word in words:
         #    if word == '.':
         #        updateWordCount(dic, word1, '$', dictionary)

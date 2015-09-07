@@ -2,7 +2,7 @@
 
 import nltk
 import os
-# import re
+import re
 # import sys
 # import random
 # import collections
@@ -14,56 +14,63 @@ client = pymongo.MongoClient(os.getenv('mongo_functal'))
 
 db = client['topics']
 
-# --- get_topics
+possibly_sensitive_words = set(line.strip().replace(r'^', r'\b').replace(r'$', r'\b')
+                               for line in open(os.getenv('functal_folder') + '/words/words.txt') if len(line.strip()) > 0)
+
+sensitive_re = '|'.join(list(possibly_sensitive_words))
 
 
-def get_topics():
-    topics = list(set([tweet['topic'] for tweet in db.tweets.find()]))
+def analyze_tweets():
+    total_tweets = db.tweets.find().count()
+    print('total tweets: ' + str(total_tweets))
 
-    return topics
-
-# --- get_tweets
-
-
-def get_tweets(topic):
-    tweets = list([tweet['text'] for tweet in db.tweets.find({'topic': topic})])
-
-    return tweets
-
-#--- get words by flattening
+    # about 7% are sensitive
+    sensitive_tweets = list([tweet['text'] for tweet in db.tweets.find({'text': {'$regex': sensitive_re}})])
+    print('total sensitive tweets: ' + str(round(len(sensitive_tweets) / total_tweets * 100, 2)) + '%')
+    pprint(sensitive_tweets[:5])
 
 
-def get_words(tweets):
+def get_corpus():
 
-    # words = [w for w in [word_tokenize(tweet) for tweet in tweets]]
-    wordsLists = [nltk.tokenize.word_tokenize(tweet) for tweet in tweets]
+    words = []
 
-    words = [word.lower() for wordList in wordsLists
-             for word in wordList]
+    topic = 'grid'
 
-    return words
+    tweets = set([tweet['text'] for tweet in db.tweets.find({'topic': topic})])
 
+    for tweet in tweets:
+        text = tweet.lower()
 
-def lexical_diversity(words):
-    return len(words) / len(set(words))
+        # remove links
+        text = re.sub(r'http[^\b]*', '', text)
+
+        # remove names
+        text = re.sub(r'@[^\b]*', '', text)
+
+        # remove hashtags
+        text = re.sub(r'#[^\b]*', '', text)
+
+        # remove special chars
+        text = re.sub(r'[!]', '', text)
+
+        # remove entities
+        text = re.sub(r'&amp;', 'and', text)
+        text = re.sub(r'&.*;', '', text)
+
+        words = words + nltk.tokenize.WhitespaceTokenizer().tokenize(text)
+
+    return nltk.Text(words)
 
 #--- main
 
 
 def main():
 
-    topics = get_topics()
+    # analyze_tweets()
 
-    for topic in topics[:1]:
-        print('topic: ' + topic)
+    corpus = get_corpus()
 
-        tweets = get_tweets(topic)
-
-        words = get_words(tweets)
-
-        print('total words: ' + str(len(words)))
-        print('unique words: ' + str(len(set(words))))
-        print('lexical diversity: ' + str(lexical_diversity(words)))
+    pprint(corpus.concordance('grid'))
 
 #---
 
