@@ -44,4 +44,4 @@ nohup.out
 
 dump/
 
-admin/processing/bower_components/*
+admin/processing/bower_components
