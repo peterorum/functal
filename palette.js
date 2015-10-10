@@ -10,16 +10,13 @@
 
   var minHslStats = {
     h: {
-      std: 0.2
+      std: 0.25
     },
     s: {
-      std: 0.2,
-      meanMin: 0.5
+      std: 0.25
     },
     l: {
-      std: 0.2,
-      meanMin: 0.4,
-      meanMax: 0.8
+      std: 0.2
     },
     i: // intensity
     {
@@ -43,6 +40,14 @@
     var hueTo = 0.5;
 
     var hue = math.mod(baseHue + math.random(hueFrom, hueTo) / 12, 1);
+
+    // skip dull orange. no 0.4 to 0.83333
+    // go more red
+
+    if (hue > 0.4 / 12 && hue < 0.8333 / 12) {
+      hue -= 0.4333 / 12;
+      hue = math.mod(hue, 1);
+    }
 
     return hue;
   };
@@ -218,7 +223,7 @@
           }
         };
       },
-      weight: 20
+      weight: 0 // 20 not enough hue stddev
     },
 
     {
@@ -632,7 +637,7 @@
       {
         // orange
         hue: 1 / 12,
-        weight: 10
+        weight: 20
       },
       {
         // yellow
@@ -751,13 +756,9 @@
       palette.hslStats = calcHslStats(palette.colors);
 
       ok =
-      // palette.hslStats.h.std > minHslStats.h.std &&
+        palette.hslStats.h.std > minHslStats.h.std &&
         palette.hslStats.l.std > minHslStats.l.std &&
         palette.hslStats.s.std > minHslStats.s.std &&
-        palette.hslStats.l.mean > minHslStats.l.meanMin &&
-        palette.hslStats.l.mean < minHslStats.l.meanMax &&
-        // palette.hslStats.s.mean > minHslStats.s.meanMin &&
-        // palette.hslStats.i.max > minHslStats.i.max &&
         isHueModeOk(palette.hslStats.h.mode);
 
     } while (!ok);

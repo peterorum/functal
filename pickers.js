@@ -78,7 +78,7 @@
     },
     {
       name: 'mix',
-      weight: 20,
+      weight: 5,
       getColor: mixers.mix,
       getMixers: (modifiers) => getMixers(modifiers)
     }
