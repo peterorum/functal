@@ -1,5 +1,3 @@
-/* eslint-disable angular/no-console, angular/log */
-
 (function() {
 
   "use strict";
