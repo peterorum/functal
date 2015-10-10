@@ -21,7 +21,7 @@
     },
     i: // intensity
     {
-      max: 0.8
+      max: 0.65
     }
   };
 
@@ -643,17 +643,17 @@
       {
         // lime green
         hue: 3 / 12,
-        weight: 1
+        weight: 5
       },
       {
         // bright green
         hue: 4 / 12,
-        weight: 1
+        weight: 5
       },
       {
         // light green
         hue: 5 / 12,
-        weight: 1
+        weight: 5
       },
       {
         // cyan
@@ -673,12 +673,12 @@
       {
         // violet
         hue: 9 / 12,
-        weight: 1
+        weight: 5
       },
       {
         // magenta
         hue: 10 / 12,
-        weight: 1
+        weight: 5
       },
       {
         // cool red
