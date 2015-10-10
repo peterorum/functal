@@ -66,11 +66,6 @@
       // less brown
       changed = true;
 
-      // brighter orange
-      if (h12 < 0.83) {
-        hsl.h = 0.83 / 12;
-      }
-
       // more saturated & light
 
       hsl.s = 0.75 + hsl.s * 0.25;

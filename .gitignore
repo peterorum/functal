@@ -43,3 +43,5 @@ nohup.out
 ~$*.xlsx
 
 dump/
+
+processing/bower_components/*
