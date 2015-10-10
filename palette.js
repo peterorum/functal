@@ -10,11 +10,11 @@
 
   var minHslStats = {
     h: {
-      std: 0.08
+      std: 0.2
     },
     s: {
       std: 0.2,
-      meanMin: 0.5,
+      meanMin: 0.5
     },
     l: {
       std: 0.2,
@@ -57,12 +57,19 @@
 
     var h12 = hsl.h * 12;
 
-    if (h12 >= 1 && h12 <= 2) {
+    if (h12 >= 0.33 && h12 <= 2) {
       // less brown
       changed = true;
 
-      hsl.s = math.sqrt(hsl.s);
-      hsl.l = math.sqrt(hsl.l);
+      // brighter orange
+      if (h12 < 0.83) {
+        hsl.h = 0.83 / 12;
+      }
+
+      // more saturated & light
+
+      hsl.s = 0.75 + hsl.s * 0.25;
+      hsl.l = 0.50 + hsl.l * 0.50;
     }
 
     return (changed ? clr.hsl2rgb(hsl) : rgb);
@@ -122,7 +129,7 @@
           }
         };
       },
-      weight: 100,
+      weight: 100
     },
 
     {
@@ -168,7 +175,7 @@
           }
         };
       },
-      weight: 100,
+      weight: 100
     },
     {
       fn: function() {
@@ -211,7 +218,7 @@
           }
         };
       },
-      weight: 20,
+      weight: 20
     },
 
     {
@@ -249,7 +256,7 @@
           }
         };
       },
-      weight: 10,
+      weight: 10
     },
     {
       fn: function() {
@@ -283,7 +290,7 @@
           }
         };
       },
-      weight: 5,
+      weight: 5
     },
     {
       fn: function() {
@@ -329,7 +336,7 @@
           }
         };
       },
-      weight: 5,
+      weight: 5
     }
 
   ];
@@ -427,7 +434,7 @@
     return hsl;
   };
 
-  var getLightness = function(index, hue, contrast) {
+  var getLightness = function(index, hue /*, contrast */) {
 
     var l;
     // alternate bright/dark bands
@@ -650,7 +657,7 @@
       {
         // cyan
         hue: 6 / 12,
-        weight: 10,
+        weight: 10
       },
       {
         // cool blue
@@ -743,7 +750,9 @@
 
       palette.hslStats = calcHslStats(palette.colors);
 
-      ok = palette.hslStats.l.std > minHslStats.l.std &&
+      ok =
+      // palette.hslStats.h.std > minHslStats.h.std &&
+        palette.hslStats.l.std > minHslStats.l.std &&
         palette.hslStats.s.std > minHslStats.s.std &&
         palette.hslStats.l.mean > minHslStats.l.meanMin &&
         palette.hslStats.l.mean < minHslStats.l.meanMax &&

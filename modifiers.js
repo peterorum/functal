@@ -13,27 +13,25 @@
   // modifying the final result
   // return -1..1
 
-  exports.reducers = [
-    {
+  exports.reducers = [{
       name: 'min',
       fn: math.min,
       weight: 1
-    },
-    {
+    }, {
       name: 'max',
       fn: math.max,
       weight: 1
     }
-  // {
-  //     name: 'last',
-  //     fn: R.last,
-  //     weight: 1
-  // },
-  // {
-  //     name: 'mean',
-  //     fn: math.mean,
-  //     weight: 1
-  // }
+    // {
+    //     name: 'last',
+    //     fn: R.last,
+    //     weight: 1
+    // },
+    // {
+    //     name: 'mean',
+    //     fn: math.mean,
+    //     weight: 1
+    // }
   ];
 
   // determines if the endpoint is within a band of the shape
@@ -46,8 +44,7 @@
 
       if (math.abs(distance - maxDistance) < band) {
         x = (distance - maxDistance) % 1;
-      }
-      else {
+      } else {
         x = 0;
       }
 
@@ -63,8 +60,7 @@
     };
   };
 
-  var bounders = [
-    {
+  var bounders = [{
       fn: function() {
 
         return {
@@ -90,8 +86,7 @@
         };
       },
       weight: 1,
-    },
-    {
+    }, {
       fn: bander,
       weight: 4
     }
@@ -118,8 +113,7 @@
     return math.divide(vals, max);
   };
 
-  var distancers = [
-    {
+  var distancers = [{
       fn: function() {
 
         return {
@@ -131,8 +125,7 @@
         };
       },
       weight: 1,
-    },
-    {
+    }, {
       fn: function() {
 
         return {
@@ -144,8 +137,7 @@
         };
       },
       weight: 1,
-    },
-    {
+    }, {
       fn: function() {
 
         return {
@@ -164,7 +156,8 @@
   //------------- get topic for title
 
   exports.genericTopics = ['curve', 'spider', 'swarm', 'collapse', 'crash', 'collide', 'spray', 'swirl', 'chaos', 'chaotic', 'random', 'ocean', 'map', 'paradise',
-    'universe', 'weather', 'imagination', 'web'];
+    'universe', 'weather', 'imagination', 'web'
+  ];
 
 
   exports.getTopic = function(functal) {
@@ -178,7 +171,7 @@
       topic = exports.genericTopics[math.random(0, exports.genericTopics.length)];
     }
 
-    if (! topic && prob < 0.5) {
+    if (!topic && prob < 0.5) {
       var trap = R.find((m) => m.name === 'shape trap', functal.modifierParams);
 
       if (trap) {
@@ -186,8 +179,7 @@
 
         if (R.indexOf(trap.shape, trackedShapes) >= 0) {
           topic = trap.shape;
-        }
-        else {
+        } else {
           if (trap.shape === 'polygon') {
             if (trap.count === 4) {
               topic = 'square';
@@ -239,8 +231,7 @@
         var lightTopics = ['light', 'sunshine'];
 
         topic = lightTopics[math.randomInt(0, lightTopics.length)];
-      }
-      else if (functal.hslStats && functal.hslStats.l && functal.hslStats.l.mean < 0.5){
+      } else if (functal.hslStats && functal.hslStats.l && functal.hslStats.l.mean < 0.5) {
         var darkTopics = ['night', 'storm'];
 
         topic = darkTopics[math.randomInt(0, darkTopics.length)];
@@ -254,7 +245,7 @@
       topic = clr.getHueName(functal.hslStats.h.mode);
     }
 
-    if (! topic) {
+    if (!topic) {
       console.log('unexpected lack of topic - force to watch');
       topic = 'watch';
     }
@@ -287,11 +278,10 @@
       return dist2(p, w);
     }
 
-    return dist2(p,
-      {
-        x: v.x + t * (w.x - v.x),
-        y: v.y + t * (w.y - v.y)
-      });
+    return dist2(p, {
+      x: v.x + t * (w.x - v.x),
+      y: v.y + t * (w.y - v.y)
+    });
   }
 
   function distToSegment(p, v, w) {
@@ -299,8 +289,7 @@
     return math.sqrt(distToSegmentSquared(p, v, w));
   }
 
-  exports.modifiers = [
-    {
+  exports.modifiers = [{
       // final angle
 
       fn: function(functal) {
@@ -330,8 +319,7 @@
         };
       },
       weight: 1,
-    },
-    {
+    }, {
       fn: function(functal) {
 
         var fn = R.curry(function(offset, functal, result) {
@@ -531,8 +519,7 @@
 
             if (isCheckered && z2.re % 2 !== z2.im % 2) {
               z3 = z2;
-            }
-            else {
+            } else {
               z3 = math.subtract(z1, z2);
             }
 
@@ -550,15 +537,13 @@
 
         var isCheckered = !!math.randomInt(2);
 
-        var distancer = Rp.wandom(distancers).fn(
-          {});
+        var distancer = Rp.wandom(distancers).fn({});
 
         var border = math.random(1) / lines;
 
-        var bounder = Rp.wandom(bounders).fn(
-          {
-            maxDistance: border
-          });
+        var bounder = Rp.wandom(bounders).fn({
+          maxDistance: border
+        });
 
         return {
           fn: fn(lines, isCheckered, distancer, border, bounder),
@@ -600,10 +585,9 @@
 
         var size = Rp.bandom(1, -2);
         var centre = math.complex(Rp.bandom(1, 2) * Rp.randomSign() - 1, Rp.bandom(1, 2) * Rp.randomSign());
-        var bounder = Rp.wandom(bounders).fn(
-          {
-            maxDistance: size
-          });
+        var bounder = Rp.wandom(bounders).fn({
+          maxDistance: size
+        });
 
         return {
           fn: fn(bounder, size, centre),
@@ -617,8 +601,7 @@
         };
       },
       weight: 2,
-    },
-    {
+    }, {
       // sin
 
       fn: function( /* functal */ ) {
@@ -650,8 +633,7 @@
         };
       },
       weight: 1,
-    },
-    {
+    }, {
       // real + a * imag - b
 
       name: 'linear',
@@ -683,8 +665,7 @@
         };
       },
       weight: 0.5,
-    },
-    {
+    }, {
       // real * imag
 
       name: 'rebyim',
@@ -737,10 +718,9 @@
 
         var diameter = Rp.bandom(functal.limit, -2);
         var centre = math.complex(math.random(-functal.limit, functal.limit), math.random(-functal.limit, functal.limit));
-        var bounder = Rp.wandom(bounders).fn(
-          {
-            maxDistance: diameter
-          });
+        var bounder = Rp.wandom(bounders).fn({
+          maxDistance: diameter
+        });
 
         // return curried function with constant params
 
@@ -802,10 +782,9 @@
         var diameter = maxDiameter / freq;
         var spirality = math.randomInt(2); // 0 = concentric circles, 1 = spiral
 
-        var bounder = Rp.wandom(bounders).fn(
-          {
-            maxDistance: diameter
-          });
+        var bounder = Rp.wandom(bounders).fn({
+          maxDistance: diameter
+        });
 
         return {
           fn: fn(bounder, diameter, freq, spirality),
@@ -865,10 +844,9 @@
 
         var shape = shaper.make();
 
-        var bounder = bander(
-          {
-            maxDistance: math.random(1)
-          });
+        var bounder = bander({
+          maxDistance: math.random(1)
+        });
 
         return {
           fn: fn(shape.lines, grid, bounder),

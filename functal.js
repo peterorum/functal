@@ -1,17 +1,18 @@
+/* eslint-disable angular/no-console, angular/log */
+
 (function() {
 
   "use strict";
 
-  var version = '2.2.0';
+  var version = '2.2.1';
 
   var seedrandom = require('seedrandom');
   var randomSeed = (new Date()).getTime();
 
   // must be first
-  seedrandom(randomSeed,
-    {
-      global: true
-    });
+  seedrandom(randomSeed, {
+    global: true
+  });
 
   var math = require('mathjs');
   var moment = require('moment');
@@ -57,8 +58,7 @@
 
         z = max;
       }
-    }
-    else {
+    } else {
 
       if (!isFinite(z.re) || isNaN(z.re)) {
 
@@ -81,8 +81,7 @@
     if (isDev) {
 
       deferred.resolve(true);
-    }
-    else {
+    } else {
 
       s3.list('functal-images').then(function(result) {
 
@@ -220,8 +219,7 @@
 
           var mods = fractal.getModifierValues(functal, result);
           rgb = functal.picker.getColor(functal, mods, result, palette);
-        }
-        else {
+        } else {
 
           var hsl = pal.getColor(palette, result.escape);
           rgb = clr.hsl2rgb(hsl);
@@ -314,30 +312,25 @@
     functal.process = process.fn;
     functal.pow = options.pow();
 
-    var modifierModifierFns = [
-      {
-        fn: R.identity,
-        weight: 1
-      },
-      {
-        fn: math.square,
-        weight: 1
-      },
-      {
-        fn: math.abs,
-        weight: 1
-      },
-      {
-        fn: math.round,
-        weight: 1
-      },
-      {
-        fn: R.curry(function cospi(x) {
+    var modifierModifierFns = [{
+      fn: R.identity,
+      weight: 1
+    }, {
+      fn: math.square,
+      weight: 1
+    }, {
+      fn: math.abs,
+      weight: 1
+    }, {
+      fn: math.round,
+      weight: 1
+    }, {
+      fn: R.curry(function cospi(x) {
 
-          return math.cos(math.pi * x);
-        }),
-        weight: 1
-      },];
+        return math.cos(math.pi * x);
+      }),
+      weight: 1
+    }, ];
 
     functal.modifierParams = [];
     functal.reducers = [];
@@ -468,12 +461,11 @@
 
     var deferred = Q.defer();
 
-    var image = new PNG(
-      {
-        width: functal.width,
-        height: functal.height,
-        filterType: -1
-      });
+    var image = new PNG({
+      width: functal.width,
+      height: functal.height,
+      filterType: -1
+    });
 
     var data = functal.data;
 
@@ -653,175 +645,164 @@
     };
 
     // types of fractals with different initial z & c.
-    var sets = [
-      {
-        name: 'mandelbrot',
-        z: function() {
+    var sets = [{
+      name: 'mandelbrot',
+      z: function() {
 
-          return math.complex(0, 0);
-        },
-        c: function(x, y) {
-
-          return math.complex(x, y);
-        },
-        params: function() {
-
-          return {};
-        }
+        return math.complex(0, 0);
       },
-      {
-        name: 'julia',
-        z: function(x, y) {
+      c: function(x, y) {
 
-          return math.complex(x, y);
-        },
-        c: R.once(function() {
+        return math.complex(x, y);
+      },
+      params: function() {
 
-          var cmax = 1.75;
+        return {};
+      }
+    }, {
+      name: 'julia',
+      z: function(x, y) {
 
-          var c = math.complex(math.random(-cmax, cmax), math.random(-cmax, cmax));
+        return math.complex(x, y);
+      },
+      c: R.once(function() {
 
-          return c;
-        }),
-        params: function() {
+        var cmax = 1.75;
 
-          // stored for recreating
+        var c = math.complex(math.random(-cmax, cmax), math.random(-cmax, cmax));
 
-          return {
-            c: this.c()
-          };
-        }
-      }];
+        return c;
+      }),
+      params: function() {
+
+        // stored for recreating
+
+        return {
+          c: this.c()
+        };
+      }
+    }];
 
     // pick a random set type
     options.set = sets[math.randomInt(0, sets.length)];
 
-    options.z2zfns = [
-      {
-        fn: function() {
+    options.z2zfns = [{
+      fn: function() {
 
-          return {
-            name: "square",
-            fn: math.square
-          };
-        },
-        weight: 1
+        return {
+          name: "square",
+          fn: math.square
+        };
       },
-      {
-        fn: function() {
+      weight: 1
+    }, {
+      fn: function() {
 
-          return {
-            name: "sqrt",
-            fn: math.sqrt,
-          };
-        },
-        weight: 1
+        return {
+          name: "sqrt",
+          fn: math.sqrt,
+        };
       },
-      {
-        fn: function() {
+      weight: 1
+    }, {
+      fn: function() {
 
-          return {
-            name: "sin",
-            fn: math.sin
-          };
-        },
-        weight: 1
+        return {
+          name: "sin",
+          fn: math.sin
+        };
       },
-      {
-        fn: function() {
+      weight: 1
+    }, {
+      fn: function() {
 
-          return {
-            name: "cos",
-            fn: math.cos
-          };
-        },
-        weight: 1
+        return {
+          name: "cos",
+          fn: math.cos
+        };
       },
-      {
-        fn: function() {
+      weight: 1
+    }, {
+      fn: function() {
 
-          return {
-            name: "log",
-            fn: math.log
-          };
-        },
-        weight: 1
+        return {
+          name: "log",
+          fn: math.log
+        };
       },
-      {
-        fn: function() {
+      weight: 1
+    }, {
+      fn: function() {
 
-          var factor = math.randomInt(1, 1000);
+        var factor = math.randomInt(1, 1000);
 
-          return {
-            name: "floor mod",
-            factor: factor,
-            fn: R.curry(function(f, z) {
+        return {
+          name: "floor mod",
+          factor: factor,
+          fn: R.curry(function(f, z) {
 
-              return math.chain(z).multiply(f).floor().divide(f).done();
-            })(factor)
-          };
-        },
-        weight: 1,
+            return math.chain(z).multiply(f).floor().divide(f).done();
+          })(factor)
+        };
       },
-      {
-        fn: function() {
+      weight: 1,
+    }, {
+      fn: function() {
 
-          return {
-            name: "reciprocal",
-            fn: function reciprocal(z) {
+        return {
+          name: "reciprocal",
+          fn: function reciprocal(z) {
 
-              return math.divide(math.complex(1, 0), z);
-            }
-          };
-        },
-
-        weight: 1
+            return math.divide(math.complex(1, 0), z);
+          }
+        };
       },
-      {
-        fn: function() {
 
-          return {
-            name: "trigxy",
-            fn: (function trigxy() {
+      weight: 1
+    }, {
+      fn: function() {
 
-              var trig1 = Rp.wandom([math.sin, math.cos]);
-              var trig2 = Rp.wandom([math.sin, math.cos]);
+        return {
+          name: "trigxy",
+          fn: (function trigxy() {
 
-              var fxy = {
-                freq1: math.random(20),
-                freq2: math.random(20),
-                trig1: trig1,
-                trig2: trig2,
-                name1: Rp.nameOf(trig1),
-                name2: Rp.nameOf(trig2)
-              };
+            var trig1 = Rp.wandom([math.sin, math.cos]);
+            var trig2 = Rp.wandom([math.sin, math.cos]);
 
-              var fn = function trigxy(z) {
+            var fxy = {
+              freq1: math.random(20),
+              freq2: math.random(20),
+              trig1: trig1,
+              trig2: trig2,
+              name1: Rp.nameOf(trig1),
+              name2: Rp.nameOf(trig2)
+            };
 
-                return math.complex(fxy.trig1(math.mod(fxy.freq1 * z.re, math.pi * 2)), fxy.trig2(math.mod(fxy.freq2 * z.im, math.pi * 2)));
-              };
+            var fn = function trigxy(z) {
 
-              fn.params = fxy;
+              return math.complex(fxy.trig1(math.mod(fxy.freq1 * z.re, math.pi * 2)), fxy.trig2(math.mod(fxy.freq2 * z.im, math.pi * 2)));
+            };
 
-              return fn;
-            })()
-          };
-        },
-        weight: 1
+            fn.params = fxy;
+
+            return fn;
+          })()
+        };
       },
-      {
-        fn: function() {
+      weight: 1
+    }, {
+      fn: function() {
 
-          return {
-            name: "fraction",
-            fn: function fraction(z) {
+        return {
+          name: "fraction",
+          fn: function fraction(z) {
 
-              return math.complex(z.re - math.floor(z.re), z.im - math.floor(z.im));
-            }
-          };
-        },
-        weight: 1
-      },];
+            return math.complex(z.re - math.floor(z.re), z.im - math.floor(z.im));
+          }
+        };
+      },
+      weight: 1
+    }, ];
 
     return options;
   };
@@ -859,10 +840,12 @@
 
         ok = functal.accept &&
           functal.stdDev > functal.minStdDev &&
+          // functal.hslStats.h.std > functal.minHslStats.h.std &&
           functal.hslStats.l.std > functal.minHslStats.l.std &&
           functal.hslStats.s.std > functal.minHslStats.s.std &&
           functal.hslStats.l.mean > functal.minHslStats.l.meanMin &&
           functal.hslStats.l.mean < functal.minHslStats.l.meanMax &&
+          // functal.hslStats.i.max > functal.minHslStats.i.max &&
           // functal.hslStats.s.mean > functal.minHslStats.s.meanMin &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount;
@@ -935,8 +918,7 @@
             return dbTopics.collection('titles').removeAsync(doc).then(function() {
               return dbFunctal.collection('images').insertAsync(image);
             });
-          }
-          else {
+          } else {
             console.log('no title for topic');
           }
         })
@@ -969,8 +951,7 @@
 
           deferred.reject();
         });
-    }
-    else {
+    } else {
 
       deferred.reject();
     }
@@ -1005,8 +986,7 @@
           console.log('close');
           client.close();
         });
-      }
-      else {
+      } else {
         // sleep for an hour if enough files already & then exit for shell script to restart
 
         setTimeout(function() {
