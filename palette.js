@@ -16,7 +16,8 @@
       std: 0.2
     },
     l: {
-      std: 0.2
+      std: 0.2,
+      max: 0.9
     },
     i: // intensity
     {
@@ -754,6 +755,7 @@
         palette.hslStats.h.std > minHslStats.h.std &&
         palette.hslStats.l.std > minHslStats.l.std &&
         palette.hslStats.s.std > minHslStats.s.std &&
+        palette.hslStats.l.max > minHslStats.l.max &&
         palette.hslStats.i.max > minHslStats.i.max &&
         isHueModeOk(palette.hslStats.h.mode);
 
