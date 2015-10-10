@@ -143,7 +143,7 @@
     var hsl = {
       h: math.random(1),
       s: math.random(1),
-      l: math.random(1),
+      l: math.random(1)
     };
 
     return hsl;

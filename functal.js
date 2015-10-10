@@ -58,7 +58,8 @@
 
         z = max;
       }
-    } else {
+    }
+    else {
 
       if (!isFinite(z.re) || isNaN(z.re)) {
 
@@ -81,7 +82,8 @@
     if (isDev) {
 
       deferred.resolve(true);
-    } else {
+    }
+    else {
 
       s3.list('functal-images').then(function(result) {
 
@@ -219,7 +221,8 @@
 
           var mods = fractal.getModifierValues(functal, result);
           rgb = functal.picker.getColor(functal, mods, result, palette);
-        } else {
+        }
+        else {
 
           var hsl = pal.getColor(palette, result.escape);
           rgb = clr.hsl2rgb(hsl);
@@ -330,7 +333,7 @@
         return math.cos(math.pi * x);
       }),
       weight: 1
-    }, ];
+    },];
 
     functal.modifierParams = [];
     functal.reducers = [];
@@ -802,7 +805,7 @@
         };
       },
       weight: 1
-    }, ];
+    }];
 
     return options;
   };
@@ -843,6 +846,7 @@
           functal.hslStats.h.std > functal.minHslStats.h.std &&
           functal.hslStats.l.std > functal.minHslStats.l.std &&
           functal.hslStats.s.std > functal.minHslStats.s.std &&
+          functal.hslStats.i.max > functal.minHslStats.i.max &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount;
       } catch (ex) {
@@ -914,7 +918,8 @@
             return dbTopics.collection('titles').removeAsync(doc).then(function() {
               return dbFunctal.collection('images').insertAsync(image);
             });
-          } else {
+          }
+          else {
             console.log('no title for topic');
           }
         })
@@ -947,7 +952,8 @@
 
           deferred.reject();
         });
-    } else {
+    }
+    else {
 
       deferred.reject();
     }
@@ -982,7 +988,8 @@
           console.log('close');
           client.close();
         });
-      } else {
+      }
+      else {
         // sleep for an hour if enough files already & then exit for shell script to restart
 
         setTimeout(function() {

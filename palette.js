@@ -10,17 +10,17 @@
 
   var minHslStats = {
     h: {
-      std: 0.25
+      std: 0.2
     },
     s: {
-      std: 0.25
+      std: 0.2
     },
     l: {
       std: 0.2
     },
     i: // intensity
     {
-      max: 0.6
+      max: 0.8
     }
   };
 
@@ -754,6 +754,7 @@
         palette.hslStats.h.std > minHslStats.h.std &&
         palette.hslStats.l.std > minHslStats.l.std &&
         palette.hslStats.s.std > minHslStats.s.std &&
+        palette.hslStats.i.max > minHslStats.i.max &&
         isHueModeOk(palette.hslStats.h.mode);
 
     } while (!ok);
