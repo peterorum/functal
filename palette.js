@@ -45,10 +45,10 @@
     // skip dull orange. no 0.4 to 0.83333
     // go more red
 
-    if (hue > 0.4 / 12 && hue < 0.8333 / 12) {
-      hue -= 0.4333 / 12;
-      hue = math.mod(hue, 1);
-    }
+    // if (hue > 0.4 / 12 && hue < 0.8333 / 12) {
+    //   hue -= 0.4333 / 12;
+    //   hue = math.mod(hue, 1);
+    // }
 
     return hue;
   };
@@ -70,7 +70,7 @@
       // more saturated & light
 
       hsl.s = 0.75 + hsl.s * 0.25;
-      hsl.l = 0.50 + hsl.l * 0.50;
+      hsl.l = 0.70 + hsl.l * 0.30;
     }
 
     return (changed ? clr.hsl2rgb(hsl) : rgb);
@@ -219,7 +219,7 @@
           }
         };
       },
-      weight: 0 // 20 not enough hue stddev
+      weight: 20
     },
 
     {
@@ -633,7 +633,7 @@
       {
         // orange
         hue: 1 / 12,
-        weight: 20
+        weight: 30
       },
       {
         // yellow
@@ -663,12 +663,12 @@
       {
         // cool blue
         hue: 7 / 12,
-        weight: 50
+        weight: 25
       },
       {
         // warm blue
         hue: 8 / 12,
-        weight: 40
+        weight: 20
       },
       {
         // violet
@@ -752,7 +752,7 @@
       palette.hslStats = calcHslStats(palette.colors);
 
       ok =
-        palette.hslStats.h.std > minHslStats.h.std &&
+        // palette.hslStats.h.std > minHslStats.h.std &&
         palette.hslStats.l.std > minHslStats.l.std &&
         palette.hslStats.s.std > minHslStats.s.std &&
         palette.hslStats.l.max > minHslStats.l.max &&
