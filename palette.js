@@ -16,7 +16,7 @@
       std: 0.2
     },
     l: {
-      std: 0.2,
+      std: 0.3,
       max: 0.9
     },
     i: // intensity
