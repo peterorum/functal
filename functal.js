@@ -842,10 +842,13 @@
         ok = functal.accept &&
           functal.stdDev > functal.minStdDev &&
           // functal.hslStats.h.std > functal.minHslStats.h.std &&
-          functal.hslStats.l.std > functal.minHslStats.l.std &&
-          functal.hslStats.s.std > functal.minHslStats.s.std &&
+          // functal.hslStats.l.std > functal.minHslStats.l.std &&
+          functal.hslStats.l.min < functal.minHslStats.l.min &&
           functal.hslStats.l.max > functal.minHslStats.l.max &&
-          functal.hslStats.i.max > functal.minHslStats.i.max &&
+          // functal.hslStats.l.median > functal.minHslStats.l.median &&
+          // functal.hslStats.s.mean > functal.minHslStats.s.mean &&
+          // functal.hslStats.s.std > functal.minHslStats.s.std &&
+          // functal.hslStats.i.max > functal.minHslStats.i.max &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount;
       } catch (ex) {

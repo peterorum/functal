@@ -10,13 +10,16 @@
 
   var minHslStats = {
     h: {
-      std: 0.2
+      std: 0.05
     },
     s: {
-      std: 0.2
+      std: 0,
+      mean: 0.6,
     },
     l: {
-      std: 0.3,
+      std: 0.2,
+      median: 0.5,
+      min: 0.1,
       max: 0.9
     },
     i: // intensity
@@ -457,15 +460,15 @@
   var getSaturation = function(hue) {
 
     // brightish
-    var s = Rp.bandom(1, -2);
+    var s = Rp.bandom(1, -4);
 
-    var h12 = hue * 12;
+    // var h12 = hue * 12;
 
-    // brighter orange
-    if (h12 > 1 && h12 < 2) {
+    // // brighter orange
+    // if (h12 > 1 && h12 < 2) {
 
-      s = Rp.bandom(1, -2);
-    }
+    //   s = Rp.bandom(1, -2);
+    // }
 
     return s;
   };
@@ -752,11 +755,9 @@
       palette.hslStats = calcHslStats(palette.colors);
 
       ok =
-        // palette.hslStats.h.std > minHslStats.h.std &&
-        palette.hslStats.l.std > minHslStats.l.std &&
-        palette.hslStats.s.std > minHslStats.s.std &&
+        // palette.hslStats.l.std > minHslStats.l.std &&
+        palette.hslStats.l.min < minHslStats.l.min &&
         palette.hslStats.l.max > minHslStats.l.max &&
-        palette.hslStats.i.max > minHslStats.i.max &&
         isHueModeOk(palette.hslStats.h.mode);
 
     } while (!ok);
