@@ -7,9 +7,9 @@
 
 # nohup ./create&
 
-source $HOME/.bash_profile
+source /home/ec2-user/.bash_profile
 
-cd $HOME/functal
+cd /home/ec2-user/functal
 
 while :
 do
