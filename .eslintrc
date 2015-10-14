@@ -2,7 +2,7 @@
   "extends": "eslint:recommended",
   "env": {
     "es6": true,
-    "browser": true,
+    "node": true,
     "jasmine": true
   },
   "ecmaFeatures": {
@@ -16,5 +16,8 @@
     "inject": true,
     "moment": true,
     "R": true // ramda
+  },
+  "rules" : {
+    "no-console": 0
   }
 }
