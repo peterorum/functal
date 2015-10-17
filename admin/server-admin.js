@@ -139,6 +139,9 @@
             s3.delete(bucket, img.name)
               .then(function() {
                 return s3.delete(bucketJson, img.name.replace(/(png|jpg)$/, 'json'));
+              })
+              .then(function(){
+                return db.collection('images').removeAsync({name: img.name});
               });
           }, unpopular);
 
