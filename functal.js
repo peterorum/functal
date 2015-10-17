@@ -994,6 +994,8 @@
       else {
         // sleep for an hour if enough files already & then exit for shell script to restart
 
+        console.log('full - sleeping', new Date());
+
         setTimeout(function() {
           client.close();
         }, 60 * 60 * 1000);
