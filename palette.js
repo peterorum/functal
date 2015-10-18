@@ -45,14 +45,6 @@
 
     var hue = math.mod(baseHue + math.random(hueFrom, hueTo) / 12, 1);
 
-    // skip dull orange. no 0.4 to 0.83333
-    // go more red
-
-    // if (hue > 0.4 / 12 && hue < 0.8333 / 12) {
-    //   hue -= 0.4333 / 12;
-    //   hue = math.mod(hue, 1);
-    // }
-
     return hue;
   };
 
@@ -414,7 +406,7 @@
 
     // less green, brown, purple
 
-    var ok = ! R.contains(h12, [3.5, 5, 9.5]);
+    var ok = ! R.contains(h12, [3, 3.5, 5, 9.5]);
 
     // no green
     // ok = ok && !(h12 >= 2 && h12 < 6);
@@ -644,27 +636,27 @@
       {
         // orange
         hue: 1 / 12,
-        weight: 30
+        weight: 0 //30
       },
       {
         // yellow
         hue: 2 / 12,
-        weight: 10
+        weight: 5
       },
       {
         // lime green
         hue: 3 / 12,
-        weight: 5
+        weight: 0 // 5
       },
       {
         // bright green
         hue: 4 / 12,
-        weight: 5
+        weight: 0 // 5
       },
       {
         // light green
         hue: 5 / 12,
-        weight: 5
+        weight: 0 // 5
       },
       {
         // cyan
@@ -689,7 +681,7 @@
       {
         // magenta
         hue: 10 / 12,
-        weight: 5
+        weight: 0 // 5
       },
       {
         // cool red
