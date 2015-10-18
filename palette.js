@@ -791,5 +791,4 @@
 
     return palette;
   };
-
 }());
