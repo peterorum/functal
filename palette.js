@@ -13,7 +13,7 @@
       std: 0.05
     },
     s: {
-      std: 0,
+      std: 0.3,
       mean: 0.6
     },
     l: {
@@ -415,6 +415,9 @@
     // no green
     var ok = !(h12 >= 2 && h12 < 6);
 
+    // no brown/orange
+    ok = ok && !(h12 >= 0.5 && h12 <= 1.0);
+
     // no purple
     ok = ok && !(h12 >= 8.5 && h12 <= 11);
 
@@ -460,7 +463,9 @@
   var getSaturation = function(hue) {
 
     // brightish
-    var s = Rp.bandom(1, -4);
+    // var s = Rp.bandom(1, -4);
+
+    var s = math.random(1);
 
     // var h12 = hue * 12;
 
@@ -755,10 +760,12 @@
       palette.hslStats = calcHslStats(palette.colors);
 
       ok =
+        // palette.hslStats.s.std > 0.4 && //minHslStats.s.std &&
         // palette.hslStats.l.std > minHslStats.l.std &&
         palette.hslStats.l.min < minHslStats.l.min &&
         palette.hslStats.l.max > minHslStats.l.max &&
-        isHueModeOk(palette.hslStats.h.mode);
+        // isHueModeOk(palette.hslStats.h.mode) &&
+        true;
 
     } while (!ok);
 
