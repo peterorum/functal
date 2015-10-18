@@ -631,7 +631,7 @@
       {
         // warm red
         hue: 0 / 12,
-        weight: 25
+        weight: 50
       },
       {
         // orange
