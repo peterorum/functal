@@ -17,14 +17,14 @@
       mean: 0.6
     },
     l: {
-      std: 0.2,
+      std: 0.25,
       median: 0.5,
       min: 0.1,
       max: 0.9
     },
     i: // intensity
     {
-      max: 0.65
+      max: 0.75
     }
   };
 
@@ -412,14 +412,18 @@
 
   var isHueModeOk = function(h12) {
 
+    // less green, brown, purple
+
+    var ok = ! R.contains(h12, [3.5, 5, 9.5]);
+
     // no green
-    var ok = !(h12 >= 2 && h12 < 6);
+    // ok = ok && !(h12 >= 2 && h12 < 6);
 
     // no orange/brown
-    ok = ok && !(h12 >= 0.5 && h12 <= 1);
+    // ok = ok && !(h12 >= 0.5 && h12 <= 1);
 
     // no purple
-    ok = ok && !(h12 >= 8.5 && h12 <= 11);
+    // ok = ok && !(h12 >= 8.5 && h12 <= 11);
 
     return ok;
   };

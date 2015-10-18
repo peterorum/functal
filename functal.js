@@ -843,6 +843,7 @@
           functal.stdDev > functal.minStdDev &&
           functal.hslStats.s.std > functal.minHslStats.s.std &&
           functal.hslStats.l.std > functal.minHslStats.l.std &&
+          functal.hslStats.l.min < functal.minHslStats.l.min &&
           functal.hslStats.i.max > functal.minHslStats.i.max &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
           functal.uniques > functal.sampleCount;
