@@ -78,7 +78,7 @@ def main(argv):
 
     functals = get_functals_with_title()
 
-    functals = functals[0: 10]
+    #functals = functals[0: 10]
 
     print('count: ' + str(len(functals)))
 
