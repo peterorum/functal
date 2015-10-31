@@ -6,9 +6,7 @@ import os
 # import re
 import sys
 import getopt
-import json
-import urllib.request
-import urllib.parse
+from sentiment import get_sentiment
 
 from pprint import pprint
 
@@ -23,41 +21,6 @@ db_functal = client['functal']
 
 def get_functals_with_title():
     return list(db_functal.images.find({'title': {'$exists': True}}))
-
-#--- get_sentiment
-
-
-def get_sentiment(text):
-
-    # retunrs neg, pos or neutral
-
-    sentimentUrl = 'https://japerk-text-processing.p.mashape.com/sentiment/'
-
-    text = {
-        "language": "english",
-        "text": text
-    }
-
-    data = urllib.parse.urlencode(text)
-    data = data.encode('utf-8')
-
-    headers = {
-        "X-Mashape-Key": "jdCBpGtsH0mshRoceXM5JpCevqhop1ZL1DWjsnWzicw4mg6J6i",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-    }
-
-    # post
-
-    req = urllib.request.Request(sentimentUrl, data=data, headers=headers)
-
-    response = urllib.request.urlopen(req)
-
-    sentiment = json.loads(response.read().decode('utf-8'))
-
-    # pprint(sentiment['label'])
-
-    return sentiment['label']
 
 #--- run
 

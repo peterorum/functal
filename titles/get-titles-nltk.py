@@ -9,6 +9,7 @@ import sys
 import random
 import collections
 import nltk
+from sentiment import get_sentiment
 
 from pprint import pprint
 # pp = pprint.PrettyPrinter(indent=4)
@@ -21,6 +22,8 @@ db = client['topics']
 possibly_sensitive_words = set(line.strip()
                                for line in open(os.getenv('functal_folder') + '/words/words.txt') if len(line.strip()) > 0)
 
+two_letter_words = ["ah", "am", "an", "as", "at", "be", "by", "do", "eh", "ex", "go", "ha", "he",
+                    "if", "in", "is", "it", "me", "my", "no", "of", "on", "or", "so", "to", "up", "us", "we"]
 
 # --- get_topics
 
@@ -115,7 +118,11 @@ def get_words(tweets, dictionary):
 
 
 def is_word(word, dictionary):
-    return word == '^' or word == '$' or word in dictionary
+
+    if len(word) == 2:
+        return word in two_letter_words
+    else:
+        return word == '^' or word == '$' or word in dictionary
 
 # update word counts
 
@@ -195,7 +202,7 @@ def create_title(probs):
                     break
 
         # short & more than one word
-        if len(title) < 60 and ' ' in title:
+        if len(title) < 60 and ' ' in title and get_sentiment(title) != 'neg':
             break
 
     return title
@@ -208,7 +215,7 @@ def run():
 
     # titles to generate per topic
     min_title_count = 100
-    max_title_count = 2000
+    max_title_count = 200
 
     topics = get_topics()
 
