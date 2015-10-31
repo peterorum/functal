@@ -47,6 +47,6 @@ def get_sentiment(text):
 
     sentiment = json.loads(response.read().decode('utf-8'))
 
-    pprint(sentiment)
+    # pprint(sentiment)
 
     return sentiment['result']['sentiment'].lower()
