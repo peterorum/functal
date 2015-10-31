@@ -56,8 +56,8 @@ def main(argv):
         pprint(sentiment)
 
         # wipe negative titles
-        if sentiment == 'neg':
-            pprint('--- removed')
+        if sentiment == 'negative':
+            pprint('------------------- removed')
             db_functal.images.update({'_id': functal['_id']}, {'$unset': {'title': ''}})
 
     client.close()

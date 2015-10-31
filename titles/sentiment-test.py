@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 
-import json
-import urllib.request
-import urllib.parse
+from sentiment import get_sentiment
 from pprint import pprint
 
 #--- run
@@ -10,31 +8,12 @@ from pprint import pprint
 
 def run():
 
-    sentimentUrl = 'https://japerk-text-processing.p.mashape.com/sentiment/'
+    text = 'not bad'
 
-    text = {
-        "language": "english",
-        "text": "a lovely spiral"
-    }
+    sentiment = get_sentiment(text)
 
-    data = urllib.parse.urlencode(text)
-    data = data.encode('utf-8')
+    pprint(sentiment)
 
-    headers = {
-        "X-Mashape-Key": "jdCBpGtsH0mshRoceXM5JpCevqhop1ZL1DWjsnWzicw4mg6J6i",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-    }
-
-    # post
-
-    req = urllib.request.Request(sentimentUrl, data=data, headers=headers)
-
-    response = urllib.request.urlopen(req)
-
-    sentiment = json.loads(response.read().decode('utf-8'))
-
-    pprint(sentiment['label'])
 #---
 
 run()

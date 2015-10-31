@@ -202,7 +202,7 @@ def create_title(probs):
                     break
 
         # short & more than one word
-        if len(title) < 60 and ' ' in title and get_sentiment(title) != 'neg':
+        if len(title) < 60 and ' ' in title and get_sentiment(title) != 'negative':
             break
 
     return title
