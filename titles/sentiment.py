@@ -9,7 +9,7 @@ from pprint import pprint
 
 def get_sentiment(text):
 
-    # returns neg, pos or neutral
+    # returns negative, positive or neutral
 
     #sentimentUrl = 'https://japerk-text-processing.p.mashape.com/sentiment/'
 
@@ -22,31 +22,36 @@ def get_sentiment(text):
 
     #{'result': {'confidence': '62.5106', 'sentiment': 'Positive'}}
 
-    sentimentUrl = 'https://community-sentiment.p.mashape.com/text/'
+    result = 'negative'
 
-    # todo: use batch http://sentiment.vivekn.com/docs/api/, http://sentiment.vivekn.com/api/batch/
+    if len(text) > 0:
+        sentimentUrl = 'https://community-sentiment.p.mashape.com/text/'
 
-    text = {
-        "txt": text
-    }
+        # todo: use batch http://sentiment.vivekn.com/docs/api/, http://sentiment.vivekn.com/api/batch/
 
-    data = urllib.parse.urlencode(text)
-    data = data.encode('utf-8')
+        text = {
+            "txt": text
+        }
 
-    headers = {
-        "X-Mashape-Key": os.getenv('mashape'),
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-    }
+        data = urllib.parse.urlencode(text)
+        data = data.encode('utf-8')
 
-    # post
+        headers = {
+            "X-Mashape-Key": os.getenv('mashape'),
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json"
+        }
 
-    req = urllib.request.Request(sentimentUrl, data=data, headers=headers)
+        # post
 
-    response = urllib.request.urlopen(req)
+        req = urllib.request.Request(sentimentUrl, data=data, headers=headers)
 
-    sentiment = json.loads(response.read().decode('utf-8'))
+        response = urllib.request.urlopen(req)
 
-    # pprint(sentiment)
+        sentiment = json.loads(response.read().decode('utf-8'))
 
-    return sentiment['result']['sentiment'].lower()
+        # pprint(sentiment)
+
+        result = sentiment['result']['sentiment'].lower()
+
+    return result
