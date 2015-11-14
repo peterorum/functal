@@ -501,16 +501,6 @@
 
     var frameData = new Buffer(functal.width * functal.height * 4);
 
-    var i = 0;
-
-    while (i < frameData.length) {
-
-      frameData[i++] = 0xFF; // red
-      frameData[i++] = 0x00; // green
-      frameData[i++] = 0x00; // blue
-      frameData[i++] = 0xFF; // alpha - ignored in JPEGs
-    }
-
     var data = functal.data;
 
     for (var y = 0; y < functal.height; y++) {
@@ -549,6 +539,94 @@
     return deferred.promise;
   };
 
+
+  // ------------ output to a processing script
+
+  fractal.processing = function(functal) {
+
+    var deferred = Q.defer();
+
+    var data = functal.data;
+
+    var filename = functal.filename.replace(/-/, '');
+
+    fsq.mkdir(`processing/functals/${filename}`).then(function() {
+
+      var pde = fs.createWriteStream(`processing/functals/${filename}/${filename}.pde`);
+
+      var outputWidth = 512
+      var outputHeight = outputWidth;
+
+      pde.write('void setup() {\n');
+      pde.write('noLoop();\n');
+      pde.write(`size(${outputWidth}, ${outputHeight});\n`);
+      pde.write('smooth();\n');
+      pde.write('background(0);\n');
+      pde.write('noFill();\n');
+      pde.write('}\n');
+
+
+      // do points at random
+
+      let xy = [];
+
+      for (let y = 0; y < outputHeight; y++) {
+
+        for (let x = 0; x < outputHeight; x++) {
+          xy.push({
+            x: x,
+            y: y
+          });
+        }
+      }
+
+      xy = R.sortBy(() => math.random(), xy);
+
+      // break into small functions to overcome java size limit - one per column
+      pde.write('void draw() {\n');
+
+      for (var z1 = 0; z1 < xy.length; z1 += outputWidth) {
+        pde.write(`draw${z1}();\n`);
+      }
+      pde.write('}\n');
+
+      for (let z1 = 0; z1 < xy.length; z1 += outputWidth) {
+        pde.write(`void draw${z1}() {\n`);
+
+        for (let z2 = 0; z2 < outputWidth; z2++) {
+          let z = z1 + z2;
+
+          let yy = xy[z].y;
+          let xx = xy[z].x;
+
+          let y = yy + functal.width / 2 - outputWidth / 2;
+          let x = xx + functal.width / 2 - outputWidth / 2;
+          var rgb = data[x][y].rgb;
+
+          var hsl = clr.rgb2hsl(rgb);
+
+          var radius = 64 * (1 - hsl.l);
+          var strokeWeight = 1;//math.randomInt(1, 9);
+          var opacity = 255 * (1 - hsl.l);
+
+          pde.write(`strokeWeight(${strokeWeight});\n`);
+
+          pde.write(`stroke(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity});\n`);
+
+          pde.write(`ellipse(${xx}, ${yy}, ${radius}, ${radius});\n`);
+
+        }
+        pde.write('}\n');
+      }
+
+      pde.end(function() {
+        deferred.resolve();
+      });
+    });
+
+    return deferred.promise;
+  };
+
   fractal.setOptions = function(size) {
 
     var filename = 'functal-' + moment.utc().format('YYYYMMDDHHmmssSSS');
@@ -556,8 +634,8 @@
     // size: small, medium, large
     var sizes = {
       small: {
-        width: 200,
-        height: 200
+        width: 512,
+        height: 512
       },
       medium: {
         width: 768,
@@ -843,11 +921,12 @@
           functal.stdDev > functal.minStdDev &&
           functal.hslStats.s.std > functal.minHslStats.s.std &&
           functal.hslStats.l.std > functal.minHslStats.l.std &&
-          // functal.hslStats.l.min < functal.minHslStats.l.min &&
           functal.hslStats.l.max > functal.minHslStats.l.max &&
           functal.hslStats.i.max > functal.minHslStats.i.max &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
-          functal.uniques > functal.sampleCount;
+          functal.uniques > functal.sampleCount &&
+          true;
+
       } catch (ex) {
 
         ok = false;
@@ -891,6 +970,11 @@
           // save jpg
           return fractal.jpg(functal);
         })
+        // .then(function() {
+
+        //   // save processing
+        //   return fractal.processing(functal);
+        // })
         .then(function() {
 
           // get title
@@ -971,7 +1055,7 @@
       if (ok) {
         // make fractal
 
-        var count = (isDev ? 12 : 1);
+        var count = (isDev ? 1 : 1);
 
         var result = Q(); // jshint ignore:line
 

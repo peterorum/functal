@@ -10,6 +10,7 @@
     exports.readFile = Q.nfbind(fs.readFile);
     exports.writeFile = Q.nfbind(fs.writeFile);
     exports.readdir = Q.nfbind(fs.readdir);
+    exports.mkdir = Q.nfbind(fs.mkdir);
     exports.unlink = Q.nfbind(fs.unlink);
 
 })();

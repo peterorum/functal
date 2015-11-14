@@ -49,3 +49,5 @@ admin/processing/bower_components/*
 __pycache__/
 
 titles/__pycache__/
+
+processing/functals/*
