@@ -79,6 +79,10 @@
       for (var z1 = 0; z1 < xy.length; z1 += outputWidth) {
         pde.write(`draw${z1}();\n`);
       }
+
+      pde.write(`save(${filename.jpg});\n`);
+      pde.write('exit();\n');
+
       pde.write('}\n');
 
       for (let z1 = 0; z1 < xy.length; z1 += outputWidth) {
