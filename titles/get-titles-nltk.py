@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/local/bin/python3
 
 # run hourly to keep enough titles per topic
 
@@ -52,18 +52,18 @@ def get_words(tweets, dictionary):
     dic = dict()
 
     for tweet in tweets:
+        pprint(tweet)
 
         text = tweet.lower()
-        # print('text: ' + text)
 
         # remove links
-        text = re.sub(r'http[^\b]*', '', text)
+        text = re.sub(r'(https?):\/\/(www\.)?[a-z0-9\.:].*?(?=\s|$)', '', text)
 
         # remove names
-        text = re.sub(r'@[^\b]*', '', text)
+        text = re.sub(r'@[a-z0-9].*?(?=\s|$)', '', text)
 
         # remove hashtags
-        text = re.sub(r'#[^\b]*', '', text)
+        text = re.sub(r'#[a-z0-9].*?(?=\s|$)', '', text)
 
         # remove special chars
         text = re.sub(r'[!]', '', text)
@@ -72,43 +72,46 @@ def get_words(tweets, dictionary):
         text = re.sub(r'&amp;', 'and', text)
         text = re.sub(r'&.*;', '', text)
 
-        # print(text)
-
         words = nltk.tokenize.WhitespaceTokenizer().tokenize(text)
-
-        # print('words')
-        # print(text)
+        words = [re.sub(r"[^a-z0-9']", '', w) for w in words]
+        words = [w for w in words if len(w) > 0]
         # pprint(words)
+        pos = nltk.pos_tag(words)
 
-        # init to start of line
-        word1 = "^"
+        # pprint(pos)
 
-        # . is tokenized separately as it assumes text has already been broekn into sentences
-        # todo - first parse text into sentences using punkt sentence parser
+        # skip tweet if it doesn't end in a noun etc
+        if not re.match('DT|CC|VBP|IN|TO', pos[-1][1]):
 
-        # for word in words:
-        #    if word == '.':
-        #        updateWordCount(dic, word1, '$', dictionary)
-        #        word1 = '^'
-        #    else:
-        #        updateWordCount(dic, word1, word, dictionary)
-        #        word1 = word
+            # init to start of line
+            word1 = "^"
 
-        # assumes end of sentence work includes dot
-        for word in words:
-            if word.endswith('.'):
-                word = word.replace('.', '')
-                updateWordCount(dic, word1, word, dictionary)
-                updateWordCount(dic, word, '$', dictionary)
-                word1 = '^'
-            else:
-                updateWordCount(dic, word1, word, dictionary)
-                word1 = word
+            # . is tokenized separately as it assumes text has already been broekn into sentences
+            # todo - first parse text into sentences using punkt sentence parser
 
-        # end of line
+            # for word in words:
+            #    if word == '.':
+            #        updateWordCount(dic, word1, '$', dictionary)
+            #        word1 = '^'
+            #    else:
+            #        updateWordCount(dic, word1, word, dictionary)
+            #        word1 = word
 
-        if word1 != '^':
-            updateWordCount(dic, word1, "$", dictionary)
+            # assumes end of sentence work includes dot
+            for word in words:
+                if word.endswith('.'):
+                    word = word.replace('.', '')
+                    updateWordCount(dic, word1, word, dictionary)
+                    updateWordCount(dic, word, '$', dictionary)
+                    word1 = '^'
+                else:
+                    updateWordCount(dic, word1, word, dictionary)
+                    word1 = word
+
+            # end of line
+
+            if word1 != '^':
+                updateWordCount(dic, word1, "$", dictionary)
 
     # pprint(dic)
 
@@ -226,7 +229,7 @@ def run():
 
         titles_found = db.titles.find({'topic': topic}).count()
 
-        if titles_found < min_title_count:
+        if True:  # titles_found < min_title_count:
             tweets = get_tweets(topic)
 
             # dictionary of word bigrams
