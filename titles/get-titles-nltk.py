@@ -52,7 +52,6 @@ def get_words(tweets, dictionary):
     dic = dict()
 
     for tweet in tweets:
-        pprint(tweet)
 
         text = tweet.lower()
 
@@ -76,42 +75,47 @@ def get_words(tweets, dictionary):
         words = [re.sub(r"[^a-z0-9']", '', w) for w in words]
         words = [w for w in words if len(w) > 0]
         # pprint(words)
-        pos = nltk.pos_tag(words)
 
-        # pprint(pos)
+        if len(words) > 0:
+            pos = nltk.pos_tag(words)
 
-        # skip tweet if it doesn't end in a noun etc
-        if not re.match('DT|CC|VBP|IN|TO', pos[-1][1]):
+            # pprint(pos)
 
-            # init to start of line
-            word1 = "^"
+            # skip tweet if it doesn't end in a noun etc
+            if not re.match('DT|CC|VBP|IN|TO', pos[-1][1]):
 
-            # . is tokenized separately as it assumes text has already been broekn into sentences
-            # todo - first parse text into sentences using punkt sentence parser
+                # init to start of line
+                word1 = "^"
 
-            # for word in words:
-            #    if word == '.':
-            #        updateWordCount(dic, word1, '$', dictionary)
-            #        word1 = '^'
-            #    else:
-            #        updateWordCount(dic, word1, word, dictionary)
-            #        word1 = word
+                # . is tokenized separately as it assumes text has already been broekn into sentences
+                # todo - first parse text into sentences using punkt sentence parser
 
-            # assumes end of sentence work includes dot
-            for word in words:
-                if word.endswith('.'):
-                    word = word.replace('.', '')
-                    updateWordCount(dic, word1, word, dictionary)
-                    updateWordCount(dic, word, '$', dictionary)
-                    word1 = '^'
-                else:
-                    updateWordCount(dic, word1, word, dictionary)
-                    word1 = word
+                # for word in words:
+                #    if word == '.':
+                #        updateWordCount(dic, word1, '$', dictionary)
+                #        word1 = '^'
+                #    else:
+                #        updateWordCount(dic, word1, word, dictionary)
+                #        word1 = word
 
-            # end of line
+                # assumes end of sentence word includes dot
+                for word in words:
+                    # pprint(word1)
+                    if word.endswith('.'):
+                        word = word.replace('.', '')
+                        updateWordCount(dic, word1, word, dictionary)
+                        updateWordCount(dic, word, '$', dictionary)
+                        word1 = '^'
+                    else:
+                        updateWordCount(dic, word1, word, dictionary)
+                        word1 = word
 
-            if word1 != '^':
-                updateWordCount(dic, word1, "$", dictionary)
+                # end of line
+
+                if word1 != '^':
+                    updateWordCount(dic, word1, "$", dictionary)
+
+                # pprint(word1)
 
     # pprint(dic)
 
@@ -205,7 +209,11 @@ def create_title(probs):
                     break
 
         # short & more than one word
-        if len(title) < 60 and ' ' in title and get_sentiment(title) != 'negative':
+        sentiment = get_sentiment(title)
+
+        pprint("{} {}".format(title, sentiment))
+
+        if len(title) < 60 and ' ' in title and sentiment != 'negative':
             break
 
     return title
@@ -229,7 +237,9 @@ def run():
 
         titles_found = db.titles.find({'topic': topic}).count()
 
-        if True:  # titles_found < min_title_count:
+        if titles_found < min_title_count:
+            pprint(topic)
+
             tweets = get_tweets(topic)
 
             # dictionary of word bigrams
@@ -241,7 +251,6 @@ def run():
             # create titles
             titles = [create_title(probs) for i in range(0, max_title_count - titles_found)]
 
-            pprint(topic)
             pprint(titles)
 
             # store
