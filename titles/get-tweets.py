@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/local/bin/python3
 
 import os
 import random
@@ -8,7 +8,7 @@ import sys
 import getopt
 import urllib
 # import json
-import pprint
+from pprint import pprint
 from datetime import datetime
 
 import twitter
@@ -22,6 +22,28 @@ client = pymongo.MongoClient(os.getenv('mongo_functal'))
 
 db = client['topics']
 
+tweets_to_keep = 100000
+
+
+def purge_tweets(topic):
+    print('purge topic : ' + topic)
+
+    try:
+        tweets_found = db.tweets.find({'topic': topic}).count()
+
+        print("found {}".format(tweets_found))
+
+        if tweets_found > tweets_to_keep:
+            tweets_to_purge = list(db.tweets.find({'topic': topic}, {"_id": -1}).sort(
+                [("_id", -1)]).skip(tweets_to_keep))
+
+            tweets_to_purge = [t["_id"] for t in tweets_to_purge]
+
+            db.tweets.remove({"_id": {"$in": tweets_to_purge}})
+
+    except urllib.error.URLError as e:
+        print(e)
+
 # --- get_tweets
 
 
@@ -32,16 +54,16 @@ def get_tweets(topic):
         # todo - use since_id as max id from db for topic
         search_results = twit.search.tweets(q=topic, lang='en', result_type='mixed', count=100)
         # print('search_results')
-        # pp.pprint(search_results)
+        # pprint(search_results)
 
         # 'user': tweet['user']['name']
         texts = [{'_id': tweet['id_str'], 'text': tweet['text'], 'topic': topic}
                  for tweet in search_results['statuses'] if topic in tweet['text'] and db.tweets.find({'_id': tweet['id_str']}).count() == 0]
 
         if len(texts) > 0:
-            # pp.pprint(texts)
+                # pprint(texts)
 
-            # store
+                # store
             try:
                 result = db.tweets.insert(texts, {'ordered': False})
                 print(str(len(result)) + ' tweets inserted')
@@ -57,7 +79,6 @@ def get_tweets(topic):
 
 #--- global
 
-pp = pprint.PrettyPrinter(indent=4)
 auth = twitter.oauth.OAuth(os.environ['token'], os.environ['token_secret'], os.environ[
     'consumer_key'], os.environ['consumer_secret'])
 twit = twitter.Twitter(auth=auth)
@@ -92,6 +113,7 @@ def main(argv):
             topic = topics[random.randint(0, len(topics) - 1)]
 
         print(str(datetime.now()) + ' ' + topic)
+        purge_tweets(topic)
         get_tweets(topic)
     except Exception as e:
         print(type(e))
