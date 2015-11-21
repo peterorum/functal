@@ -51,6 +51,9 @@ def get_words(tweets, dictionary):
 
     dic = dict()
 
+    # limit tweets
+    #tweets = list(tweets)[0:10]
+
     for tweet in tweets:
 
         text = tweet.lower()
@@ -129,9 +132,9 @@ def is_word(word, dictionary):
     if len(word) == 2:
         return word in two_letter_words
     elif len(word) == 1:
-        return word in "aiu"
+        return word in "^$aiu"
     else:
-        return word == '^' or word == '$' or word in dictionary
+        return word in dictionary
 
 # update word counts
 
@@ -251,6 +254,7 @@ def run():
             probs = calc_probs(dic)
 
             # create titles
+
             titles = [create_title(probs) for i in range(0, max_title_count - titles_found)]
 
             pprint(titles)
