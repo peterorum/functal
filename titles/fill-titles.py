@@ -2,6 +2,13 @@
 
 # add a title to any functal without one
 
+# to clear all titles
+# use topics
+# db.titles.remove({})
+# use images
+# db.images.update({}, {$unset: {title: ''}}, {multi: true})
+
+
 import os
 # import re
 import sys
