@@ -128,6 +128,8 @@ def is_word(word, dictionary):
 
     if len(word) == 2:
         return word in two_letter_words
+    else if len(word) == 1:
+        return word in "aiu"
     else:
         return word == '^' or word == '$' or word in dictionary
 
