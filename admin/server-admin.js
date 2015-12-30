@@ -218,7 +218,19 @@
 
             if (data.count) {
                 // return limited number of images as requested
-                imagesResult = R.take(data.count, images);
+
+                if (data.sortBy === 'new') {
+                    // latest, already sorted
+                    imagesResult = R.take(data.count, images);
+                }
+                else {
+                    // return a random collection
+                    var randomImages = R.sort(function() {
+                        return Math.random() < 0.5 ? -1 : 1;
+                    });
+
+                    imagesResult = R.take(data.count, randomImages);
+                }
             }
 
             res.jsonp(
