@@ -209,14 +209,14 @@
 
             var uri = url.parse(req.url);
             var query = queryString.parse(uri.query);
-            var data = JSON.parse(query.data);
+            var data = JSON.parse(query.data || "{}");
 
             // throttled
             getImagesHourly(db);
 
             var imagesResult = images;
 
-            if (data && data.count) {
+            if (data.count) {
                 // return limited number of images as requested
                 imagesResult = R.take(data.count, images);
             }
