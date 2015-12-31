@@ -10,6 +10,7 @@ import random
 import collections
 import nltk
 from sentiment import get_sentiment
+from datetime import datetime
 
 from pprint import pprint
 # pp = pprint.PrettyPrinter(indent=4)
@@ -52,7 +53,7 @@ def get_words(tweets, dictionary):
     dic = dict()
 
     # limit tweets
-    #tweets = list(tweets)[0:10]
+    # tweets = list(tweets)[0:10]
 
     for tweet in tweets:
 
@@ -248,19 +249,27 @@ def run():
         titles_found = db.titles.find({'topic': topic}).count()
 
         if titles_found < min_title_count:
-            pprint(topic)
+            print(str(datetime.now()) + ' ' + topic)
 
             tweets = get_tweets(topic)
+
+            print(str(datetime.now()) + ' got tweets')
 
             # dictionary of word bigrams
             dic = get_words(tweets, dictionary)
 
+            print(str(datetime.now()) + ' got dic')
+
             # convert counts to probabilities
             probs = calc_probs(dic)
+
+            print(str(datetime.now()) + ' got probs')
 
             # create titles
 
             titles = [create_title(probs) for i in range(0, max_title_count - titles_found)]
+
+            print(str(datetime.now()) + ' got titles')
 
             pprint(titles)
 
@@ -269,6 +278,7 @@ def run():
             try:
                 items = [{'topic': topic, 'title': title} for title in titles if len(title) > 0]
                 db.titles.insert(items)
+                print(str(datetime.now()) + ' saved titles')
             except pymongo.errors.PyMongoError as e:
                 print(type(e))
                 print(e)
