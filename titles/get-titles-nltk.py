@@ -186,7 +186,7 @@ def create_title(probs):
     title = ''
     tries = 0
 
-    while tries < 1000:
+    while tries < 2000:
         title = ''
         word1 = '^'
         tries += 1
@@ -262,7 +262,7 @@ def run():
             # store
 
             try:
-                items = [{'topic': topic, 'title': title} for title in titles]
+                items = [{'topic': topic, 'title': title} for title in titles if len(title) > 0]
                 db.titles.insert(items)
             except pymongo.errors.PyMongoError as e:
                 print(type(e))
