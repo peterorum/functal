@@ -38,7 +38,8 @@ def get_functals():
 
 
 def get_functals_without_title():
-    return list(db_functal.images.find('$or': [{'title': {'$exists': false}}, {'title': {'$eq': ''}}]}))
+    # return list(db_functal.images.find({'title': {'$exists': False}}))
+    return list(db_functal.images.find('$or': [{'title': {'$exists': False}}, {'title': {'$eq': ''}}]}))
 
 #--- run
 
