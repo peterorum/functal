@@ -253,23 +253,15 @@ def run():
 
             tweets = get_tweets(topic)
 
-            print(str(datetime.now()) + ' got tweets')
-
             # dictionary of word bigrams
             dic = get_words(tweets, dictionary)
-
-            print(str(datetime.now()) + ' got dic')
 
             # convert counts to probabilities
             probs = calc_probs(dic)
 
-            print(str(datetime.now()) + ' got probs')
-
             # create titles
 
             titles = [create_title(probs) for i in range(0, max_title_count - titles_found)]
-
-            print(str(datetime.now()) + ' got titles')
 
             pprint(titles)
 
