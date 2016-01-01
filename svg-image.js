@@ -28,20 +28,67 @@
 
     var functalsFolder = 'functals';
 
+    // load jpeg
+
+    function loadJpeg(filename) {
+
+        var jpegData = fs.readFileSync(filename);
+
+        var rawImageData = jpeg.decode(jpegData);
+
+        var data = R.times(() => [], rawImageData.height);
+
+        var rawData = rawImageData.data;
+        var w = rawImageData.width;
+        var h = rawImageData.height;
+
+        for (var d = 0; d < rawImageData.width * rawImageData.height * 4; d += 4) {
+            let rgb = {};
+
+            rgb.r = rawData[d];
+            rgb.g = rawData[d + 1];
+            rgb.b = rawData[d + 2];
+
+            let d1 = d / 4;
+
+            let x = math.floor(d1 / w);
+            let y = d1 - x * w;
+
+            data[y][x] = {
+                rgb: rgb
+            };
+        }
+
+        return {
+            data: data,
+            width: w,
+            height: h
+        };
+    }
     // ------------ output to svg
 
-    var createSvg = function(folder, filename, data, inputWidth, inputHeight) {
+    var createSvg = function(filename) {
+
+        console.log(filename);
+
+        var jpeg = loadJpeg(filename);
+
+        let data = jpeg.data;
+        let inputWidth = jpeg.width;
+        let inputHeight = jpeg.height;
+
+        var outputFilename = filename.replace(/\.jpg/, '');
 
         var outputWidth = inputWidth;
         var outputHeight = inputHeight;
 
         let maxStrokeWidth = 1 + Rp.bandomInt(outputWidth, 5);
 
-        console.log('maxStrokeWidth ' , maxStrokeWidth);
+        console.log('maxStrokeWidth ', maxStrokeWidth);
 
-        return new Promise(function(resolve) {
+        return new promise(function(resolve) {
 
-            var svg = fs.createWriteStream(`${folder}/${filename}.svg`);
+            var svg = fs.createWriteStream(`${outputFilename}.svg`);
 
             svg.write('<?xml version="1.0"?>\n');
             svg.write('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">\n');
@@ -56,8 +103,8 @@
 
             svg.write('.uf {fill: none }\n');
 
-            for(let i = 1; i < maxStrokeWidth + 1; i++) {
-              svg.write(`.st${i} {stroke-width: ${i}; }\n`);
+            for (let i = 1; i < maxStrokeWidth + 1; i++) {
+                svg.write(`.st${i} {stroke-width: ${i}; }\n`);
             }
 
             svg.write('</style>\n');
@@ -118,45 +165,14 @@
 
         var files = fs.readdirSync(folder);
 
-        R.forEach(function(f) {
-            if (path.extname(f) === '.jpg') {
-                console.log(f);
+        files = R.filter((f) => path.extname(f) === '.jpg', files);
 
-                var jpegData = fs.readFileSync(folder + '/' + f);
+        files = R.map((f) => folder + '/' + f, files);
 
-                var rawImageData = jpeg.decode(jpegData);
-
-                var data = R.times(() => [], rawImageData.height);
-
-                var rawData = rawImageData.data;
-                var w = rawImageData.width;
-                var h = rawImageData.height;
-
-                for (var d = 0; d < rawImageData.width * rawImageData.height * 4; d += 4) {
-                    let rgb = {};
-
-                    rgb.r = rawData[d];
-                    rgb.g = rawData[d + 1];
-                    rgb.b = rawData[d + 2];
-
-                    let d1 = d / 4;
-
-                    let x = math.floor(d1 / w);
-                    let y = d1 - x * w;
-                    // x = w - 1 - x;
-                    // y = h - 1 - y;
-
-                    data[y][x] = {
-                        rgb: rgb
-                    };
-                }
-
-                createSvg(folder, f.replace(/\.jpg/, ''), data, w, h);
-            }
-        }, files);
-
+        promise.each(files, createSvg);
 
     };
+
     // kick off
 
     processFiles();
