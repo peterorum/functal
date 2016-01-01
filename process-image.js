@@ -80,7 +80,8 @@
         pde.write(`draw${z1}();\n`);
       }
 
-      pde.write(`save(${filename.jpg});\n`);
+      // export jpg
+      pde.write(`save("${filename}-p.jpg");\n`);
       pde.write('exit();\n');
 
       pde.write('}\n');
