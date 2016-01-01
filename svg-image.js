@@ -35,7 +35,7 @@
         var outputWidth = inputWidth;
         var outputHeight = inputHeight;
 
-        let maxStrokeWidth = 1 + Rp.bandomInt(outputWidth, 4);
+        let maxStrokeWidth = 1 + Rp.bandomInt(outputWidth, 5);
 
         console.log('maxStrokeWidth ' , maxStrokeWidth);
 
