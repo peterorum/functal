@@ -148,7 +148,11 @@
             // end
             svg.write('</svg>\n');
 
+            jpeg = null;
+            xy = null;
+
             svg.end(function() {
+                svg = null;
                 resolve();
             });
 
