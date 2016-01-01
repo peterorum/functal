@@ -2,6 +2,9 @@
 
     "use strict";
 
+    // rsvg-convert --unlimited func.svg | convert - func.jpg
+    // for file in *.svg ; do rsvg-convert --unlimited "$file" | convert - "${file/%svg/jpg}"; done
+
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
 
@@ -94,8 +97,7 @@
             svg.write('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">\n');
             svg.write(`<svg width="${outputWidth}" height="${outputHeight}" xmlns="http://www.w3.org/2000/svg"> \n`);
 
-            svg.write('<title>Functal</title>\n');
-            svg.write(`<desc>${filename}</desc>\n`);
+            svg.write(`<title>${filename}</title>\n`);
 
             // styles
 
