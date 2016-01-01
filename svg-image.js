@@ -132,15 +132,14 @@
 
                 let y = yy + inputHeight / 2 - outputHeight / 2;
                 let x = xx + inputWidth / 2 - outputWidth / 2;
-                var rgb = data[x][y].rgb;
+                let rgb = data[x][y].rgb;
 
-                var hsl = clr.rgb2hsl(rgb);
+                let hsl = clr.rgb2hsl(rgb);
 
-                var radius = math.round(64 * (1 - hsl.l), 0);
-                var strokeWidth = math.randomInt(1, maxStrokeWidth + 1);
+                let radius = math.round(64 * (1 - hsl.l), 0);
+                let strokeWidth = math.randomInt(1, maxStrokeWidth + 1);
 
-                var opacity = math.round((1 - hsl.l) / strokeWidth, 2);
-
+                let opacity = math.round((1 - hsl.l) / strokeWidth, 2);
 
                 svg.write(`<circle class="uf st${strokeWidth}"  r="${radius}" cx="${xx}" cy="${yy}" stroke="rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})"/>\n`);
             }
@@ -148,6 +147,8 @@
             // end
             svg.write('</svg>\n');
 
+            data = null;
+            jpeg.data = null;
             jpeg = null;
             xy = null;
 
