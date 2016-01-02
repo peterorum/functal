@@ -94,7 +94,22 @@
 
                 }, docs);
 
-                resolve();
+                // add new ones to database
+                let newbies = R.filter((img) => !R.find((d) => d.name === img.name, docs), images);
+
+                newbies = R.map((i) => ({
+                        name: i.name,
+                        likes: 0,
+                        dislikes: 0
+                        // grab topic from json?
+                }), newbies);
+
+                console.log('newbies', JSON.stringify(newbies));
+
+                db.collection('images').insertAsync(newbies).then(function() {
+                    resolve();
+                });
+
             }, function(err) {
                 reject("error in loadVotes:" + err);
             });
