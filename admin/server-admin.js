@@ -3,6 +3,8 @@
 
     // must always be running by...
     // nohup ./serve&
+    // also in /etc/rc.local...
+    // sudo -u ec2-user /home/ec2-user/functal/admin/serve&
 
     var express = require('express');
 
@@ -97,18 +99,23 @@
                 // add new ones to database
                 let newbies = R.filter((img) => !R.find((d) => d.name === img.name, docs), images);
 
-                newbies = R.map((i) => ({
-                        name: i.name,
-                        likes: 0,
-                        dislikes: 0
-                        // grab topic from json?
-                }), newbies);
+                if (newbies.length) {
 
-                console.log('newbies', JSON.stringify(newbies));
+                    newbies = R.map((i) => ({
+                            name: i.name,
+                            likes: 0,
+                            dislikes: 0
+                    }), newbies);
 
-                db.collection('images').insertAsync(newbies).then(function() {
+                    console.log('newbies', JSON.stringify(newbies));
+
+                    db.collection('images').insertAsync(newbies).then(function() {
+                        resolve();
+                    });
+                }
+                else {
                     resolve();
-                });
+                }
 
             }, function(err) {
                 reject("error in loadVotes:" + err);
