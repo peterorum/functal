@@ -2,9 +2,6 @@
 
     "use strict";
 
-    // rsvg-convert --unlimited func.svg | convert - func.jpg
-    // for file in *.svg ; do rsvg-convert --unlimited "$file" | convert - "${file/%svg/jpg}"; done
-
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
 
