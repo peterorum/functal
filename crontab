@@ -1,0 +1,8 @@
+PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/aws/bin:/home/ec2-user/bin
+MAILTO=peter.orum@gmail.com
+00 01,07,20 * * * /home/ec2-user/functal/tweet
+30 01,13  * * * /home/ec2-user/functalbook/facebook
+15 00,08,16 * * * /home/ec2-user/functalbook/tumblr
+00 17 * * * /home/ec2-user/functalbook/reblog
+#00 * * * * /home/ec2-user/data-hmm/tweet_common
+20 01 * * * /home/ec2-user/functal/titles/get-titles

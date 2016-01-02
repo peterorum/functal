@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# run daily
+
+source $HOME/.bash_profile
+
+cd $HOME/functal/titles
+
+node --harmony ./set-topics.js --untitled
+
+./fill-titles.py --untitled

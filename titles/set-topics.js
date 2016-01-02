@@ -1,109 +1,122 @@
 (function() {
-  "use strict";
+    "use strict";
 
-  // add each image on s3 to db
+    // add each image on s3 to db
 
-  var R = require('ramda');
-  var math = require('mathjs');
+    var R = require('ramda');
+    var math = require('mathjs');
 
-  var promise = require("bluebird");
-  var mongodb = promise.promisifyAll(require("mongodb"));
-  var mongoClient = promise.promisifyAll(mongodb.MongoClient);
+    var promise = require("bluebird");
+    var mongodb = promise.promisifyAll(require("mongodb"));
+    var mongoClient = promise.promisifyAll(mongodb.MongoClient);
 
-  var request = promise.promisifyAll(require('request'));
+    var request = promise.promisifyAll(require('request'));
 
-  var modifiers = require('../modifiers');
+    var modifiers = require('../modifiers');
 
-  var setTopics = function(db) {
-    return new Promise(function(resolve, reject) {
+    var setTopics = function(db, untitled) {
+        return new Promise(function(resolve, reject) {
 
-      // no topic
-      var query = {
-        topic: {
-          $exists: false
-        }
-      };
+            var query = {}; // all
 
-      query = {}; // all
+            // no topic
 
-      db.collection('images').find(query).toArrayAsync().then(function(docs) {
+            if (untitled) {
+                query = {
+                    $or: [{
+                        topic: {
+                            $exists: false
+                        }
+                    },
+                        {
+                            topic: {
+                                $eq: ''
+                            }
+                        }
+                    ]
+                };
+            }
 
-        console.log('count: ' + docs.length);
+            db.collection('images').find(query).toArrayAsync().then(function(docs) {
 
-        docs.reverse();
+                console.log('count: ' + docs.length);
 
-        var delay = 500;
-        var counter = 0;
+                docs.reverse();
 
-        var updates = R.map(function(image) {
+                var delay = 500;
+                var counter = 0;
 
-          return new Promise(function(updateResolve) {
-            counter++;
-            setTimeout(function() {
+                var updates = R.map(function(image) {
 
-              var jsonUrl = 'https://s3.amazonaws.com/functal-json/' + image.name.replace(/jpg/, 'json').replace(/-svg/, '');
+                    return new Promise(function(updateResolve) {
+                        counter++;
+                        setTimeout(function() {
 
-              // jsonUrl = 'https://s3.amazonaws.com/functal-json/functal-20150704155915238.json';
+                            var jsonUrl = 'https://s3.amazonaws.com/functal-json/' + image.name.replace(/jpg/, 'json').replace(/-svg/, '');
 
-              // console.log(jsonUrl);
+                            // jsonUrl = 'https://s3.amazonaws.com/functal-json/functal-20150704155915238.json';
 
-              request.getAsync(jsonUrl).then(function(data) {
-                var response = data[0];
-                var topic;
+                            // console.log(jsonUrl);
 
-                if (response.statusCode === 200) {
-                  // json found
-                  var json = response.body;
+                            request.getAsync(jsonUrl).then(function(data) {
+                                var response = data[0];
+                                var topic;
 
-                  var functal = JSON.parse(json);
+                                if (response.statusCode === 200) {
+                                    // json found
+                                    var json = response.body;
 
-                  functal.hslStats = functal.palette.hslStats;
+                                    var functal = JSON.parse(json);
 
-                  topic = modifiers.getTopic(functal);
-                }
+                                    functal.hslStats = functal.palette.hslStats;
 
-                if (!topic) {
-                  topic = modifiers.genericTopics[math.randomInt(0, modifiers.genericTopics.length)];
-                }
+                                    topic = modifiers.getTopic(functal);
+                                }
 
-                console.log(image.name + ': ' + topic);
+                                if (!topic) {
+                                    topic = modifiers.genericTopics[math.randomInt(0, modifiers.genericTopics.length)];
+                                }
 
-                image.topic = topic;
+                                console.log(image.name + ': ' + topic);
 
-                db.collection('images').updateAsync({
-                  name: image.name
-                }, image).then(function() {
-                  updateResolve();
+                                image.topic = topic;
+
+                                db.collection('images').updateAsync({
+                                    name: image.name
+                                }, image).then(function() {
+                                    updateResolve();
+                                });
+                            }, function(err) {
+                                console.log('http request error: ' + err);
+                                updateResolve();
+                            });
+                        // shedule the delay
+                        }, counter * delay);
+                    });
+                }, docs);
+
+                promise.all(updates).then(function() {
+                    resolve();
+                }).catch(function() {
+                    reject();
                 });
-              }, function(err) {
-                console.log('http request error: ' + err);
-                updateResolve();
-              });
-            // shedule the delay
-            }, counter * delay);
-          });
-        }, docs);
-
-        promise.all(updates).then(function() {
-          resolve();
-        }).catch(function() {
-          reject();
+            });
         });
-      });
+    };
+
+    //--------- database
+
+    mongoClient.connectAsync(process.env.mongo_functal).then(function(client) {
+
+        let untitled = !!R.find((a) => a === '--untitled', process.argv);
+
+        var db = client.db('functal');
+
+        setTopics(db, untitled).then(function() {
+            client.close();
+        }).catch(function() {
+            client.close();
+        });
+
     });
-  };
-
-  //--------- database
-
-  mongoClient.connectAsync(process.env.mongo_functal).then(function(client) {
-
-    var db = client.db('functal');
-
-    setTopics(db).then(function() {
-      client.close();
-    }).catch(function() {
-      client.close();
-    });
-
-  });
 }());
