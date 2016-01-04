@@ -3,10 +3,8 @@
 # aws s3 cp s3://functal-svg functal-svg/
 # nohup ./convert-svg&
 
-find ./functal-svg -type f -name "*.svg" -execdir bash -c 'echo "$0" && rsvg-convert --unlimited "$0" | convert - "${0/\.svg/-svg.jpg}"' {} \;
+find ./functal-svg -type f -name "*.svg" -execdir bash -c 'echo "$0" && rsvg-convert --unlimited "$0" | convert - "${0/\.svg/-svg.jpg}" && aws s3 cp "${0/\.svg/-svg.jpg}" s3://functal-images --acl="public-read"' {} \;
 
-# then upload to s3
-
-aws s3 cp functal-svg/ s3://functal-images --recursive --exclude="*" --include="*.jpg" --acl="public-read"
+# aws s3 cp functal-svg/ s3://functal-images --recursive --exclude="*" --include="*.jpg" --acl="public-read"
 
 echo done
