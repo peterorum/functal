@@ -23,6 +23,7 @@
   "dependencies": {
     "bluebird": "^3.1.1",
     "body-parser": "^1.12.3",
+    "chalk": "^1.1.1",
     "express": "^4.12.3",
     "jpeg-js": "^0.1.1",
     "lodash.debounce": "^3.1.0",
@@ -36,5 +37,6 @@
     "seedrandom": "^2.3.11",
     "twit": "^1.1.19"
   },
-  "devDependencies": {}
+  "devDependencies": {
+  }
 }

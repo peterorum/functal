@@ -10,6 +10,7 @@
         global: true
     });
 
+    var chalk = require('chalk');
     var math = require('mathjs');
     // var moment = require('moment');
     var jpeg = require('jpeg-js');
@@ -65,11 +66,32 @@
             height: h
         };
     }
+
+    //------------- shape writers
+
+    // circle
+
+    let svgCircle = function(svgf, options) {
+        svgf.write(`<circle class="uf st${options.strokeWidth}"  r="${options.width}" cx="${options.x}" cy="${options.y}" stroke="rgba(${options.rgb.r}, ${options.rgb.g}, ${options.rgb.b}, ${options.opacity})" />\n`);
+    };
+
+    svgCircle.title = 'circle';
+
+    // rect
+
+    let svgRect = function(svgf, options) {
+        svgf.write(`<rect class="uf st${options.strokeWidth}" x="${options.x}" y="${options.y}" width="${options.width}" height="${options.height}" stroke="rgba(${options.rgb.r}, ${options.rgb.g}, ${options.rgb.b}, ${options.opacity})" />\n`);
+    };
+
+    svgRect.title = 'rect';
+
+    let svgShapes = [svgCircle, svgRect];
+
     // ------------ output to svg
 
     var createSvg = function(filename) {
 
-        console.log(filename);
+        console.log(chalk.yellow(filename));
 
         var jpeg = loadJpeg(filename);
 
@@ -83,30 +105,37 @@
         var outputHeight = inputHeight;
 
         let maxStrokeWidth = 1 + Rp.bandomInt(outputWidth, 5);
+        let maxWidth = 1 + Rp.bandomInt(64, -2);
+        let maxHeight = 1 + Rp.bandomInt(64, -2);
 
-        console.log('maxStrokeWidth ', maxStrokeWidth);
+        console.log(chalk.green(`maxStrokeWidth: ${maxStrokeWidth}`));
+        console.log(chalk.green(`max size: ${maxWidth} x ${maxHeight}`));
 
         return new promise(function(resolve) {
 
-            var svg = fs.createWriteStream(`${outputFilename}.svg`);
+            var svgf = fs.createWriteStream(`${outputFilename}.svg`);
 
-            svg.write('<?xml version="1.0"?>\n');
-            svg.write('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">\n');
-            svg.write(`<svg width="${outputWidth}" height="${outputHeight}" xmlns="http://www.w3.org/2000/svg"> \n`);
+            var svgShape = Rp.wandom(svgShapes);
 
-            svg.write(`<title>${filename}</title>\n`);
+            console.log(chalk.blue(svgShape.title));
+
+            svgf.write('<?xml version="1.0"?>\n');
+            svgf.write('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">\n');
+            svgf.write(`<svg width="${outputWidth}" height="${outputHeight}" xmlns="http://www.w3.org/2000/svg"> \n`);
+
+            svgf.write(`<title>${filename}</title>\n`);
 
             // styles
 
-            svg.write('<style type="text/css">\n');
+            svgf.write('<style type="text/css">\n');
 
-            svg.write('.uf {fill: none }\n');
+            svgf.write('.uf {fill: none }\n');
 
             for (let i = 1; i < maxStrokeWidth + 1; i++) {
-                svg.write(`.st${i} {stroke-width: ${i}; }\n`);
+                svgf.write(`.st${i} {stroke-width: ${i}; }\n`);
             }
 
-            svg.write('</style>\n');
+            svgf.write('</style>\n');
 
             // do points at random
 
@@ -135,24 +164,36 @@
 
                 let hsl = clr.rgb2hsl(rgb);
 
-                let radius = math.round(64 * (1 - hsl.l), 0);
+                let width = math.round(maxWidth * (1 - hsl.l), 0);
+                let height = math.round(maxHeight * (1 - hsl.l), 0);
+
                 let strokeWidth = math.randomInt(1, maxStrokeWidth + 1);
 
                 let opacity = math.round((1 - hsl.l) / strokeWidth, 2);
 
-                svg.write(`<circle class="uf st${strokeWidth}"  r="${radius}" cx="${xx}" cy="${yy}" stroke="rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})"/>\n`);
+                let options = {
+                    strokeWidth: strokeWidth,
+                    x: xx,
+                    y: yy,
+                    width: width,
+                    height: height,
+                    rgb: rgb,
+                    opacity: opacity
+                };
+
+                svgShape(svgf, options);
             }
 
             // end
-            svg.write('</svg>\n');
+            svgf.write('</svg>\n');
 
             data = null;
             jpeg.data = null;
             jpeg = null;
             xy = null;
 
-            svg.end(function() {
-                svg = null;
+            svgf.end(function() {
+                svgf = null;
                 resolve();
             });
 
