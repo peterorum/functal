@@ -91,111 +91,117 @@
 
     var createSvg = function(filename) {
 
-        console.log(chalk.yellow(filename));
-
-        var jpeg = loadJpeg(filename);
-
-        let data = jpeg.data;
-        let inputWidth = jpeg.width;
-        let inputHeight = jpeg.height;
-
-        var outputFilename = filename.replace(/\.jpg/, '');
-
-        var outputWidth = inputWidth;
-        var outputHeight = inputHeight;
-
-        let maxStrokeWidth = 1 + Rp.bandomInt(outputWidth, 5);
-        let maxWidth = 1 + Rp.bandomInt(64, -2);
-        let maxHeight = 1 + Rp.bandomInt(64, -2);
-
-        console.log(chalk.green(`maxStrokeWidth: ${maxStrokeWidth}`));
-        console.log(chalk.green(`max size: ${maxWidth} x ${maxHeight}`));
-
         return new promise(function(resolve) {
 
-            var svgf = fs.createWriteStream(`${outputFilename}.svg`);
+            console.log(chalk.yellow(filename));
+
+            var jpeg = loadJpeg(filename);
+
+            let data = jpeg.data;
+            let inputWidth = jpeg.width;
+            let inputHeight = jpeg.height;
+
+            var outputFilename = filename.replace(/\.jpg/, '');
+
+            var outputWidth = inputWidth;
+            var outputHeight = inputHeight;
+
+            let maxStrokeWidth = 1 + Rp.bandomInt(outputWidth, 5);
+            let maxWidth = 1 + Rp.bandomInt(64, -2);
+            let maxHeight = 1 + Rp.bandomInt(64, -2);
+
+            console.log(chalk.green(`maxStrokeWidth: ${maxStrokeWidth}`));
+            console.log(chalk.green(`max size: ${maxWidth} x ${maxHeight}`));
 
             var svgShape = Rp.wandom(svgShapes);
 
             console.log(chalk.blue(svgShape.title));
 
-            svgf.write('<?xml version="1.0"?>\n');
-            svgf.write('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">\n');
-            svgf.write(`<svg width="${outputWidth}" height="${outputHeight}" xmlns="http://www.w3.org/2000/svg"> \n`);
+            try {
+                var svgf = fs.createWriteStream(`${outputFilename}.svg`);
 
-            svgf.write(`<title>${filename}</title>\n`);
+                svgf.write('<?xml version="1.0"?>\n');
+                svgf.write('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">\n');
+                svgf.write(`<svg width="${outputWidth}" height="${outputHeight}" xmlns="http://www.w3.org/2000/svg"> \n`);
 
-            // styles
+                svgf.write(`<title>${filename}</title>\n`);
 
-            svgf.write('<style type="text/css">\n');
+                // styles
 
-            svgf.write('.uf {fill: none }\n');
+                svgf.write('<style type="text/css">\n');
 
-            for (let i = 1; i < maxStrokeWidth + 1; i++) {
-                svgf.write(`.st${i} {stroke-width: ${i}; }\n`);
-            }
+                svgf.write('.uf {fill: none }\n');
 
-            svgf.write('</style>\n');
-
-            // do points at random
-
-            let xy = [];
-
-            for (let y = 0; y < outputHeight; y++) {
-
-                for (let x = 0; x < outputWidth; x++) {
-                    xy.push({
-                        x: x,
-                        y: y
-                    });
+                for (let i = 1; i < maxStrokeWidth + 1; i++) {
+                    svgf.write(`.st${i} {stroke-width: ${i}; }\n`);
                 }
-            }
 
-            xy = R.sortBy(() => math.random(), xy);
+                svgf.write('</style>\n');
 
-            for (let z = 0; z < xy.length; z++) {
+                // do points at random
 
-                let yy = xy[z].y;
-                let xx = xy[z].x;
+                let xy = [];
 
-                let y = yy + inputHeight / 2 - outputHeight / 2;
-                let x = xx + inputWidth / 2 - outputWidth / 2;
-                let rgb = data[x][y].rgb;
+                for (let y = 0; y < outputHeight; y++) {
 
-                let hsl = clr.rgb2hsl(rgb);
+                    for (let x = 0; x < outputWidth; x++) {
+                        xy.push({
+                            x: x,
+                            y: y
+                        });
+                    }
+                }
 
-                let width = math.round(maxWidth * (1 - hsl.l), 0);
-                let height = math.round(maxHeight * (1 - hsl.l), 0);
+                xy = R.sortBy(() => math.random(), xy);
 
-                let strokeWidth = math.randomInt(1, maxStrokeWidth + 1);
+                for (let z = 0; z < xy.length; z++) {
 
-                let opacity = math.round((1 - hsl.l) / strokeWidth, 2);
+                    let yy = xy[z].y;
+                    let xx = xy[z].x;
 
-                let options = {
-                    strokeWidth: strokeWidth,
-                    x: xx,
-                    y: yy,
-                    width: width,
-                    height: height,
-                    rgb: rgb,
-                    opacity: opacity
-                };
+                    let y = yy + inputHeight / 2 - outputHeight / 2;
+                    let x = xx + inputWidth / 2 - outputWidth / 2;
+                    let rgb = data[x][y].rgb;
 
-                svgShape(svgf, options);
-            }
+                    let hsl = clr.rgb2hsl(rgb);
 
-            // end
-            svgf.write('</svg>\n');
+                    let width = math.round(maxWidth * (1 - hsl.l), 0);
+                    let height = math.round(maxHeight * (1 - hsl.l), 0);
 
-            data = null;
-            jpeg.data = null;
-            jpeg = null;
-            xy = null;
+                    let strokeWidth = math.randomInt(1, maxStrokeWidth + 1);
 
-            svgf.end(function() {
-                svgf = null;
+                    let opacity = math.round((1 - hsl.l) / strokeWidth, 2);
+
+                    let options = {
+                        strokeWidth: strokeWidth,
+                        x: xx,
+                        y: yy,
+                        width: width,
+                        height: height,
+                        rgb: rgb,
+                        opacity: opacity
+                    };
+
+                    svgShape(svgf, options);
+                }
+
+                // end
+                svgf.write('</svg>\n');
+
+                data = null;
+                jpeg.data = null;
+                jpeg = null;
+                xy = null;
+
+                svgf.end(function() {
+                    svgf = null;
+                    resolve();
+                });
+            } catch (ex) {
+                console.log(chalk.red('error'), ex);
+
                 resolve();
-            });
+            }
 
         });
     };
@@ -214,7 +220,9 @@
 
         files = R.map((f) => folder + '/' + f, files);
 
-        promise.each(files, createSvg);
+        promise.each(files, createSvg).then(function() {
+            console.log(chalk.green('done'));
+        });
 
     };
 
