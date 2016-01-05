@@ -2,6 +2,10 @@
 
     "use strict";
 
+    // from folder above functals/medium...
+    // eg cd /data/functal
+    // nohup node --harmony ~/functal/svg-image.js &
+
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
 
@@ -67,25 +71,72 @@
         };
     }
 
+
+
+    //------------- fillers
+
+    let fillerNone = function() {
+
+        return "none";
+    }
+
+    fillerNone.title = "filler-none";
+    fillerNone.hasColor = false;
+
+    let fillerColor = function(options) {
+
+        return `rgba(${options.rgb.r}, ${options.rgb.g}, ${options.rgb.b}, ${options.opacity / 4})`;
+    }
+
+    fillerColor.title = "filler-color";
+    fillerColor.hasColor = true;
+
+    let fillers = [fillerNone, fillerColor];
+
+    //------------- strokers
+
+    let strokerNone = function() {
+
+        return "none";
+    }
+
+    strokerNone.title = "stroker-none";
+
+    let strokerColor = function(options) {
+
+        return `rgba(${options.rgb.r}, ${options.rgb.g}, ${options.rgb.b}, ${options.opacity})`;
+    }
+
+    strokerColor.title = "stroker-color";
+
+    let strokerBlack = function(options) {
+
+        return `rgba(0, 0, 0, ${options.opacity})`;
+    }
+
+    strokerBlack.title = "stroker-black";
+
+    let strokers = [strokerNone, strokerColor, strokerBlack];
+
     //------------- shape writers
 
     // circle
 
-    let svgCircle = function(svgf, options) {
-        svgf.write(`<circle class="uf st${options.strokeWidth}"  r="${options.width}" cx="${options.x}" cy="${options.y}" stroke="rgba(${options.rgb.r}, ${options.rgb.g}, ${options.rgb.b}, ${options.opacity})" />\n`);
+    let shapeCircle = function(svgf, options) {
+        svgf.write(`<circle class="st${options.strokeWidth}"  r="${options.width}" cx="${options.x}" cy="${options.y}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" />\n`);
     };
 
-    svgCircle.title = 'circle';
+    shapeCircle.title = 'circle';
 
     // rect
 
-    let svgRect = function(svgf, options) {
-        svgf.write(`<rect class="uf st${options.strokeWidth}" x="${options.x}" y="${options.y}" width="${options.width}" height="${options.height}" stroke="rgba(${options.rgb.r}, ${options.rgb.g}, ${options.rgb.b}, ${options.opacity})" />\n`);
+    let shapeRect = function(svgf, options) {
+        svgf.write(`<rect class="st${options.strokeWidth}" x="${options.x}" y="${options.y}" width="${options.width}" height="${options.height}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" />\n`);
     };
 
-    svgRect.title = 'rect';
+    shapeRect.title = 'rect';
 
-    let svgShapes = [svgCircle, svgRect];
+    let shapers = [shapeCircle, shapeRect];
 
     // ------------ output to svg
 
@@ -113,9 +164,24 @@
             console.log(chalk.green(`maxStrokeWidth: ${maxStrokeWidth}`));
             console.log(chalk.green(`max size: ${maxWidth} x ${maxHeight}`));
 
-            var svgShape = Rp.wandom(svgShapes);
+            // set functions
+            var filler = Rp.wandom(fillers);
 
-            console.log(chalk.blue(svgShape.title));
+            // if no filler, ensure stroker has color
+            var stroker;
+
+            if (!filler.hasColor) {
+                stroker = strokerColor;
+            }
+            else {
+                stroker = Rp.wandom(strokers);
+            }
+
+            var shaper = Rp.wandom(shapers);
+
+            console.log(chalk.blue(shaper.title));
+            console.log(chalk.blue(filler.title));
+            console.log(chalk.blue(stroker.title));
 
             try {
                 var svgf = fs.createWriteStream(`${outputFilename}.svg`);
@@ -179,10 +245,12 @@
                         width: width,
                         height: height,
                         rgb: rgb,
-                        opacity: opacity
+                        opacity: opacity,
+                        filler: filler,
+                        stroker: stroker
                     };
 
-                    svgShape(svgf, options);
+                    shaper(svgf, options);
                 }
 
                 // end
