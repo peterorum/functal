@@ -8,11 +8,16 @@ echo $1
 echo create svg
 node --harmony svg-image.js "$1"
 
-echo convert to jpg
-rsvg-convert --unlimited "${1/\.jpg/.svg}" | convert - "${1/\.jpg/-svg.jpg}"
+if [ -s "${1/\.jpg/.svg}" ]
+then
+  echo convert to jpg
+  rsvg-convert --unlimited "${1/\.jpg/.svg}" | convert - "${1/\.jpg/-svg.jpg}"
 
-echo copy to s3
-aws s3 cp "${1/\.jpg/-svg.jpg}" s3://functal-images --acl="public-read"
+  echo copy to s3
+  aws s3 cp "${1/\.jpg/-svg.jpg}" s3://functal-images --acl="public-read"
+else
+  echo zero length file
+fi
 
 echo delete
 rm "$1" "${1/\.jpg/.svg}" "${1/\.jpg/-svg.jpg}"
