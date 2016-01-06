@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# convert all found files, one at a time, to svg & transfer to s3
+
+find /data/functals/medium/*.jpg -type f -exec bash -c './create-svg "$0"' {} \;
+

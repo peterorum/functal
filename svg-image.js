@@ -28,11 +28,6 @@
     var promise = require("bluebird");
     var fs = promise.promisifyAll(require('fs'));
 
-    // smaller image, no tweet
-    var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
-
-    var functalsFolder = 'functals';
-
     // load jpeg
 
     function loadJpeg(filename) {
@@ -278,19 +273,21 @@
 
     var processFiles = function() {
 
-        var size = (isDev ? 'small' : 'medium');
+        if (process.argv.length > 2) {
 
-        let folder = `${functalsFolder}/${size}`;
+            var files = R.tail(R.tail(process.argv));
 
-        var files = fs.readdirSync(folder);
+            files = R.filter((f) => path.extname(f) === '.jpg', files);
 
-        files = R.filter((f) => path.extname(f) === '.jpg', files);
+            // console.log(files);
 
-        files = R.map((f) => folder + '/' + f, files);
+            promise.each(files, createSvg).then(function() {
+            });
+        }
+        else {
+            console.log('usage: node --harmony svg-image path ...');
+        }
 
-        promise.each(files, createSvg).then(function() {
-            console.log(chalk.green('done'));
-        });
 
     };
 

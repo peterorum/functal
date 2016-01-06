@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#convert a single jpg to svg, then jpg & transfer to s3
+# then delete them
+
+echo $1
+
+node --harmony svg-image.js "$1"
+
+rsvg-convert --unlimited "${1/\.jpg/.svg}" | convert - "${1/\.jpg/-svg.jpg}"
+
+aws s3 cp "${1/\.jpg/-svg.jpg}" s3://functal-images --acl="public-read"
+
+rm "$1" "${1/\.jpg/.svg}" "${1/\.jpg/-svg.jpg}"
