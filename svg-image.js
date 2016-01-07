@@ -6,6 +6,9 @@
     // eg cd /data/functal
     // nohup node --harmony ~/functal/svg-image.js &
 
+    // choosing a rnadom seleciton of files
+    // mv `ls | shuf | head -n 250` ../medium
+
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
 
@@ -100,7 +103,7 @@
 
     sorterLight.title = "sorter-light";
 
-    let sorters = [/*sorterRandom,*/ sorterLight];
+    let sorters = [sorterRandom, sorterLight];
 
     //------------- fillers
 
