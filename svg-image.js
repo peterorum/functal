@@ -66,7 +66,41 @@
         };
     }
 
+    //------------- sorters
 
+    let sorterRandom = function(xy) {
+
+      let xy2 = R.sortBy(() => math.random(), xy);
+
+      let points = 1 + Rp.bandomInt(xy.length, -2);
+
+      // sparse
+      xy2 = R.take(points, xy2);
+
+      return xy2;
+    }
+
+    sorterRandom.title = "sorter-random";
+
+    // dark ones drawn first
+
+    let sorterLight = function(xy, data) {
+
+      let xy2 = R.sortBy((p) => {
+
+        let rgb = data[p.x][p.y].rgb;
+        let hsl = clr.rgb2hsl(rgb);
+
+        return hsl.l;
+
+      }, xy);
+
+      return xy2;
+    }
+
+    sorterLight.title = "sorter-light";
+
+    let sorters = [/*sorterRandom,*/ sorterLight];
 
     //------------- fillers
 
@@ -173,13 +207,12 @@
             }
 
             var shaper = Rp.wandom(shapers);
-
-            var points = 1 + Rp.bandomInt(outputWidth * outputHeight, -2);
+            var sorter = Rp.wandom(sorters);
 
             console.log(chalk.blue(shaper.title));
             console.log(chalk.blue(filler.title));
             console.log(chalk.blue(stroker.title));
-            console.log(chalk.blue(`points: ${points}`));
+            console.log(chalk.blue(sorter.title));
 
             try {
                 var svgf = fs.createWriteStream(`${outputFilename}.svg`);
@@ -216,10 +249,7 @@
                     }
                 }
 
-                xy = R.sortBy(() => math.random(), xy);
-
-                // sparse
-                xy = R.take(points, xy);
+                xy = sorter(xy, data);
 
                 for (let z = 0; z < xy.length; z++) {
 
