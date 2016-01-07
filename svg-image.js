@@ -174,9 +174,12 @@
 
             var shaper = Rp.wandom(shapers);
 
+            var points = 1 + Rp.bandomInt(outputWidth * outputHeight, -2);
+
             console.log(chalk.blue(shaper.title));
             console.log(chalk.blue(filler.title));
             console.log(chalk.blue(stroker.title));
+            console.log(chalk.blue(`points: ${points}`));
 
             try {
                 var svgf = fs.createWriteStream(`${outputFilename}.svg`);
@@ -214,6 +217,9 @@
                 }
 
                 xy = R.sortBy(() => math.random(), xy);
+
+                // sparse
+                xy = R.take(points, xy);
 
                 for (let z = 0; z < xy.length; z++) {
 
