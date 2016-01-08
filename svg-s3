@@ -2,6 +2,6 @@
 
 # convert all found files, one at a time, to svg & transfer to s3
 
-#find /data/functal/functals/medium/*.jpg -type f -exec bash -c './create-svg "$0"' {} \;
+find /data/functal/functals/medium/*.jpg -type f -exec bash -c './create-svg "$0"' {} \;
 
 sudo shutdown -h now
