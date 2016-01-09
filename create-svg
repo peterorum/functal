@@ -16,13 +16,13 @@ node --harmony svg-image.js "$1"
 if [ -s "${1/\.jpg/.svg}" ]
 then
   echo convert to jpg
-  rsvg-convert --unlimited "${1/\.jpg/.svg}" | convert - "${1/functal/functal-a003}"
+  rsvg-convert --unlimited "${1/\.jpg/.svg}" | convert - "${1/functal-/functal-a003-}"
 
   echo copy to s3
-  aws s3 cp "${1/functal/functal-a003}" s3://functal-images --acl="public-read"
+  aws s3 cp "${1/functal-/functal-a003-}" s3://functal-images --acl="public-read"
 else
   echo zero length file
 fi
 
 echo delete
-rm "$1" "${1/\.jpg/.svg}" "${1/functal/functal-a003}"
+rm "$1" "${1/\.jpg/.svg}" "${1/functal-/functal-a003-}"
