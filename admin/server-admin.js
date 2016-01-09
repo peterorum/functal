@@ -133,6 +133,9 @@
 
                 console.log('count: ' + result.files.length);
 
+                // newsest ones first
+                let files = R.sortBy((f) => - f.LastModified.getTime(), result.files);
+
                 images = R.map(function(img) {
                     return {
                         name: img.Key,
@@ -140,9 +143,7 @@
                         dislikes: 0,
                         title: ''
                     };
-                }, result.files);
-
-                images = R.reverse(images);
+                }, files);
 
                 // load votes
                 loadVotes(db).then(function() {
