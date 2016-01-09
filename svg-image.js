@@ -155,7 +155,7 @@
     // ellipse
 
     let shapeEllipse = function(svgf, options) {
-        svgf.write(`<ellipse rx="${options.width}" ry="${options.height}" cx="${options.x}" cy="${options.y}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}"  transform="rotate(${options.angle}, ${options.x + options.width / 2}, ${options.y + options.height / 2} )" />\n`);
+        svgf.write(`<ellipse rx="${options.width}" ry="${options.height}" cx="${options.x}" cy="${options.y}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}"  transform="rotate(${options.angle}, ${options.x}, ${options.y} )" />\n`);
     };
 
     shapeEllipse.isFilled = true;
@@ -164,7 +164,8 @@
     // rect
 
     let shapeRect = function(svgf, options) {
-        svgf.write(`<rect x="${options.x}" y="${options.y}" rx="${options.rounded}" ry="${options.rounded}" width="${options.width}" height="${options.height}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}"  transform="rotate(${options.angle}, ${options.x + options.width / 2}, ${options.y + options.height / 2} )" />\n`);
+        svgf.write(`<rect x="${options.x}" y="${options.y}" rx="${options.rounded}" ry="${options.rounded}" width="${options.width}" height="${options.height}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}"  transform="rotate(${options.angle}, ${options.x}, ${options.y} )" />\n`);
+        svgf.write(`<rect x="${options.x}" y="${options.y}" rx="${options.rounded}" ry="${options.rounded}" width="${options.width}" height="${options.height}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}"  transform="rotate(${options.angle}, ${options.x}, ${options.y} )" />\n`);
     };
 
     shapeRect.isFilled = true;
@@ -174,7 +175,7 @@
     // rotates by hue
 
     let shapeLine = function(svgf, options) {
-        svgf.write(`<line x1="${options.x}" x2="${options.x + options.width}"  y1="${options.y}" y2="${options.y + options.height}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" transform="rotate(${options.angle}, ${options.x + options.width / 2}, ${options.y + options.height / 2} )" />\n`);
+        svgf.write(`<line x1="${options.x - options.width / 2}" x2="${options.x + options.width / 2}"  y1="${options.y - options.height / 2}" y2="${options.y + options.height / 2}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" transform="rotate(${options.angle}, ${options.x}, ${options.y} )" />\n`);
     };
 
     shapeLine.isFilled = false;
