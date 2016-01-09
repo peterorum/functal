@@ -155,7 +155,7 @@
     // circle
 
     let shapeCircle = function(svgf, options) {
-        svgf.write(`<circle class="st${options.strokeWidth}"  r="${options.width}" cx="${options.x}" cy="${options.y}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" />\n`);
+        svgf.write(`<circle r="${options.width}" cx="${options.x}" cy="${options.y}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" />\n`);
     };
 
     shapeCircle.title = 'circle';
@@ -163,7 +163,7 @@
     // rect
 
     let shapeRect = function(svgf, options) {
-        svgf.write(`<rect class="st${options.strokeWidth}" x="${options.x}" y="${options.y}" width="${options.width}" height="${options.height}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" />\n`);
+        svgf.write(`<rect x="${options.x}" y="${options.y}" width="${options.width}" height="${options.height}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" />\n`);
     };
 
     shapeRect.title = 'rect';
@@ -225,18 +225,6 @@
                 svgf.write(`<svg width="${outputWidth}" height="${outputHeight}" xmlns="http://www.w3.org/2000/svg"> \n`);
 
                 svgf.write(`<title>${filename}</title>\n`);
-
-                // styles
-
-                svgf.write('<style type="text/css">\n');
-
-                svgf.write('.uf {fill: none }\n');
-
-                for (let i = 1; i < maxStrokeWidth + 1; i++) {
-                    svgf.write(`.st${i} {stroke-width: ${i}; }\n`);
-                }
-
-                svgf.write('</style>\n');
 
                 // do points at random
 
