@@ -6,7 +6,7 @@
     // eg cd /data/functal
     // nohup node --harmony ~/functal/svg-image.js &
 
-    // choosing a rnadom seleciton of files
+    // choosing a random selection of files
     // mv `ls | shuf | head -n 250` ../medium
 
     var seedrandom = require('seedrandom');
@@ -150,25 +150,37 @@
 
     let strokers = [strokerNone, strokerColor, strokerBlack];
 
-    //------------- shape writers
+    //------------- shapers
 
-    // circle
+    // ellipse
 
-    let shapeCircle = function(svgf, options) {
-        svgf.write(`<circle r="${options.width}" cx="${options.x}" cy="${options.y}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" />\n`);
+    let shapeEllipse = function(svgf, options) {
+        svgf.write(`<ellipse rx="${options.width}" ry="${options.height}" cx="${options.x}" cy="${options.y}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}"  transform="rotate(${options.angle}, ${options.x + options.width / 2}, ${options.y + options.height / 2} )" />\n`);
     };
 
-    shapeCircle.title = 'circle';
+    shapeEllipse.isFilled = true;
+    shapeEllipse.title = 'shaper-ellipse';
 
     // rect
 
     let shapeRect = function(svgf, options) {
-        svgf.write(`<rect x="${options.x}" y="${options.y}" width="${options.width}" height="${options.height}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" />\n`);
+        svgf.write(`<rect x="${options.x}" y="${options.y}" rx="${options.rounded}" ry="${options.rounded}" width="${options.width}" height="${options.height}" fill="${options.filler(options)}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}"  transform="rotate(${options.angle}, ${options.x + options.width / 2}, ${options.y + options.height / 2} )" />\n`);
     };
 
-    shapeRect.title = 'rect';
+    shapeRect.isFilled = true;
+    shapeRect.title = 'shaper-rect';
 
-    let shapers = [shapeCircle, shapeRect];
+    // line
+    // rotates by hue
+
+    let shapeLine = function(svgf, options) {
+        svgf.write(`<line x1="${options.x}" x2="${options.x + options.width}"  y1="${options.y}" y2="${options.y + options.height}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" transform="rotate(${options.angle}, ${options.x + options.width / 2}, ${options.y + options.height / 2} )" />\n`);
+    };
+
+    shapeLine.isFilled = false;
+    shapeLine.title = 'shaper-line';
+
+    let shapers = [shapeEllipse, shapeRect, shapeLine];
 
     // ------------ output to svg
 
@@ -192,24 +204,25 @@
             let maxStrokeWidth = 1 + Rp.bandomInt(outputWidth, 5);
             let maxWidth = 1 + Rp.bandomInt(64, -2);
             let maxHeight = 1 + Rp.bandomInt(64, -2);
+            let rounded = Rp.bandomInt(math.min(maxWidth, maxHeight) / 8, 1);
 
             console.log(chalk.green(`maxStrokeWidth: ${maxStrokeWidth}`));
             console.log(chalk.green(`max size: ${maxWidth} x ${maxHeight}`));
 
             // set functions
+            var shaper = Rp.wandom(shapers);
             var filler = Rp.wandom(fillers);
 
             // if no filler, ensure stroker has color
             var stroker;
 
-            if (!filler.hasColor) {
+            if (!filler.hasColor || ! shaper.isFilled) {
                 stroker = strokerColor;
             }
             else {
                 stroker = Rp.wandom(strokers);
             }
 
-            var shaper = Rp.wandom(shapers);
             var sorter = Rp.wandom(sorters);
 
             console.log(chalk.blue(shaper.title));
@@ -260,6 +273,8 @@
 
                     let opacity = math.round((1 - hsl.l) / strokeWidth, 2);
 
+                    let angle = 360 * hsl.h;
+
                     let options = {
                         strokeWidth: strokeWidth,
                         x: xx,
@@ -269,7 +284,9 @@
                         rgb: rgb,
                         opacity: opacity,
                         filler: filler,
-                        stroker: stroker
+                        stroker: stroker,
+                        angle: angle,
+                        rounded: rounded
                     };
 
                     shaper(svgf, options);
