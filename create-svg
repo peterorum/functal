@@ -5,7 +5,7 @@
 
 # bulk rename example
 #aws s3 ls s3://functal-images | grep  "\-svg" | tee svg.txt
-#cat svg.txt | awk '{ x=$4; gsub(/functal/, "functal-a001-", $4); gsub(/-svg/, "", $4);  print  "aws s3 mv s3://functal-images/" x " s3://functal-images/" $4 " --acl='public-read'"}' > ~/Projects/functal/ren.sh
+#cat svg.txt | awk '{ x=$4; gsub(/functal-a003-/, "functal-", $4); gsub(/.jpg/, "-svg.jpg", $4);  print  "aws s3 mv s3://functal-images/" x " s3://functal-images/" $4 " --acl='public-read'"}' > ~/Projects/functal/ren.sh
 
 
 echo $1
@@ -16,13 +16,13 @@ node --harmony svg-image.js "$1"
 if [ -s "${1/\.jpg/.svg}" ]
 then
   echo convert to jpg
-  rsvg-convert --unlimited "${1/\.jpg/.svg}" | convert - "${1/functal-/functal-a003-}"
+  rsvg-convert --unlimited "${1/\.jpg/.svg}" | convert - "${1/\.jpg/-svg.jpg/}"
 
   echo copy to s3
-  aws s3 cp "${1/functal-/functal-a003-}" s3://functal-images --acl="public-read"
+  aws s3 cp "${1/\.jpg/-svg.jpg/}" s3://functal-images --acl="public-read"
 else
   echo zero length file
 fi
 
 echo delete
-rm "$1" "${1/\.jpg/.svg}" "${1/functal-/functal-a003-}"
+rm "$1" "${1/\.jpg/.svg}" "${1/\.jpg/-svg.jpg/}"
