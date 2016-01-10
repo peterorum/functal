@@ -131,9 +131,6 @@
 
                 console.log('count: ' + result.files.length);
 
-                // newsest ones first
-                let files = R.sortBy((f) => - f.LastModified.getTime(), result.files);
-
                 images = R.map(function(img) {
                     return {
                         name: img.Key,
@@ -142,7 +139,7 @@
                         title: '',
                         sort: img.LastModified.getTime()
                     };
-                }, files);
+                }, result.files);
 
                 // load votes
                 loadVotes(db).then(function() {
@@ -173,6 +170,9 @@
                     images = R.filter(function(i) {
                         return typeof i.likes === 'undefined' || i.likes >= i.dislikes;
                     }, images);
+
+                    // newsest ones first
+                    images = R.sortBy((i) => - i.sort, images);
 
                     resolve();
                 });
