@@ -141,7 +141,8 @@
                         name: img.Key,
                         likes: 0,
                         dislikes: 0,
-                        title: ''
+                        title: '',
+                        sort: img.LastModified.getTime()
                     };
                 }, files);
 
