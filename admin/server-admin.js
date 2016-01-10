@@ -107,8 +107,6 @@
                             dislikes: 0
                     }), newbies);
 
-                    console.log('newbies', JSON.stringify(newbies));
-
                     db.collection('images').insertAsync(newbies).then(function() {
                         resolve();
                     });
