@@ -73,14 +73,14 @@
 
     let sorterRandom = function(xy) {
 
-      let xy2 = R.sortBy(() => math.random(), xy);
+        let xy2 = R.sortBy(() => math.random(), xy);
 
-      let points = 1 + Rp.bandomInt(xy.length, -2);
+        let points = 1 + Rp.bandomInt(xy.length, -2);
 
-      // sparse
-      xy2 = R.take(points, xy2);
+        // sparse
+        xy2 = R.take(points, xy2);
 
-      return xy2;
+        return xy2;
     }
 
     sorterRandom.title = "sorter-random";
@@ -89,16 +89,15 @@
 
     let sorterLight = function(xy, data) {
 
-      let xy2 = R.sortBy((p) => {
+        let xy2 = R.sortBy((p) => {
 
-        let rgb = data[p.x][p.y].rgb;
-        let hsl = clr.rgb2hsl(rgb);
+            let rgb = data[p.x][p.y].rgb;
+            let hsl = clr.rgb2hsl(rgb);
 
-        return hsl.l;
+            return hsl.l;
+        }, xy);
 
-      }, xy);
-
-      return xy2;
+        return xy2;
     }
 
     sorterLight.title = "sorter-light";
@@ -181,7 +180,56 @@
     shapeLine.isFilled = false;
     shapeLine.title = 'shaper-line';
 
-    let shapers = [shapeEllipse, shapeRect, shapeLine];
+    // lines
+    // join random points
+
+    let shapeLines = function(svgf, options) {
+
+        let xy = options.points;
+
+
+        let x1 = options.x;
+        let y1 = options.y;
+
+        let rgb1 = options.rgb;
+
+        let z = math.randomInt(0, xy.length);
+        let xx2 = xy[z].x;
+        let yy2 = xy[z].y;
+        let x2 = xx2 + options.inputWidth / 2 - options.outputWidth / 2;
+        let y2 = yy2 + options.inputHeight / 2 - options.outputHeight / 2;
+        let rgb2 = options.data[x2][y2].rgb;
+
+        let hsl2 = clr.rgb2hsl(rgb2);
+        let opacity2 = math.round((1 - hsl2.l) / options.strokeWidth, 2);
+
+        if (x2 < x1) {
+            // swap
+
+            let rgb3 = rgb1;
+            rgb1 = {
+                r: rgb2.r,
+                g: rgb2.g,
+                b: rgb2.b
+            };
+            rgb2 = rgb3;
+        }
+
+        // defs
+        svgf.write(`<defs>\n`);
+        svgf.write(`<linearGradient id="grad${x1}-${y1}-${x2}-${y2}" x1="0%" y1="0%" x2="100%" y2="0%">\n`);
+        svgf.write(`<stop offset="0%" style="stop-color:rgb(${rgb1.r},${rgb1.g},${rgb1.b});stop-opacity:${options.opacity}" />\n`);
+        svgf.write(`<stop offset="100%" style="stop-color:rgb(${rgb2.r},${rgb2.g},${rgb2.b});stop-opacity:${opacity2}" />\n`);
+        svgf.write(`</linearGradient>\n`);
+        svgf.write(`</defs>\n`);
+
+        svgf.write(`<line x1="${options.x}" y1="${options.y}"  x2="${x2}" y2="${y2}" stroke="url(#grad${x1}-${y1}-${x2}-${y2})" stroke-width="${options.strokeWidth}"  />\n`);
+    };
+
+    shapeLines.isFilled = false;
+    shapeLines.title = 'shaper-lines';
+
+    let shapers = [ /* shapeEllipse, shapeRect, shapeLine, */ shapeLines];
 
     // ------------ output to svg
 
@@ -217,7 +265,7 @@
             // if no filler, ensure stroker has color
             var stroker;
 
-            if (!filler.hasColor || ! shaper.isFilled) {
+            if (!filler.hasColor || !shaper.isFilled) {
                 stroker = strokerColor;
             }
             else {
@@ -256,13 +304,16 @@
 
                 xy = sorter(xy, data);
 
+                // debug less
+                // xy = R.take(10000, xy);
+
                 for (let z = 0; z < xy.length; z++) {
 
                     let yy = xy[z].y;
                     let xx = xy[z].x;
 
-                    let y = yy + inputHeight / 2 - outputHeight / 2;
                     let x = xx + inputWidth / 2 - outputWidth / 2;
+                    let y = yy + inputHeight / 2 - outputHeight / 2;
                     let rgb = data[x][y].rgb;
 
                     let hsl = clr.rgb2hsl(rgb);
@@ -278,8 +329,10 @@
 
                     let options = {
                         strokeWidth: strokeWidth,
-                        x: xx,
-                        y: yy,
+                        points: xy,
+                        data: data,
+                        x: x,
+                        y: y,
                         width: width,
                         height: height,
                         rgb: rgb,
@@ -287,7 +340,11 @@
                         filler: filler,
                         stroker: stroker,
                         angle: angle,
-                        rounded: rounded
+                        rounded: rounded,
+                        inputWidth: inputWidth,
+                        inputHeight: inputHeight,
+                        outputWidth: outputWidth,
+                        outputHeight: outputHeight
                     };
 
                     shaper(svgf, options);
@@ -326,8 +383,7 @@
 
             // console.log(files);
 
-            promise.each(files, createSvg).then(function() {
-            });
+            promise.each(files, createSvg).then(function() {});
         }
         else {
             console.log('usage: node --harmony svg-image path ...');
