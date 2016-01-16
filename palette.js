@@ -84,7 +84,7 @@
 
             // analogous complementary color scheme (adjacents & complemt)
 
-            var hue = selectHue([], wues);
+            var hue = selectHue([3, 5], wues);
 
             palette.mainHue = hue * 12;
 
@@ -295,7 +295,7 @@
           name: "tetradic",
           fn: function(palette, wues) {
 
-            var hue = selectHue([], wues);
+            var hue = selectHue([7, 8], wues);
 
             palette.mainHue = hue * 12;
 
@@ -406,16 +406,7 @@
 
     // less green, brown, purple
 
-    var ok = ! R.contains(h12, [3, 3.5, 5, 9.5]);
-
-    // no green
-    // ok = ok && !(h12 >= 2 && h12 < 6);
-
-    // no orange/brown
-    // ok = ok && !(h12 >= 0.5 && h12 <= 1);
-
-    // no purple
-    // ok = ok && !(h12 >= 8.5 && h12 <= 11);
+    var ok = ! R.contains(h12, [3, 3.5, 5, 5.5, 9.5]);
 
     return ok;
   };
@@ -456,7 +447,7 @@
     return l;
   };
 
-  var getSaturation = function(hue) {
+  var getSaturation = function(/*hue*/) {
 
     // brightish
     // var s = Rp.bandom(1, -4);
