@@ -7,7 +7,14 @@
     // nohup node --harmony ~/functal/svg-image.js &
 
     // choosing a random selection of files
+    // cd /data/functal/functals/all-images
     // mv `ls | shuf | head -n 250` ../medium
+
+    // cd ~/functal
+    // nohup ./svg-s3&
+
+    // run locally
+    // rsvg-convert --unlimited functal-20150521220606941.svg | convert - functal-20150521220606941.jpg
 
     var seedrandom = require('seedrandom');
     var randomSeed = (new Date()).getTime();
