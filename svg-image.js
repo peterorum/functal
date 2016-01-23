@@ -2,16 +2,22 @@
 
     "use strict";
 
-    // from folder above functals/medium...
-    // eg cd /data/functal
-    // nohup node --harmony ~/functal/svg-image.js &
+    /* choosing a random selection of files
 
-    // choosing a random selection of files
-    // cd /data/functal/functals/all-images
-    // mv `ls | shuf | head -n 250` ../medium
+    cd /data/functal/functals/all-images
+    mv `ls | shuf | head -n 250` ../medium
 
-    // cd ~/functal
-    // nohup ./svg-s3&
+    */
+
+    /* from folder above functals/medium...
+       eg cd /data/functal
+
+     nohup node --harmony ~/functal/svg-image.js &
+
+     cd ~/functal
+     nohup ./svg-s3&
+
+   */
 
     // run locally
     // rsvg-convert --unlimited functal-20150521220606941.svg | convert - functal-20150521220606941.jpg
@@ -92,7 +98,7 @@
 
     sorterRandom.title = "sorter-random";
 
-    // dark ones drawn first
+    // light ones drawn last
 
     let sorterLight = function(xy, data) {
 
@@ -109,7 +115,77 @@
 
     sorterLight.title = "sorter-light";
 
-    let sorters = [sorterRandom, sorterLight];
+    // Dark ones drawn last
+
+    let sorterDark = function(xy, data) {
+
+        let xy2 = R.sortBy((p) => {
+
+            let rgb = data[p.x][p.y].rgb;
+            let hsl = clr.rgb2hsl(rgb);
+
+            return -hsl.l;
+        }, xy);
+
+        return xy2;
+    }
+
+    sorterDark.title = "sorter-dark";
+
+    // Most intense means full saturation at 0.5 light
+
+    let sorterIntensity = function(xy, data) {
+
+        let xy2 = R.sortBy((p) => {
+
+            let rgb = data[p.x][p.y].rgb;
+            let hsl = clr.rgb2hsl(rgb);
+
+            return hsl.s * (1 - 2 * math.abs(0.5 - hsl.l));
+        }, xy);
+
+        return xy2;
+    }
+
+    sorterIntensity.title = "sorter-intensity";
+
+    // sort by hue
+
+    let sorterHue = function(xy, data) {
+
+        let hueOffset = math.random(0, 1);
+
+        let xy2 = R.sortBy((p) => {
+
+            let rgb = data[p.x][p.y].rgb;
+            let hsl = clr.rgb2hsl(rgb);
+
+            return math.mod(hsl.h + hueOffset, 1);
+        }, xy);
+
+        return xy2;
+    }
+
+    sorterHue.title = "sorter-hue";
+
+    // sort by saturation
+
+    let sorterSaturation = function(xy, data) {
+
+        let xy2 = R.sortBy((p) => {
+
+            let rgb = data[p.x][p.y].rgb;
+            let hsl = clr.rgb2hsl(rgb);
+
+            return hsl.s;
+        }, xy);
+
+        return xy2;
+    }
+
+    sorterSaturation.title = "sorter-saturation";
+
+    let sorters = [sorterIntensity, sorterSaturation, sorterHue, sorterRandom, sorterLight, sorterDark];
 
     //------------- fillers
 
@@ -181,26 +257,25 @@
     // rotates by hue
 
     let shapeLine = function(svgf, options) {
-        svgf.write(`<line x1="${options.x - options.width / 2}" x2="${options.x + options.width / 2}"  y1="${options.y - options.height / 2}" y2="${options.y + options.height / 2}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" transform="rotate(${options.angle}, ${options.x}, ${options.y} )" />\n`);
+        svgf.write(`<line x1="${options.x - options.width / 2}" x2="${options.x + options.width / 2}"  y1="${options.y - options.height / 2}" y2="${options.y + options.height / 2}" stroke="${options.stroker(options)}" stroke-width="${options.strokeWidth}" transform="rotate(${options.angle}, ${options.x}, ${options.y} )" stroke-linecap="round" />\n`);
     };
 
     shapeLine.isFilled = false;
     shapeLine.title = 'shaper-line';
 
-    // lines
-    // join random points
+    // common lines function
 
-    let shapeLines = function(svgf, options) {
+    let shapeLinesDraw = function(svgf, options, point2) {
 
         let xy = options.points;
-
 
         let x1 = options.x;
         let y1 = options.y;
 
         let rgb1 = options.rgb;
 
-        let z = math.randomInt(0, xy.length);
+        let z = point2;
+
         let xx2 = xy[z].x;
         let yy2 = xy[z].y;
         let x2 = xx2 + options.inputWidth / 2 - options.outputWidth / 2;
@@ -230,13 +305,39 @@
         svgf.write(`</linearGradient>\n`);
         svgf.write(`</defs>\n`);
 
-        svgf.write(`<line x1="${options.x}" y1="${options.y}"  x2="${x2}" y2="${y2}" stroke="url(#grad${x1}-${y1}-${x2}-${y2})" stroke-width="${options.strokeWidth}"  />\n`);
+        svgf.write(`<line x1="${options.x}" y1="${options.y}"  x2="${x2}" y2="${y2}" stroke="url(#grad${x1}-${y1}-${x2}-${y2})" stroke-width="${options.strokeWidth}" stroke-linecap="round" />\n`);
     };
 
-    shapeLines.isFilled = false;
-    shapeLines.title = 'shaper-lines';
 
-    let shapers = [ /* shapeEllipse, shapeRect, shapeLine, */ shapeLines];
+
+    // lines
+    // join random points
+
+    let shapeLinesRandom = function(svgf, options) {
+
+        let point2 = math.randomInt(0, options.points.length);
+
+        shapeLinesDraw(svgf, options, point2);
+    };
+
+    shapeLinesRandom.isFilled = false;
+    shapeLinesRandom.title = 'shaper-lines-random';
+
+    // lines
+    // join sequential points
+
+    let shapeLinesSequential = function(svgf, options) {
+
+        let point2 = (options.currentPoint + 1) % options.points.length;
+
+        shapeLinesDraw(svgf, options, point2);
+    };
+
+    shapeLinesSequential.isFilled = false;
+    shapeLinesSequential.title = 'shaper-lines-sequential';
+
+
+    let shapers = [shapeEllipse, shapeRect, shapeLine, shapeLinesRandom, shapeLinesSequential];
 
     // ------------ output to svg
 
@@ -312,7 +413,7 @@
                 xy = sorter(xy, data);
 
                 // debug less
-                // xy = R.take(10000, xy);
+                // xy = R.take(100, xy);
 
                 for (let z = 0; z < xy.length; z++) {
 
@@ -340,6 +441,7 @@
                         data: data,
                         x: x,
                         y: y,
+                        currentPoint: z,
                         width: width,
                         height: height,
                         rgb: rgb,
