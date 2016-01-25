@@ -7,15 +7,8 @@
     cd /data/functal/functals/all-images
     mv `ls | shuf | head -n 250` ../medium
 
-    */
-
-    /* from folder above functals/medium...
-       eg cd /data/functal
-
-     nohup node --harmony ~/functal/svg-image.js &
-
-     cd ~/functal
-     nohup ./svg-s3&
+    cd ~/functal
+    nohup ./svg-s3&
 
    */
 
