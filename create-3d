@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo $1
+
+echo create 3d
+node --harmony 3d-image.js "$1"
+
+if [ -s "${1/\.jpg/.html}" ]
+then
+  echo convert to jpg
+  slimerjs 3d2jpg.js "${1/\.jpg/.html}"
+else
+  echo zero length file
+fi
+

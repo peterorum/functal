@@ -3,7 +3,8 @@
   "env": {
     "es6": true,
     "node": true,
-    "jasmine": true
+    "jasmine": true,
+    "browser": true
   },
   "ecmaFeatures": {
     "modules": true
@@ -15,7 +16,10 @@
     "module": true,
     "inject": true,
     "moment": true,
-    "R": true // ramda
+    "R": true, // ramda
+    "THREE": true,
+    "slimer": true,
+    "phantom": true
   },
   "rules" : {
     "no-console": 0
