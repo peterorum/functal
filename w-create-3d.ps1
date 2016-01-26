@@ -19,7 +19,11 @@ foreach ($file in $files) {
 
     slimerjs $cwd\3d2jpg.js $f".html";
 
+    write-host "Moving to s3"
+
     aws s3 cp $f"-3d.jpg" s3://functal-images --acl="public-read"
+
+    write-host "Deleting"
 
     remove-item $f".jpg"
     remove-item $f".html"
@@ -28,4 +32,4 @@ foreach ($file in $files) {
     cd $cwd
 }
 
-Write-Host "There are $count files with the pattern $filer in folder $path"
+Write-Host "There were $count files with the pattern $filter in folder $path"
