@@ -14,7 +14,7 @@ page.open(phantom.args[0])
             page.render(phantom.args[0].replace(/\.html/, '-3d.jpg'))
         }
         else {
-            console.log("Sorry, the page is not loaded");
+            console.log("Sorry, the page is not loaded.", status);
         }
 
         page.close();

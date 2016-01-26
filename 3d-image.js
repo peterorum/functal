@@ -84,7 +84,7 @@
             var outputWidth = inputWidth;
             var outputHeight = inputHeight;
 
-            var maxz = Rp.bandomInt(outputHeight, 3);
+            var maxz = Rp.bandomInt(outputHeight, 2);
             console.log('maxz ' , maxz);
 
             try {
