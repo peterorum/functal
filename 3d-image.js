@@ -129,7 +129,7 @@
 
                       var s = new THREE.Scene();
 
-                      var camera = new THREE.PerspectiveCamera( 75, width / height, 1, 10000 );
+                      var camera = new THREE.PerspectiveCamera( 75, width / height, 1, 1000 );
                       camera.position.z = 1000;
                 \n`);
 
@@ -145,9 +145,9 @@
                     }
                 }
 
-                // debug less
+                // use a small % of points otherwise too big to render
                 xy = R.sortBy(() => math.random(), xy);
-                // xy = R.take(100000, xy);
+                xy = R.take(xy.length * 0.3, xy);
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -162,7 +162,7 @@
 
                     // 3d coords
                     let x3 = (x / inputWidth) * outputWidth - outputWidth / 2;
-                    let y3 = (y / inputHeight) * outputHeight - outputHeight / 2;
+                    let y3 = - ((y / inputHeight) * outputHeight - outputHeight / 2);
 
                     let z3 = math.round(hsl.l * maxz, 0); /// outputHeight;
 

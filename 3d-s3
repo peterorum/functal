@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# convert all found files, one at a time, to svg & transfer to s3
+
+# kill orphaned firefox icons
+# killall -KILL Dock
+
+# find /data/functal/functals/medium/*.jpg -type f -exec bash -c './create-svg "$0"' {} \;
+find functals/small/*.jpg -type f -exec bash -c './create-3d "$0"' {} \;
+
+# sudo shutdown -h now
