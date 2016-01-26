@@ -2,6 +2,9 @@
 
     "use strict";
 
+    /* download files
+    aws s3 cp s3://functal-images . --recursive --exclude "*-svg.jpg" --exclude "*-3d.jpg"
+
     /* choosing a random selection of files
 
     cd /data/functal/functals/all-images
