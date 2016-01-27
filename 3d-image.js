@@ -84,7 +84,7 @@
             var outputWidth = inputWidth;
             var outputHeight = inputHeight;
 
-            var maxz = Rp.bandomInt(outputHeight, 3);
+            var maxz = Rp.bandomInt(outputHeight, 2);
             console.log('maxz ' , maxz);
 
             try {
@@ -147,7 +147,7 @@
 
                 // use a small % of points otherwise too big to render
                 xy = R.sortBy(() => math.random(), xy);
-                xy = R.take(xy.length * 0.3, xy);
+                xy = R.take(xy.length * 0.2, xy);
 
                 for (let k = 0; k < xy.length; k++) {
 
