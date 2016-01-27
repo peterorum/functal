@@ -33,3 +33,6 @@ foreach ($file in $files) {
 }
 
 Write-Host "There were $count files with the pattern $filter in folder $path"
+
+# sleep
+psshutdown -d -t 0
