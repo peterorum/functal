@@ -84,7 +84,7 @@
             var outputWidth = inputWidth;
             var outputHeight = inputHeight;
 
-            var maxz = Rp.bandomInt(outputHeight, 2);
+            var maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
             console.log('maxz ' , maxz);
 
             try {
@@ -97,7 +97,7 @@
                     <title>${outputFilename}</title>
                     <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.min.js'></script>
                 </head>
-                <body style='margin:0; padding:0'>\n`);
+                <body style='margin:0; padding:0; overflow: hidden'>\n`);
 
                 // add line
                 outf.write(`<script>
@@ -129,8 +129,17 @@
 
                       var s = new THREE.Scene();
 
-                      var camera = new THREE.PerspectiveCamera( 75, width / height, 1, 1000 );
-                      camera.position.z = 1000;
+                      var planeGeometry = new THREE.PlaneGeometry(60, 20);
+                      var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
+                      var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+                      // rotate and position the plane
+                      plane.rotation.x = -0.5 * Math.PI;
+                      plane.position.x = 15;
+                      plane.position.y = 0;
+                      plane.position.z = 0;
+
+                      s.add(plane);
                 \n`);
 
                 let xy = [];
@@ -173,6 +182,12 @@
 
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
+
+                  var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+                  camera.position.z = 1000;
+
+                  renderer.setClearColor(new THREE.Color(0xEEEEEE));
+
                   renderer.setSize( width, height );
 
                   document.body.appendChild( renderer.domElement );
