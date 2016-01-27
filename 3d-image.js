@@ -129,18 +129,25 @@
 
                       var s = new THREE.Scene();
 
-                      var planeGeometry = new THREE.PlaneGeometry(60, 20);
-                      var planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
+                      var planeGeometry = new THREE.PlaneGeometry(width, height);
+                      var planeMaterial = new THREE.MeshBasicMaterial({color: 0xff6600});
                       var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-
-                      // rotate and position the plane
-                      plane.rotation.x = -0.5 * Math.PI;
-                      plane.position.x = 15;
-                      plane.position.y = 0;
-                      plane.position.z = 0;
-
-                      s.add(plane);
                 \n`);
+
+                // outf.write(`
+                //       var planeGeometry = new THREE.PlaneGeometry(width, height);
+                //       var planeMaterial = new THREE.MeshBasicMaterial({color: 0xff6600});
+                //       var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+                //       // rotate and position the plane
+                //       plane.rotation.x = -0.5 * Math.PI;
+                //       plane.position.x = 15;
+                //       plane.position.y = 0;
+                //       plane.position.z = 0;
+
+                //       s.add(plane);
+                // \n`);
+
 
                 let xy = [];
 
@@ -157,6 +164,7 @@
                 // use a small % of points otherwise too big to render
                 xy = R.sortBy(() => math.random(), xy);
                 xy = R.take(xy.length * 0.2, xy);
+                // xy = R.take(1000, xy); // debug
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -180,13 +188,20 @@
 
                 // end
 
+                let backgroundColor = '0x000000';
+
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
 
                   var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
-                  camera.position.z = 1000;
 
-                  renderer.setClearColor(new THREE.Color(0xEEEEEE));
+                  camera.position.x = ${ Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()};
+                  camera.position.y = ${ Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()};
+                  camera.position.z = ${ Rp.bandomInt(1000, -2)};
+
+                  camera.lookAt(s.position);
+
+                  renderer.setClearColor(new THREE.Color(${backgroundColor}));
 
                   renderer.setSize( width, height );
 
