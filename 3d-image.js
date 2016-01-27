@@ -96,6 +96,8 @@
                     <meta charset='UTF-8'>
                     <title>${outputFilename}</title>
                     <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.min.js'></script>
+                    // <script src='../3d/lib/renderer/Projector.js'></script>
+                    // <script src='../3d/lib/renderer/SVGRenderer.js'></script>
                 </head>
                 <body style='margin:0; padding:0; overflow: hidden'>\n`);
 
@@ -190,7 +192,9 @@
 
                 let backgroundColor = '0x000000';
 
+
                 outf.write(`
+                  // var renderer = new THREE.SVGRenderer();
                   var renderer = new THREE.WebGLRenderer();
 
                   var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
