@@ -96,8 +96,6 @@
                     <meta charset='UTF-8'>
                     <title>${outputFilename}</title>
                     <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.min.js'></script>
-                    // <script src='../3d/lib/renderer/Projector.js'></script>
-                    // <script src='../3d/lib/renderer/SVGRenderer.js'></script>
                 </head>
                 <body style='margin:0; padding:0; overflow: hidden'>\n`);
 
@@ -165,7 +163,7 @@
 
                 // use a small % of points otherwise too big to render
                 xy = R.sortBy(() => math.random(), xy);
-                xy = R.take(xy.length * 0.2, xy);
+                xy = R.take(xy.length * 0.18, xy);
                 // xy = R.take(1000, xy); // debug
 
                 for (let k = 0; k < xy.length; k++) {
@@ -194,7 +192,6 @@
 
 
                 outf.write(`
-                  // var renderer = new THREE.SVGRenderer();
                   var renderer = new THREE.WebGLRenderer();
 
                   var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );

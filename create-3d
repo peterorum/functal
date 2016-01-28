@@ -1,5 +1,5 @@
 #!/bin/sh
 echo create 3d "$1"
 node --harmony 3d-image.js "${1}"
-echo convert to jpg
-slimerjs 3d2jpg.js "${1/\.jpg/.html}"
+#echo convert to jpg
+#slimerjs 3d2jpg.js "${1/\.jpg/.html}"
