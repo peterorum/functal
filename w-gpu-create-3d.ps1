@@ -14,7 +14,7 @@ foreach ($file in $files) {
 
     get-date -format r
 
-    Write-Host "#$count: Making 3d from "$f;
+    Write-Host $count": Making 3d from "$f;
 
     node 3d-image.js $path$f".jpg";
 
