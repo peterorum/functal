@@ -222,14 +222,16 @@
                   spotLight.castShadow = true;
                   scene.add(spotLight);
 
-                  var ambientLight = new THREE.AmbientLight(${randomColor(params, 0.25)});
-                  scene.add(ambientLight);
+                  // var ambientLight = new THREE.AmbientLight(${randomColor(params, 0.25)});
+                  // scene.add(ambientLight);
 
                   renderer.setClearColor(new THREE.Color(${backgroundColor}));
 
                   renderer.setSize( width, height );
 
                   renderer.shadowMapEnabled = true;
+
+                  // scene.fog = new THREE.FogExp2(0xffffff, 0.00025);
 
                   document.body.appendChild( renderer.domElement );
                 \n`);
