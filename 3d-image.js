@@ -108,7 +108,7 @@
             console.log('maxRadius ', maxRadius);
 
             let maxShininess = math.randomInt(0, 256);
-            console.log('maxShininess ' , maxShininess);
+            console.log('maxShininess ', maxShininess);
 
             try {
                 var outf = fs.createWriteStream(`${outputFilename}`);
@@ -260,11 +260,17 @@
                   camera.position.z = ${ Rp.bandomInt(1000, -2)};
 
                   camera.lookAt(s.position);
+                  \n`);
 
-                  var spotLight = new THREE.SpotLight(${randomColor(params, 1)});
-                  spotLight.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
-                  scene.add(spotLight);
+                for (let i = 0; i < 3; i++) {
+                    outf.write(`
+                  var spotLight${i} = new THREE.SpotLight(${randomColor(params, 1)});
+                  spotLight${i}.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
+                  scene.add(spotLight${i});
+                  \n`);
+                }
 
+                outf.write(`
                   var ambientLight = new THREE.AmbientLight(${randomColor(params, 0.25)});
                   scene.add(ambientLight);
 
