@@ -76,7 +76,7 @@
       let rgb = params.data[x][y].rgb;
 
       let color = `0x${num2hex(math.floor(rgb.r * maxLightness))}${num2hex(math.floor(rgb.g * maxLightness))}${num2hex(math.floor(rgb.b * maxLightness))}`;
-      console.log('color ' , color);
+      // console.log('color ' , color);
 
       return color;
     }
