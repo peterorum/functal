@@ -66,6 +66,20 @@
         return (d < 16 ? "0" : "") + d.toString(16);
     }
 
+    function randomColor(params, maxLightness) {
+      let k = math.randomInt(params.xy.length);
+      let yy = params.xy[k].y;
+      let xx = params.xy[k].x;
+
+      let x = xx + params.inputWidth / 2 - params.outputWidth / 2;
+      let y = yy + params.inputHeight / 2 - params.outputHeight / 2;
+      let rgb = params.data[x][y].rgb;
+
+      let color = `0x${num2hex(math.floor(rgb.r * maxLightness))}${num2hex(math.floor(rgb.g * maxLightness))}${num2hex(math.floor(rgb.b * maxLightness))}`;
+      console.log('color ' , color);
+
+      return color;
+    }
 
     // ------------ output to html+three.js
 
@@ -125,6 +139,8 @@
                 </script>\n`);
 
                 // add cylinder
+                // todo: open/closed ends. vary radius.
+
                 outf.write(`<script>
                 function cyl(scene, options) {
                   var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, 64);
@@ -135,6 +151,9 @@
                   cylinder.position.x = options.x;
                   cylinder.position.y = options.y;
                   cylinder.position.z = 0;
+
+                  cylinder.castShadow = true;
+                  cylinder.receiveShadow = true;
 
                   scene.add(cylinder);
                 }
@@ -174,6 +193,17 @@
 
                 xy = R.sortBy(() => math.random(), xy);
                 xy = R.take(xy.length * sample, xy);
+
+
+                let params = {
+                  xy: xy,
+                  data: data,
+                  inputWidth: inputWidth,
+                  inputHeight: inputHeight,
+                  outputWidth: outputWidth,
+                  outputHeight: outputHeight
+                };
+
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -220,14 +250,19 @@
 
                   camera.lookAt(s.position);
 
-                  var spotLight = new THREE.SpotLight(0xffffff);
-                  spotLight.position.set(0, 0, 500);
+                  var spotLight = new THREE.SpotLight(${randomColor(params, 1)});
+                  spotLight.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
                   spotLight.castShadow = true;
                   scene.add(spotLight);
+
+                  var ambientLight = new THREE.AmbientLight(${randomColor(params, 0.25)});
+                  scene.add(ambientLight);
 
                   renderer.setClearColor(new THREE.Color(${backgroundColor}));
 
                   renderer.setSize( width, height );
+
+                  renderer.shadowMapEnabled = true;
 
                   document.body.appendChild( renderer.domElement );
 
