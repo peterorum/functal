@@ -110,6 +110,9 @@
             let maxShininess = math.randomInt(0, 256);
             console.log('maxShininess ', maxShininess);
 
+            let spotLights = math.randomInt(1, 4);
+            console.log('spotLights ' , spotLights);
+
             try {
                 var outf = fs.createWriteStream(`${outputFilename}`);
 
@@ -262,7 +265,7 @@
                   camera.lookAt(s.position);
                   \n`);
 
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < spotLights; i++) {
                     outf.write(`
                   var spotLight${i} = new THREE.SpotLight(${randomColor(params, 1)});
                   spotLight${i}.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
