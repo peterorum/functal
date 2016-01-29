@@ -107,6 +107,9 @@
             let maxRadius = 10 + Rp.bandomInt(128 - 10, 2);
             console.log('maxRadius ', maxRadius);
 
+            let maxShininess = math.randomInt(0, 256);
+            console.log('maxShininess ' , maxShininess);
+
             try {
                 var outf = fs.createWriteStream(`${outputFilename}`);
 
@@ -149,7 +152,7 @@
                     color: options.color,
                     opacity: options.opacity,
                     transparent: true,
-                    shininess: 255
+                    shininess: options.shininess
                   } );
 
                   var cylinder = new THREE.Mesh( geometry, material );
@@ -220,13 +223,16 @@
 
                     let opacity = hsl.l;
 
+                    let shininess = maxShininess;
+
                     outf.write(`cyl(s, {
                       x: ${x3},
                       y: ${y3},
                       z: ${z3},
                       color: 0x${num2hex(rgb.r)}${num2hex(rgb.g)}${num2hex(rgb.b)},
                       radius: ${radius},
-                      opacity: ${opacity}
+                      opacity: ${opacity},
+                      shininess: ${shininess}
                     });
                     \n`);
                 }
