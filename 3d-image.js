@@ -66,20 +66,6 @@
         return (d < 16 ? "0" : "") + d.toString(16);
     }
 
-    function randomColor(params, maxLightness) {
-      let k = math.randomInt(params.xy.length);
-      let yy = params.xy[k].y;
-      let xx = params.xy[k].x;
-
-      let x = xx + params.inputWidth / 2 - params.outputWidth / 2;
-      let y = yy + params.inputHeight / 2 - params.outputHeight / 2;
-      let rgb = params.data[x][y].rgb;
-
-      let color = `0x${num2hex(math.floor(rgb.r * maxLightness))}${num2hex(math.floor(rgb.g * maxLightness))}${num2hex(math.floor(rgb.b * maxLightness))}`;
-      // console.log('color ' , color);
-
-      return color;
-    }
 
     // ------------ output to html+three.js
 
@@ -103,7 +89,7 @@
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
             console.log('maxz ', maxz);
 
-            let maxRadius = 10 + Rp.bandomInt(128 - 10, 2);
+            let maxRadius = 4 + Rp.bandomInt(128, 2);
             console.log('maxRadius ' , maxRadius);
 
             try {
@@ -152,8 +138,7 @@
                   cylinder.position.y = options.y;
                   cylinder.position.z = 0;
 
-                  cylinder.castShadow = true;
-                  cylinder.receiveShadow = true;
+
 
                   scene.add(cylinder);
                 }
@@ -194,48 +179,6 @@
                 xy = R.sortBy(() => math.random(), xy);
                 xy = R.take(xy.length * sample, xy);
 
-
-                let params = {
-                  xy: xy,
-                  data: data,
-                  inputWidth: inputWidth,
-                  inputHeight: inputHeight,
-                  outputWidth: outputWidth,
-                  outputHeight: outputHeight
-                };
-
-                let backgroundColor = '0x000000';
-
-                outf.write(`
-                  var renderer = new THREE.WebGLRenderer();
-
-                  var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
-
-                  camera.position.x = ${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()};
-                  camera.position.y = ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()};
-                  camera.position.z = ${ Rp.bandomInt(1000, -2)};
-
-                  camera.lookAt(s.position);
-
-                  var spotLight = new THREE.SpotLight(${randomColor(params, 1)});
-                  spotLight.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
-                  spotLight.castShadow = true;
-                  scene.add(spotLight);
-
-                  // var ambientLight = new THREE.AmbientLight(${randomColor(params, 0.25)});
-                  // scene.add(ambientLight);
-
-                  renderer.setClearColor(new THREE.Color(${backgroundColor}));
-
-                  renderer.setSize( width, height );
-
-                  renderer.shadowMapEnabled = true;
-
-                  // scene.fog = new THREE.FogExp2(0xffffff, 0.00025);
-
-                  document.body.appendChild( renderer.domElement );
-                \n`);
-
                 for (let k = 0; k < xy.length; k++) {
 
                     let yy = xy[k].y;
@@ -267,7 +210,33 @@
 
                 // end
 
+                let backgroundColor = '0x000000';
+
+
                 outf.write(`
+                  var renderer = new THREE.WebGLRenderer();
+
+                  var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+
+                  camera.position.x = ${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()};
+                  camera.position.y = ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()};
+                  camera.position.z = ${ Rp.bandomInt(1000, -2)};
+
+                  camera.lookAt(s.position);
+
+                  var spotLight = new THREE.SpotLight(0xffffff);
+                  spotLight.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
+                  spotLight.castShadow = true;
+                  scene.add(spotLight);
+
+                  renderer.setClearColor(new THREE.Color(${backgroundColor}));
+
+                  renderer.setSize( width, height );
+
+                  renderer.shadowMapEnabled = true;
+
+                  document.body.appendChild( renderer.domElement );
+
                   renderer.render( scene, camera );
                 \n`);
 
