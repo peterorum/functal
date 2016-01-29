@@ -6,9 +6,20 @@ let Promise = require('bluebird');
 
 let fs = Promise.promisifyAll(require("fs"));
 
-let driver = new webdriver.Builder()
-    .forBrowser('chrome')
-    .build();
+
+var firefox = require('selenium-webdriver/firefox');
+
+var profile = new firefox.Profile();
+profile.setPreference('webgl.force-enabled', true);
+profile.setPreference('dom.max_script_run_time', 0);
+
+var options = new firefox.Options().setProfile(profile);
+var driver = new firefox.Driver(options);
+
+
+// let driver = new webdriver.Builder()
+//     .forBrowser('firefox')
+//     .build();
 
 function saveScreenshot(data, filename) {
 
@@ -24,7 +35,7 @@ function forSizeToBe(w, h) {
 
             // console.log(size.width, size.height);
 
-            return size.width === w;// && size.height === h;
+            return size.width === w ; // && size.height === h;
         });
     };
 }
@@ -32,11 +43,13 @@ function forSizeToBe(w, h) {
 // no extension
 let file = process.argv[2];
 
-driver.manage().window().setSize(768, 1024);
+driver.manage().window().setSize(768, 1019);
 
-driver.wait(forSizeToBe(768, 1024), 1000);
+driver.wait(forSizeToBe(768, 1019), 1000);
 
 driver.get(`file://${file}.html`);
+
+// driver.sleep(6000000);
 
 driver.call(function* () {
 
