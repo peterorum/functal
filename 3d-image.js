@@ -231,8 +231,6 @@
 
                   renderer.shadowMapEnabled = true;
 
-                  scene.fog = new THREE.FogExp2(0xffffff, 0.00025);
-
                   document.body.appendChild( renderer.domElement );
                 \n`);
 
