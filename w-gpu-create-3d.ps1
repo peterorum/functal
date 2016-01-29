@@ -23,7 +23,7 @@ foreach ($file in $files) {
 
     node screenshot $path$f;
 
-    if (test-path $path$f".png"){
+    if (test-path $path$f".png")  {
 
       # crop bottom off to 768x1024 & convert to jpg
       write-host "Cropping to jpg"
