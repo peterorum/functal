@@ -1,7 +1,5 @@
 "use strict";
 
-let webdriver = require('selenium-webdriver');
-
 let Promise = require('bluebird');
 
 let fs = Promise.promisifyAll(require("fs"));
@@ -17,10 +15,6 @@ var options = new firefox.Options().setProfile(profile);
 var driver = new firefox.Driver(options);
 
 
-// let driver = new webdriver.Builder()
-//     .forBrowser('firefox')
-//     .build();
-
 function saveScreenshot(data, filename) {
 
     return fs.writeFileAsync(filename, data.replace(/^data:image\/png;base64,/, ""), 'base64')
@@ -29,13 +23,11 @@ function saveScreenshot(data, filename) {
         });
 }
 
-function forSizeToBe(w, h) {
+function forSizeToBe(w) {
     return function() {
         return driver.manage().window().getSize().then(function(size) {
 
-            // console.log(size.width, size.height);
-
-            return size.width === w ; // && size.height === h;
+            return size.width === w;
         });
     };
 }
@@ -43,9 +35,9 @@ function forSizeToBe(w, h) {
 // no extension
 let file = process.argv[2];
 
-driver.manage().window().setSize(768, 1019);
+driver.manage().window().setSize(768, 1024);
 
-driver.wait(forSizeToBe(768, 1019), 1000);
+driver.wait(forSizeToBe(768), 1000);
 
 driver.get(`file://${file}.html`);
 
@@ -56,4 +48,4 @@ driver.call(function* () {
     return saveScreenshot(yield driver.takeScreenshot(), `${file}.png`);
 });
 
-driver.quit();
+// driver.quit(6);

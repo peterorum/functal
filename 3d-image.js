@@ -22,6 +22,8 @@
     var promise = require("bluebird");
     var fs = promise.promisifyAll(require('fs'));
 
+    var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
+
     // load jpeg
 
     function loadJpeg(filename) {
@@ -61,7 +63,7 @@
     }
 
     function num2hex(d) {
-      return (d < 16 ? "0" : "") + d.toString(16);
+        return (d < 16 ? "0" : "") + d.toString(16);
     }
 
 
@@ -79,13 +81,16 @@
             let inputWidth = jpeg.width;
             let inputHeight = jpeg.height;
 
-            var outputFilename = filename.replace(/\.jpg/, '.html');
+            let outputFilename = filename.replace(/\.jpg/, '.html');
 
-            var outputWidth = inputWidth;
-            var outputHeight = inputHeight;
+            let outputWidth = inputWidth;
+            let outputHeight = inputHeight;
 
-            var maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
-            console.log('maxz ' , maxz);
+            let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
+            console.log('maxz ', maxz);
+
+            let maxRadius = 4 + Rp.bandomInt(128, 2);
+            console.log('maxRadius ' , maxRadius);
 
             try {
                 var outf = fs.createWriteStream(`${outputFilename}`);
@@ -101,7 +106,7 @@
 
                 // add line
                 outf.write(`<script>
-                function al(scene, x3, y3, z3, color) {
+                function ln(scene, x3, y3, z3, color) {
                   var geometry = new THREE.Geometry();
 
                   geometry.vertices.push(
@@ -119,6 +124,22 @@
                 }
                 </script>\n`);
 
+                // add cylinder
+                outf.write(`<script>
+                function cyl(scene, options) {
+                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, 64);
+                  var material = new THREE.MeshPhongMaterial( {color: options.color} );
+
+                  var cylinder = new THREE.Mesh( geometry, material );
+
+                  cylinder.position.x = options.x;
+                  cylinder.position.y = options.y;
+                  cylinder.position.z = 0;
+
+                  scene.add(cylinder);
+                }
+                </script>\n`);
+
                 outf.write(`<script>
                   draw();
 
@@ -127,27 +148,9 @@
                       var width = ${outputWidth};
                       var height = ${outputHeight};
 
-                      var s = new THREE.Scene();
-
-                      var planeGeometry = new THREE.PlaneGeometry(width, height);
-                      var planeMaterial = new THREE.MeshBasicMaterial({color: 0xff6600});
-                      var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+                      var scene = new THREE.Scene();
+                      var s = scene;
                 \n`);
-
-                // outf.write(`
-                //       var planeGeometry = new THREE.PlaneGeometry(width, height);
-                //       var planeMaterial = new THREE.MeshBasicMaterial({color: 0xff6600});
-                //       var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-
-                //       // rotate and position the plane
-                //       plane.rotation.x = -0.5 * Math.PI;
-                //       plane.position.x = 15;
-                //       plane.position.y = 0;
-                //       plane.position.z = 0;
-
-                //       s.add(plane);
-                // \n`);
-
 
                 let xy = [];
 
@@ -162,9 +165,15 @@
                 }
 
                 // use a small % of points otherwise too big to render
+
+                // 0.4 for lines
+
+                let sample = (isDev ? 1 : 1);
+
+                sample = sample / (maxRadius * maxRadius);
+
                 xy = R.sortBy(() => math.random(), xy);
-                xy = R.take(xy.length * 0.4, xy);
-                // xy = R.take(1000, xy); // debug
+                xy = R.take(xy.length * sample, xy);
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -179,11 +188,20 @@
 
                     // 3d coords
                     let x3 = (x / inputWidth) * outputWidth - outputWidth / 2;
-                    let y3 = - ((y / inputHeight) * outputHeight - outputHeight / 2);
+                    let y3 = -((y / inputHeight) * outputHeight - outputHeight / 2);
 
                     let z3 = math.round(hsl.l * maxz, 0); /// outputHeight;
 
-                    outf.write(`al(s, ${x3}, ${y3}, ${z3}, 0x${num2hex(rgb.r)}${num2hex(rgb.g)}${num2hex(rgb.b)});\n`);
+                    let radius = maxRadius;
+
+                    outf.write(`cyl(s, {
+                      x: ${x3},
+                      y: ${y3},
+                      z: ${z3},
+                      color: 0x${num2hex(rgb.r)}${num2hex(rgb.g)}${num2hex(rgb.b)},
+                      radius: ${radius}
+                    });
+                    \n`);
                 }
 
                 // end
@@ -196,11 +214,16 @@
 
                   var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
 
-                  camera.position.x = ${ Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()};
-                  camera.position.y = ${ Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()};
+                  camera.position.x = ${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()};
+                  camera.position.y = ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()};
                   camera.position.z = ${ Rp.bandomInt(1000, -2)};
 
                   camera.lookAt(s.position);
+
+                  var spotLight = new THREE.SpotLight(0xffffff);
+                  spotLight.position.set(0, 0, 500);
+                  spotLight.castShadow = true;
+                  scene.add(spotLight);
 
                   renderer.setClearColor(new THREE.Color(${backgroundColor}));
 
@@ -208,7 +231,7 @@
 
                   document.body.appendChild( renderer.domElement );
 
-                  renderer.render( s, camera );
+                  renderer.render( scene, camera );
                 \n`);
 
                 outf.write(`}
