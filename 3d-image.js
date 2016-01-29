@@ -163,7 +163,7 @@
 
                 // use a small % of points otherwise too big to render
                 xy = R.sortBy(() => math.random(), xy);
-                xy = R.take(xy.length * 0.75, xy);
+                xy = R.take(xy.length * 0.4, xy);
                 // xy = R.take(1000, xy); // debug
 
                 for (let k = 0; k < xy.length; k++) {
