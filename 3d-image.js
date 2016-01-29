@@ -103,7 +103,7 @@
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
             console.log('maxz ', maxz);
 
-            let maxRadius = 4 + Rp.bandomInt(128, 2);
+            let maxRadius = 10 + Rp.bandomInt(128 - 10, 2);
             console.log('maxRadius ' , maxRadius);
 
             try {
