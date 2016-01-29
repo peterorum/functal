@@ -23,14 +23,22 @@ foreach ($file in $files) {
 
     node screenshot $path$f;
 
-    # crop bottom off to 768x1024 & convert to jpg
-    write-host "Cropping to jpg"
+    if (test-path $path$f".png"){
 
-    convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
+      # crop bottom off to 768x1024 & convert to jpg
+      write-host "Cropping to jpg"
 
-    write-host "Moving to s3"
+      convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
 
-    aws s3 cp $path$f"-3d.jpg" s3://functal-images --acl="public-read"
+      write-host "Moving to s3"
+
+      aws s3 cp $path$f"-3d.jpg" s3://functal-images --acl="public-read"
+
+    } else {
+
+      write-host "==================== fail"
+
+    }
 
     write-host "Deleting"
 
