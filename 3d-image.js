@@ -67,18 +67,18 @@
     }
 
     function randomColor(params, maxLightness) {
-      let k = math.randomInt(params.xy.length);
-      let yy = params.xy[k].y;
-      let xx = params.xy[k].x;
+        let k = math.randomInt(params.xy.length);
+        let yy = params.xy[k].y;
+        let xx = params.xy[k].x;
 
-      let x = xx + params.inputWidth / 2 - params.outputWidth / 2;
-      let y = yy + params.inputHeight / 2 - params.outputHeight / 2;
-      let rgb = params.data[x][y].rgb;
+        let x = xx + params.inputWidth / 2 - params.outputWidth / 2;
+        let y = yy + params.inputHeight / 2 - params.outputHeight / 2;
+        let rgb = params.data[x][y].rgb;
 
-      let color = `0x${num2hex(math.floor(rgb.r * maxLightness))}${num2hex(math.floor(rgb.g * maxLightness))}${num2hex(math.floor(rgb.b * maxLightness))}`;
-      // console.log('color ' , color);
+        let color = `0x${num2hex(math.floor(rgb.r * maxLightness))}${num2hex(math.floor(rgb.g * maxLightness))}${num2hex(math.floor(rgb.b * maxLightness))}`;
+        // console.log('color ' , color);
 
-      return color;
+        return color;
     }
 
 
@@ -105,7 +105,7 @@
             console.log('maxz ', maxz);
 
             let maxRadius = 10 + Rp.bandomInt(128 - 10, 2);
-            console.log('maxRadius ' , maxRadius);
+            console.log('maxRadius ', maxRadius);
 
             try {
                 var outf = fs.createWriteStream(`${outputFilename}`);
@@ -145,7 +145,7 @@
                 outf.write(`<script>
                 function cyl(scene, options) {
                   var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, 64);
-                  var material = new THREE.MeshPhongMaterial( {color: options.color} );
+                  var material = new THREE.MeshPhongMaterial( {color: options.color, opacity: options.opacity, transparent: true} );
 
                   var cylinder = new THREE.Mesh( geometry, material );
 
@@ -213,12 +213,15 @@
 
                     let radius = maxRadius;
 
+                    let opacity = hsl.l;
+
                     outf.write(`cyl(s, {
                       x: ${x3},
                       y: ${y3},
                       z: ${z3},
                       color: 0x${num2hex(rgb.r)}${num2hex(rgb.g)}${num2hex(rgb.b)},
-                      radius: ${radius}
+                      radius: ${radius},
+                      opacity: ${opacity}
                     });
                     \n`);
                 }
@@ -228,12 +231,12 @@
                 let backgroundColor = '0x000000';
 
                 let params = {
-                  xy: xy,
-                  data: data,
-                  inputWidth: inputWidth,
-                  inputHeight: inputHeight,
-                  outputWidth: outputWidth,
-                  outputHeight: outputHeight
+                    xy: xy,
+                    data: data,
+                    inputWidth: inputWidth,
+                    inputHeight: inputHeight,
+                    outputWidth: outputWidth,
+                    outputHeight: outputHeight
                 };
 
                 outf.write(`
