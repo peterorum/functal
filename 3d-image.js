@@ -145,7 +145,12 @@
                 outf.write(`<script>
                 function cyl(scene, options) {
                   var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, 64);
-                  var material = new THREE.MeshPhongMaterial( {color: options.color, opacity: options.opacity, transparent: true} );
+                  var material = new THREE.MeshPhongMaterial( {
+                    color: options.color,
+                    opacity: options.opacity,
+                    transparent: true,
+                    shininess: 255
+                  } );
 
                   var cylinder = new THREE.Mesh( geometry, material );
 
