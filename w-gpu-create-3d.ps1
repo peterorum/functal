@@ -12,7 +12,9 @@ foreach ($file in $files) {
     $count ++;
     $f = [io.path]::GetFileNameWithoutExtension($file);
 
-    Write-Host "Making 3d from "$f;
+    get-date -format r
+
+    Write-Host "#$count: Making 3d from "$f;
 
     node 3d-image.js $path$f".jpg";
 

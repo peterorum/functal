@@ -204,6 +204,37 @@
                   outputHeight: outputHeight
                 };
 
+                let backgroundColor = '0x000000';
+
+                outf.write(`
+                  var renderer = new THREE.WebGLRenderer();
+
+                  var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+
+                  camera.position.x = ${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()};
+                  camera.position.y = ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()};
+                  camera.position.z = ${ Rp.bandomInt(1000, -2)};
+
+                  camera.lookAt(s.position);
+
+                  var spotLight = new THREE.SpotLight(${randomColor(params, 1)});
+                  spotLight.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
+                  spotLight.castShadow = true;
+                  scene.add(spotLight);
+
+                  var ambientLight = new THREE.AmbientLight(${randomColor(params, 0.25)});
+                  scene.add(ambientLight);
+
+                  renderer.setClearColor(new THREE.Color(${backgroundColor}));
+
+                  renderer.setSize( width, height );
+
+                  renderer.shadowMapEnabled = true;
+
+                  scene.fog = new THREE.FogExp2(0xffffff, 0.00025);
+
+                  document.body.appendChild( renderer.domElement );
+                \n`);
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -236,36 +267,7 @@
 
                 // end
 
-                let backgroundColor = '0x000000';
-
-
                 outf.write(`
-                  var renderer = new THREE.WebGLRenderer();
-
-                  var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
-
-                  camera.position.x = ${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()};
-                  camera.position.y = ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()};
-                  camera.position.z = ${ Rp.bandomInt(1000, -2)};
-
-                  camera.lookAt(s.position);
-
-                  var spotLight = new THREE.SpotLight(${randomColor(params, 1)});
-                  spotLight.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
-                  spotLight.castShadow = true;
-                  scene.add(spotLight);
-
-                  var ambientLight = new THREE.AmbientLight(${randomColor(params, 0.25)});
-                  scene.add(ambientLight);
-
-                  renderer.setClearColor(new THREE.Color(${backgroundColor}));
-
-                  renderer.setSize( width, height );
-
-                  renderer.shadowMapEnabled = true;
-
-                  document.body.appendChild( renderer.domElement );
-
                   renderer.render( scene, camera );
                 \n`);
 
