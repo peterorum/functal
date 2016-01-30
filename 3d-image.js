@@ -109,7 +109,8 @@
 
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
 
-            let maxRadius = 10 + Rp.bandomInt(128 - 10, 2);
+            let maxRadius = Rp.bandomInt(128, 2);
+            let maxRadius2 = Rp.bandomInt(128, 2);
 
             let maxShininess = math.randomInt(0, 256);
 
@@ -129,6 +130,7 @@
             let params = {
                 maxz,
                 maxRadius,
+                maxRadius2,
                 maxShininess,
                 spotLights,
                 segments,
@@ -181,7 +183,7 @@
                 outf.write(`
                 function cyl(scene, options) {
 
-                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, ${params.segments});
+                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments});
 
                   var materials = [
                   new THREE.MeshPhongMaterial( {
@@ -272,6 +274,7 @@
                     let z3 = math.round(hsl.l * maxz, 0); /// outputHeight;
 
                     let radius = params.maxRadius;
+                    let radius2 = params.maxRadius2;
 
                     let opacity = params.minOpacity + (params.maxOpacity - params.minOpacity) * hsl.l;
 
@@ -283,6 +286,7 @@
                       z: ${z3},
                       color: 0x${num2hex(rgb.r)}${num2hex(rgb.g)}${num2hex(rgb.b)},
                       radius: ${radius},
+                      radius2: ${radius2},
                       opacity: ${opacity},
                       shininess: ${shininess}
                     });
