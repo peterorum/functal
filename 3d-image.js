@@ -115,7 +115,7 @@
 
             let spotLights = math.randomInt(1, 4);
 
-            let segments = math.randomInt(1, 129);
+            let segments = math.randomInt(1, 65);
 
             let wireframe = (maxRadius > 12) &&  (math.random() < 0.25);
 
