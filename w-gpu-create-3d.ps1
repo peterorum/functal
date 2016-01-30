@@ -54,6 +54,7 @@ foreach ($file in $files) {
 
     write-host "Minutes running " ([math]::Round($runningTime, 2))
     write-host "Seconds per image " ([math]::Round($runningTime / $count * 60))
+    write-host "-----------------------------------------------"
 
     if ($runningTime -gt 55) {
       break;
