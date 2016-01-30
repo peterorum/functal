@@ -2,6 +2,8 @@ $path = "c:\process\"
 $filter = "*.jpg"
 $count = 0
 
+$startTime = (get-date)
+
 $cwd = Split-Path $script:MyInvocation.MyCommand.Path
 
 Write-Host "Loading files....";
@@ -46,6 +48,15 @@ foreach ($file in $files) {
     remove-item $path$f".html"
     remove-item $path$f".png"
     remove-item $path$f"-3d.jpg"
+
+    $currentTime = (get-date)
+    $runningTime = ($currentTime-$startTime).totalminutes
+
+    write-host "Running time $runningTime minutes"
+
+    if ($runningTime -gt 55) {
+      break;
+    }
 }
 
 Write-Host "$count files were processed"
