@@ -110,7 +110,7 @@
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
 
             let maxRadius = 1 + Rp.bandomInt(128, 2);
-            let maxRadius2 = (math.random() < 0.5 ? maxRadius : 1 + Rp.bandomInt(128, 2));
+            let maxRadius2 = (math.random() < 0.5 && maxRadius > 10) ? maxRadius : 1 + Rp.bandomInt(128, 2);
 
             let maxShininess = math.randomInt(0, 256);
 
@@ -127,7 +127,7 @@
               maxOpacity = math.round(100 * math.random(minOpacity, 1)) / 100;
             }
 
-            let openEnded = false;
+            let openEnded = (math.random() < 0.5);
 
             let params = {
                 maxz,
@@ -193,7 +193,7 @@
                     color: options.color,
                     opacity: options.opacity,
                     transparent: true,
-                    shininess: options.shininess,
+                    shininess: options.shininess
                   } )
                 ];
                 \n`);
