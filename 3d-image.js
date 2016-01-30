@@ -76,7 +76,6 @@
         let rgb = params.data[x][y].rgb;
 
         let color = `0x${num2hex(math.floor(rgb.r * maxLightness))}${num2hex(math.floor(rgb.g * maxLightness))}${num2hex(math.floor(rgb.b * maxLightness))}`;
-        // console.log('color ' , color);
 
         return color;
     }
@@ -102,10 +101,10 @@
             let outputHeight = inputHeight;
 
             let dimensions = {
-              inputWidth,
-              inputHeight,
-              outputWidth,
-              outputHeight
+                inputWidth,
+                inputHeight,
+                outputWidth,
+                outputHeight
             };
 
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
@@ -118,18 +117,24 @@
 
             let segments = math.randomInt(1, 129);
 
-            let wireframe = (maxRadius > 12) &&  (math.random() < 0.125);
+            let wireframe = (maxRadius > 12) &&  (math.random() < 0.25);
 
             let minOpacity = math.round(100 * math.random()) / 100;
+            let maxOpacity = 1;
+
+            if (wireframe) {
+              maxOpacity = math.round(100 * math.random(minOpacity, 1)) / 100;
+            }
 
             let params = {
-              maxz,
-              maxRadius,
-              maxShininess,
-              spotLights,
-              segments,
-              wireframe,
-              minOpacity
+                maxz,
+                maxRadius,
+                maxShininess,
+                spotLights,
+                segments,
+                wireframe,
+                minOpacity,
+                maxOpacity
             };
 
             console.log('params ', JSON.stringify(params, null, 2));
@@ -148,8 +153,10 @@
                 </head>
                 <body style='margin:0; padding:0; overflow: hidden'>\n`);
 
+                outf.write(`<script>\n`);
+
                 // add line
-                outf.write(`<script>
+                outf.write(`
                 function ln(scene, x3, y3, z3, color) {
                   var geometry = new THREE.Geometry();
 
@@ -166,23 +173,41 @@
 
                   scene.add(line);
                 }
-                </script>\n`);
+                \n`);
 
                 // add cylinder
                 // todo: open/closed ends. vary radius.
 
-                outf.write(`<script>
+                outf.write(`
                 function cyl(scene, options) {
+
                   var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, ${params.segments});
-                  var material = new THREE.MeshPhongMaterial( {
+
+                  var materials = [
+                  new THREE.MeshPhongMaterial( {
                     color: options.color,
                     opacity: options.opacity,
                     transparent: true,
                     shininess: options.shininess,
-                    wireframe: ${params.wireframe}
-                  } );
+                  } )
+                ];
+                \n`);
 
-                  var cylinder = new THREE.Mesh( geometry, material );
+                if (params.wireframe) {
+                  outf.write(`
+                    materials.push(
+
+                      new THREE.MeshBasicMaterial( {
+                        color: options.color,
+                        wireframe: true
+                      } )
+
+                    );
+                  \n`);
+                }
+
+                outf.write(`
+                  var cylinder = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 
                   cylinder.position.x = options.x;
                   cylinder.position.y = options.y;
@@ -192,9 +217,9 @@
 
                   scene.add(cylinder);
                 }
-                </script>\n`);
+                \n`);
 
-                outf.write(`<script>
+                outf.write(`
                   draw();
 
                   function draw() {
@@ -248,7 +273,7 @@
 
                     let radius = params.maxRadius;
 
-                    let opacity = params.minOpacity + (1 - params.minOpacity) * hsl.l;
+                    let opacity = params.minOpacity + (params.maxOpacity - params.minOpacity) * hsl.l;
 
                     let shininess = params.maxShininess;
 
@@ -304,8 +329,11 @@
                   renderer.render( scene, camera );
                 \n`);
 
-                outf.write(`}
-                      </script>
+                outf.write(`}\n`); // end draw()
+
+                outf.write(`</script>\n`);
+
+                outf.write(`
                   </body>
                   </html>
                   \n`);
