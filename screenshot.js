@@ -48,4 +48,4 @@ driver.call(function* () {
     return saveScreenshot(yield driver.takeScreenshot(), `${file}.png`);
 });
 
-// driver.quit(6);
+driver.quit();
