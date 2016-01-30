@@ -11,9 +11,14 @@ $cwd = Split-Path $script:MyInvocation.MyCommand.Path
 
 Write-Host "Loading files....";
 
-$files = @(get-childitem -recurse -path $path -filter $filter)
+#$files = @(get-childitem -recurse -path $path -filter $filter)
 
-foreach ($file in $files) {
+#foreach ($file in $files) {
+
+get-childitem -recurse -path $path -filter $filter | % {
+
+    $file = $_;
+
     $count ++;
     $f = [io.path]::GetFileNameWithoutExtension($file);
 
