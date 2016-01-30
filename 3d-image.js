@@ -110,7 +110,7 @@
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
 
             let maxRadius = 1 + Rp.bandomInt(128, 2);
-            let maxRadius2 = (math.random() < 0.5 && maxRadius > 10) ? maxRadius : 1 + Rp.bandomInt(128, 2);
+            let maxRadius2 = (maxRadius < 10 ? 10 + Rp.bandomInt(128, 2) : (math.random() < 0.5 ? maxRadius : 1 + Rp.bandomInt(128, 2)));
 
             let maxShininess = math.randomInt(0, 256);
 
@@ -131,6 +131,12 @@
 
             let arc = (math.random() < 0.75) ? 2 * Math.PI : math.round(100 * math.random(0, 2 * Math.PI)) / 100;
 
+            let rotation = {
+              x: math.random(0, 2 * Math.PI),
+              y: math.random(0, 2 * Math.PI),
+              z: math.random(0, 2 * Math.PI)
+            };
+
             let params = {
                 maxz,
                 maxRadius,
@@ -142,7 +148,8 @@
                 minOpacity,
                 maxOpacity,
                 openEnded,
-                arc
+                arc,
+                rotation
             };
 
             console.log('params ', JSON.stringify(params, null, 2));
@@ -217,11 +224,13 @@
                 outf.write(`
                   var cylinder = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 
+                  cylinder.rotation.x = ${params.rotation.x};
+                  cylinder.rotation.y = ${params.rotation.y};
+                  cylinder.rotation.z = ${params.rotation.z};
+
                   cylinder.position.x = options.x;
                   cylinder.position.y = options.y;
-                  cylinder.position.z = 0;
-
-
+                  cylinder.position.z = options.z / 2;
 
                   scene.add(cylinder);
                 }
@@ -308,6 +317,9 @@
                 params.xy = xy;
                 params.data = data;
 
+                let cameraPositionZ = params.maxz + math.random( 600, 1000);
+                console.log('cameraPositionZ ' , cameraPositionZ);
+
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
 
@@ -315,7 +327,7 @@
 
                   camera.position.x = ${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()};
                   camera.position.y = ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()};
-                  camera.position.z = ${ Rp.bandomInt(1000, -2)};
+                  camera.position.z = ${cameraPositionZ};
 
                   camera.lookAt(s.position);
                   \n`);
