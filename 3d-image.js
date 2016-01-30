@@ -71,8 +71,8 @@
         let yy = params.xy[k].y;
         let xx = params.xy[k].x;
 
-        let x = xx + params.inputWidth / 2 - params.outputWidth / 2;
-        let y = yy + params.inputHeight / 2 - params.outputHeight / 2;
+        let x = xx + params.dimensions.inputWidth / 2 - params.dimensions.outputWidth / 2;
+        let y = yy + params.dimensions.inputHeight / 2 - params.dimensions.outputHeight / 2;
         let rgb = params.data[x][y].rgb;
 
         let color = `0x${num2hex(math.floor(rgb.r * maxLightness))}${num2hex(math.floor(rgb.g * maxLightness))}${num2hex(math.floor(rgb.b * maxLightness))}`;
@@ -101,23 +101,40 @@
             let outputWidth = inputWidth;
             let outputHeight = inputHeight;
 
+            let dimensions = {
+              inputWidth,
+              inputHeight,
+              outputWidth,
+              outputHeight
+            };
+
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
-            console.log('maxz ', maxz);
 
             let maxRadius = 10 + Rp.bandomInt(128 - 10, 2);
-            console.log('maxRadius ', maxRadius);
 
             let maxShininess = math.randomInt(0, 256);
-            console.log('maxShininess ', maxShininess);
 
             let spotLights = math.randomInt(1, 4);
-            console.log('spotLights ' , spotLights);
 
             let segments = math.randomInt(1, 129);
-            console.log('segments ' , segments);
 
-            let wireframe = (maxRadius > 12) &&  Rp.randomBoolean();
-            console.log('wireframe ' , wireframe);
+            let wireframe = (maxRadius > 12) &&  (math.random() < 0.125);
+
+            let minOpacity = math.round(100 * math.random()) / 100;
+
+            let params = {
+              maxz,
+              maxRadius,
+              maxShininess,
+              spotLights,
+              segments,
+              wireframe,
+              minOpacity
+            };
+
+            console.log('params ', JSON.stringify(params, null, 2));
+
+            params.dimensions = dimensions;
 
             try {
                 var outf = fs.createWriteStream(`${outputFilename}`);
@@ -156,13 +173,13 @@
 
                 outf.write(`<script>
                 function cyl(scene, options) {
-                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, ${segments});
+                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, ${params.segments});
                   var material = new THREE.MeshPhongMaterial( {
                     color: options.color,
                     opacity: options.opacity,
                     transparent: true,
                     shininess: options.shininess,
-                    wireframe: ${wireframe}
+                    wireframe: ${params.wireframe}
                   } );
 
                   var cylinder = new THREE.Mesh( geometry, material );
@@ -182,8 +199,8 @@
 
                   function draw() {
 
-                      var width = ${outputWidth};
-                      var height = ${outputHeight};
+                      var width = ${dimensions.outputWidth};
+                      var height = ${dimensions.outputHeight};
 
                       var scene = new THREE.Scene();
                       var s = scene;
@@ -191,9 +208,9 @@
 
                 let xy = [];
 
-                for (let y = 0; y < outputHeight; y++) {
+                for (let y = 0; y < dimensions.outputHeight; y++) {
 
-                    for (let x = 0; x < outputWidth; x++) {
+                    for (let x = 0; x < dimensions.outputWidth; x++) {
                         xy.push({
                             x: x,
                             y: y
@@ -207,7 +224,7 @@
 
                 let sample = (isDev ? 1 : 1);
 
-                sample = sample / (maxRadius * maxRadius);
+                sample = sample / (params.maxRadius * params.maxRadius);
 
                 xy = R.sortBy(() => math.random(), xy);
                 xy = R.take(xy.length * sample, xy);
@@ -217,23 +234,23 @@
                     let yy = xy[k].y;
                     let xx = xy[k].x;
 
-                    let x = xx + inputWidth / 2 - outputWidth / 2;
-                    let y = yy + inputHeight / 2 - outputHeight / 2;
+                    let x = xx + dimensions.inputWidth / 2 - dimensions.outputWidth / 2;
+                    let y = yy + dimensions.inputHeight / 2 - dimensions.outputHeight / 2;
                     let rgb = data[x][y].rgb;
 
                     let hsl = clr.rgb2hsl(rgb);
 
                     // 3d coords
-                    let x3 = (x / inputWidth) * outputWidth - outputWidth / 2;
-                    let y3 = -((y / inputHeight) * outputHeight - outputHeight / 2);
+                    let x3 = (x / dimensions.inputWidth) * dimensions.outputWidth - dimensions.outputWidth / 2;
+                    let y3 = -((y / dimensions.inputHeight) * dimensions.outputHeight - dimensions.outputHeight / 2);
 
                     let z3 = math.round(hsl.l * maxz, 0); /// outputHeight;
 
-                    let radius = maxRadius;
+                    let radius = params.maxRadius;
 
-                    let opacity = hsl.l;
+                    let opacity = params.minOpacity + (1 - params.minOpacity) * hsl.l;
 
-                    let shininess = maxShininess;
+                    let shininess = params.maxShininess;
 
                     outf.write(`cyl(s, {
                       x: ${x3},
@@ -251,22 +268,16 @@
 
                 let backgroundColor = '0x000000';
 
-                let params = {
-                    xy: xy,
-                    data: data,
-                    inputWidth: inputWidth,
-                    inputHeight: inputHeight,
-                    outputWidth: outputWidth,
-                    outputHeight: outputHeight
-                };
+                params.xy = xy;
+                params.data = data;
 
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
 
                   var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
 
-                  camera.position.x = ${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()};
-                  camera.position.y = ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()};
+                  camera.position.x = ${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()};
+                  camera.position.y = ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()};
                   camera.position.z = ${ Rp.bandomInt(1000, -2)};
 
                   camera.lookAt(s.position);
@@ -275,7 +286,7 @@
                 for (let i = 0; i < spotLights; i++) {
                     outf.write(`
                   var spotLight${i} = new THREE.SpotLight(${randomColor(params, 1)});
-                  spotLight${i}.position.set(${Rp.bandomInt(outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
+                  spotLight${i}.position.set(${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
                   scene.add(spotLight${i});
                   \n`);
                 }
