@@ -129,6 +129,8 @@
 
             let openEnded = (math.random() < 0.5);
 
+            let arc = (math.random() < 0.75) ? 2 * Math.PI : math.round(100 * math.random(0, 2 * Math.PI)) / 100;
+
             let params = {
                 maxz,
                 maxRadius,
@@ -139,7 +141,8 @@
                 wireframe,
                 minOpacity,
                 maxOpacity,
-                openEnded
+                openEnded,
+                arc
             };
 
             console.log('params ', JSON.stringify(params, null, 2));
@@ -186,7 +189,7 @@
                 outf.write(`
                 function cyl(scene, options) {
 
-                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments}, 1, ${params.openEnded}, 0, Math.PI);
+                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments}, 1, ${params.openEnded}, 0, ${params.arc});
 
                   var materials = [
                   new THREE.MeshPhongMaterial( {
