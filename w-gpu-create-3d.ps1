@@ -52,8 +52,8 @@ foreach ($file in $files) {
     $currentTime = (get-date)
     $runningTime = ($currentTime-$startTime).totalminutes
 
-    write-host "Running time $runningTime minutes"
-    write-host "Minutes per image " ($runningTime / $count)
+    write-host "Minutes running " [math]::Round($runningTime, 2)
+    write-host "Seconds per image " [math]::Round($runningTime / $count * 60)
 
     if ($runningTime -gt 55) {
       break;
