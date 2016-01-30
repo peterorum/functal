@@ -3,7 +3,7 @@
     "use strict";
 
     /* download files
-    aws s3 cp s3://functal-images . --recursive --exclude "*-svg.jpg" --exclude "*-3d.jpg"
+    aws s3 cp s3://functal-images . --recursive --exclude "*-svg.jpg" --exclude "*-3d*.*"
 
     /* choosing a random selection of files
 

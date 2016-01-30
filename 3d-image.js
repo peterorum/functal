@@ -317,8 +317,8 @@
                 params.xy = xy;
                 params.data = data;
 
-                let cameraPositionZ = params.maxz + math.random( 600, 1000);
-                console.log('cameraPositionZ ' , cameraPositionZ);
+                let cameraPositionZ = 1000;
+                // console.log('cameraPositionZ ' , cameraPositionZ);
 
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
