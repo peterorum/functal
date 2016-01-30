@@ -109,8 +109,8 @@
 
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
 
-            let maxRadius = Rp.bandomInt(128, 2);
-            let maxRadius2 = Rp.bandomInt(128, 2);
+            let maxRadius = 1 + Rp.bandomInt(128, 2);
+            let maxRadius2 = 1 + Rp.bandomInt(128, 2);
 
             let maxShininess = math.randomInt(0, 256);
 
