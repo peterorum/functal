@@ -186,7 +186,7 @@
                 outf.write(`
                 function cyl(scene, options) {
 
-                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments}, 1, ${params.openEnded});
+                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments}, 1, ${params.openEnded}, 0, Math.PI);
 
                   var materials = [
                   new THREE.MeshPhongMaterial( {
