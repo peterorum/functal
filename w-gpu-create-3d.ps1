@@ -5,7 +5,7 @@ $count = 0
 $startTime = (get-date)
 
 # minutes to run
-$runDuration = 55;
+$runDuration = 50;
 
 $cwd = Split-Path $script:MyInvocation.MyCommand.Path
 
