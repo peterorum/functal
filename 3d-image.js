@@ -113,6 +113,12 @@
             let spotLights = math.randomInt(1, 4);
             console.log('spotLights ' , spotLights);
 
+            let segments = math.randomInt(1, 129);
+            console.log('segments ' , segments);
+
+            let wireframe = (maxRadius > 12) &&  Rp.randomBoolean();
+            console.log('wireframe ' , wireframe);
+
             try {
                 var outf = fs.createWriteStream(`${outputFilename}`);
 
@@ -150,12 +156,13 @@
 
                 outf.write(`<script>
                 function cyl(scene, options) {
-                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, 64);
+                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius, options.z, ${segments});
                   var material = new THREE.MeshPhongMaterial( {
                     color: options.color,
                     opacity: options.opacity,
                     transparent: true,
-                    shininess: options.shininess
+                    shininess: options.shininess,
+                    wireframe: ${wireframe}
                   } );
 
                   var cylinder = new THREE.Mesh( geometry, material );
