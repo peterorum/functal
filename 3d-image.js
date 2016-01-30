@@ -110,7 +110,7 @@
             let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
 
             let maxRadius = 1 + Rp.bandomInt(128, 2);
-            let maxRadius2 = 1 + Rp.bandomInt(128, 2);
+            let maxRadius2 = (math.random() < 0.5 ? maxRadius : 1 + Rp.bandomInt(128, 2));
 
             let maxShininess = math.randomInt(0, 256);
 
@@ -183,7 +183,7 @@
                 outf.write(`
                 function cyl(scene, options) {
 
-                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments});
+                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments}, 4);
 
                   var materials = [
                   new THREE.MeshPhongMaterial( {
@@ -251,7 +251,9 @@
 
                 let sample = (isDev ? 1 : 1);
 
-                sample = sample / (params.maxRadius * params.maxRadius);
+                let maxRadius = Math.max(params.maxRadius, params.maxRadius2);
+
+                sample = sample / (maxRadius * maxRadius);
 
                 xy = R.sortBy(() => math.random(), xy);
                 xy = R.take(xy.length * sample, xy);
