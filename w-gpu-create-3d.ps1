@@ -53,6 +53,7 @@ foreach ($file in $files) {
     $runningTime = ($currentTime-$startTime).totalminutes
 
     write-host "Running time $runningTime minutes"
+    write-host "Minutes per image " ($runningTime / $count)
 
     if ($runningTime -gt 55) {
       break;
