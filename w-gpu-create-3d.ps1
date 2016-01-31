@@ -4,9 +4,6 @@ $count = 0
 
 $startTime = (get-date)
 
-cd \Projects\functal
-git pull
-
 # minutes to run
 $runDuration = 55;
 
@@ -17,44 +14,52 @@ Write-Host "Loading files....";
 $files = @(get-childitem -recurse -path $path -filter $filter)
 
 foreach ($file in $files) {
-    $count ++;
     $f = [io.path]::GetFileNameWithoutExtension($file);
 
     get-date -format r
 
-    Write-Host $count": Making 3d from "$f;
+    $tries = 0
+    $ok = false
 
-    node 3d-image.js $path$f".jpg";
+    while  ( ($tries -lt 100) -and (!($ok)) ) {
 
-    # saves as 768x1029
-    write-host "Saving png"
+      $tries++;
 
-    node screenshot $path$f;
+      Write-Host "Making 3d from $f - try $tries";
 
-    if (test-path $path$f".png")  {
+      node 3d-image.js $path$f".jpg";
 
+      # saves as 768x1029
+      write-host "Saving png"
 
-      # crop bottom off to 768x1024 & convert to jpg
-      write-host "Cropping to jpg"
+      node screenshot $path$f;
 
-      convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
+      if (test-path $path$f".png")  {
 
-      if ((get-item $path$f"-3d.jpg").length -gt 100kb){
+        # crop bottom off to 768x1024 & convert to jpg
+        write-host "Cropping to jpg"
 
-        write-host "Moving to s3"
+        convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
 
-        aws s3 cp $path$f"-3d.jpg" s3://functal-images --acl="public-read"
+        if ((get-item $path$f"-3d.jpg").length -gt 100kb){
+          $count ++;
+          $ok = true;
+
+          write-host "Moving to s3"
+
+          aws s3 cp $path$f"-3d.jpg" s3://functal-images --acl="public-read"
+
+        } else {
+
+          write-host "------------------ too small"
+
+        }
 
       } else {
 
-        write-host "------------------ too small"
+        write-host "==================== fail"
 
       }
-
-    } else {
-
-      write-host "==================== fail"
-
     }
 
     write-host "Deleting"
@@ -76,7 +81,5 @@ foreach ($file in $files) {
       break;
     }
 }
-
-Write-Host "$count files were processed"
 
 shutdown /s
