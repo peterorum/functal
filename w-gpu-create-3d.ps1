@@ -2,6 +2,8 @@ $path = "c:\process\"
 $filter = "*.jpg"
 $count = 0
 
+$suffix = "wgl-000001"
+
 $startTime = (get-date)
 
 # minutes to run
@@ -19,7 +21,7 @@ $list = ($files -split '[\r\n]')
 $names = @()
 
 foreach ($f in $list) {
-    if ($f -notmatch "(-3d?|-svg).jpg") {
+    if ($f -notmatch "(-wgl.*|-svg|-3d).jpg") {
         $names += $f.SubString(31)
     }
 }
@@ -60,15 +62,15 @@ while ($true) {
         # crop bottom off to 768x1024 & convert to jpg
         write-host "Cropping to jpg"
 
-        convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
+        convert $path$f".png" -gravity south -chop 0x5 $path$f"-$suffix.jpg"
 
-        if ((get-item $path$f"-3d.jpg").length -gt 100kb){
+        if ((get-item $path$f"-"$suffix".jpg").length -gt 100kb){
           $count ++;
           $ok = $true;
 
           write-host "Moving to s3"
 
-          aws s3 cp $path$f"-3d.jpg" s3://functal-images --acl="public-read"
+          aws s3 cp $path$f"-$suffixÏ.jpg" s3://functal-images --acl="public-read"
 
         } else {
 
@@ -88,7 +90,7 @@ while ($true) {
     remove-item $path$f".jpg"
     remove-item $path$f".html"
     remove-item $path$f".png"
-    remove-item $path$f"-3d.jpg"
+    remove-item $path$f"-$suffix.jpg"
 
     $currentTime = (get-date)
     $runningTime = ($currentTime-$startTime).totalminutes

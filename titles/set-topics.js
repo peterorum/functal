@@ -52,7 +52,7 @@
                         counter++;
                         setTimeout(function() {
 
-                            var jsonUrl = 'https://s3.amazonaws.com/functal-json/' + image.name.replace(/jpg/, 'json').replace(/(-svg|-3d*)\./, '.');
+                            var jsonUrl = 'https://s3.amazonaws.com/functal-json/' + image.name.replace(/jpg/, 'json').replace(/(-svg|-3d|-wgl.*)\./, '.');
 
                             // jsonUrl = 'https://s3.amazonaws.com/functal-json/functal-20150704155915238.json';
 

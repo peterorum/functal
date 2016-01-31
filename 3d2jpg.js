@@ -11,7 +11,7 @@ page.open(phantom.args[0])
             page.clipRect = { top: 0, left: 0, width: 768, height: 1024 };
 
             // screenshot
-            page.render(phantom.args[0].replace(/\.html/, '-3d.jpg'))
+            page.render(phantom.args[0].replace(/\.html/, '-wgl001.jpg'))
         }
         else {
             console.log("Sorry, the page is not loaded.", status);
