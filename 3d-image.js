@@ -114,7 +114,8 @@
 
             let maxShininess = math.randomInt(0, 256);
 
-            let spotLights = math.randomInt(1, 4);
+            let spotLights = Rp.bandomInt(4, 1);
+            let pointLights = (spotLights === 0 ? 1 : 0) + Rp.bandomInt(4, 1);
 
             let segments = math.randomInt(1, 65);
 
@@ -137,7 +138,7 @@
               z: math.random(0, 2 * Math.PI)
             };
 
-            let fieldOfView = math.random(60, 90) ;
+          let fieldOfView = 60 + Rp.bandom(30, 2) ;
 
             let params = {
                 maxz,
@@ -145,6 +146,7 @@
                 maxRadius2,
                 maxShininess,
                 spotLights,
+                pointLights,
                 segments,
                 wireframe,
                 minOpacity,
@@ -320,8 +322,12 @@
                 params.xy = xy;
                 params.data = data;
 
+                params.ambientLight = randomColor(params, 0.5);
+                console.log('params.ambientLight ' , params.ambientLight);
+
                 let cameraPositionZ = 1000;
 
+                // camera
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
 
@@ -334,16 +340,44 @@
                   camera.lookAt(scene.position);
                   \n`);
 
+                // spotlights
+
                 for (let i = 0; i < spotLights; i++) {
+
+                  let spotLightColor = randomColor(params, 1);
+                  console.log(`spotLightColor${i} `, spotLightColor);
+
                     outf.write(`
-                  var spotLight${i} = new THREE.SpotLight(${randomColor(params, 1)});
+                  var spotLight${i} = new THREE.SpotLight(${spotLightColor});
                   spotLight${i}.position.set(${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
+                  spotLight${i}.angle = ${math.random(Math.PI)};
+                  spotLight${i}.distance = ${Rp.bandom(1000, -3)};
+                  spotLight${i}.exponent = ${math.random(20)};
                   scene.add(spotLight${i});
                   \n`);
                 }
 
+                // pointlights
+
+                for (let i = 0; i < pointLights; i++) {
+
+                  let pointLightColor = randomColor(params, 1);
+                  console.log(`pointLightColor${i} `, pointLightColor);
+
+                    outf.write(`
+                  var pointLight${i} = new THREE.PointLight(${pointLightColor});
+                  pointLight${i}.position.set(${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()}, ${ math.randomInt(-100, 1000)});
+                  pointLight${i}.intensity = ${math.random(0, 3)};
+                  pointLight${i}.distance = ${Rp.bandom(1000, -3)};
+                  scene.add(pointLight${i});
+                  \n`);
+                }
+
+
+
+                // ambient light
                 outf.write(`
-                  var ambientLight = new THREE.AmbientLight(${randomColor(params, 0.25)});
+                  var ambientLight = new THREE.AmbientLight(${params.ambientLight});
                   scene.add(ambientLight);
 
                   renderer.setClearColor(new THREE.Color(${backgroundColor}));
