@@ -19,7 +19,7 @@ foreach ($file in $files) {
     get-date -format r
 
     $tries = 0
-    $ok = false
+    $ok = $FALSE
 
     while  ( ($tries -lt 100) -and (!($ok)) ) {
 
@@ -43,7 +43,7 @@ foreach ($file in $files) {
 
         if ((get-item $path$f"-3d.jpg").length -gt 100kb){
           $count ++;
-          $ok = true;
+          $ok = $TRUE;
 
           write-host "Moving to s3"
 
