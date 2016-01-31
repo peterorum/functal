@@ -4,6 +4,7 @@ $count = 0
 
 $startTime = (get-date)
 
+cd \Projects\functal
 git pull
 
 # minutes to run
