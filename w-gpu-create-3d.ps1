@@ -9,19 +9,40 @@ $runDuration = 55;
 
 $cwd = Split-Path $script:MyInvocation.MyCommand.Path
 
-Write-Host "Loading files....";
+Write-Host "Getting file list"
 
-$files = @(get-childitem -recurse -path $path -filter $filter)
+$files = aws s3 ls functal-images
 
-foreach ($file in $files) {
-    $f = [io.path]::GetFileNameWithoutExtension($file);
+$list = ($files -split '[\r\n]')
+
+# get acceptable files
+$names = @()
+
+foreach ($f in $list) {
+    if ($f -notmatch "(-3d?|-svg).jpg") {
+        $names += $f.SubString(31)
+    }
+}
+
+while ($true) {
+
+    # select random image
+    $image = ($names) | get-random
+
+    write-host "Image $image"
+
+    #download it
+    aws s3 cp s3://functal-images/$image \process
+
+    $f = [io.path]::GetFileNameWithoutExtension($image);
 
     get-date -format r
 
+    # try to get a large enough jpeg which should show some detail
     $tries = 0
-    $ok = $FALSE
+    $ok = $false
 
-    while  ( ($tries -lt 100) -and (!($ok)) ) {
+    while  ( ($tries -lt 10) -and (!($ok)) ) {
 
       $tries++;
 
@@ -43,7 +64,7 @@ foreach ($file in $files) {
 
         if ((get-item $path$f"-3d.jpg").length -gt 100kb){
           $count ++;
-          $ok = $TRUE;
+          $ok = $true;
 
           write-host "Moving to s3"
 
