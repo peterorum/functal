@@ -8,7 +8,7 @@ cd \Projects\functal
 git pull
 
 # minutes to run
-$runDuration = 50;
+$runDuration = 55;
 
 $cwd = Split-Path $script:MyInvocation.MyCommand.Path
 
