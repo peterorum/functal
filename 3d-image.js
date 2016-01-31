@@ -137,6 +137,8 @@
               z: math.random(0, 2 * Math.PI)
             };
 
+            let fieldOfView = math.random(60, 90) ;
+
             let params = {
                 maxz,
                 maxRadius,
@@ -149,7 +151,8 @@
                 maxOpacity,
                 openEnded,
                 arc,
-                rotation
+                rotation,
+                fieldOfView
             };
 
             console.log('params ', JSON.stringify(params, null, 2));
@@ -318,18 +321,17 @@
                 params.data = data;
 
                 let cameraPositionZ = 1000;
-                // console.log('cameraPositionZ ' , cameraPositionZ);
 
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
 
-                  var camera = new THREE.PerspectiveCamera( 75, width / height, 0.1, 1000 );
+                  var camera = new THREE.PerspectiveCamera( ${params.fieldOfView}, width / height, 0.1, 1000 );
 
                   camera.position.x = ${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()};
                   camera.position.y = ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()};
                   camera.position.z = ${cameraPositionZ};
 
-                  camera.lookAt(s.position);
+                  camera.lookAt(scene.position);
                   \n`);
 
                 for (let i = 0; i < spotLights; i++) {
