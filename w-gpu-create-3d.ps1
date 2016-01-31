@@ -70,7 +70,7 @@ while ($true) {
 
           write-host "Moving to s3"
 
-          aws s3 cp $path$f"-$suffixÏ.jpg" s3://functal-images --acl="public-read"
+          aws s3 cp $path$f"-"$suffix".jpg" s3://functal-images --acl="public-read"
 
         } else {
 
@@ -90,7 +90,7 @@ while ($true) {
     remove-item $path$f".jpg"
     remove-item $path$f".html"
     remove-item $path$f".png"
-    remove-item $path$f"-$suffix.jpg"
+    remove-item $path$f"-"$suffix".jpg"
 
     $currentTime = (get-date)
     $runningTime = ($currentTime-$startTime).totalminutes
