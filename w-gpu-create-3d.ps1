@@ -28,7 +28,6 @@ while ($true) {
 
     # select random image
     $image = ($names) | get-random
-    $names.remove($image)
 
     write-host "Image $image"
 
