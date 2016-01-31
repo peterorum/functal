@@ -13,7 +13,13 @@ $cwd = Split-Path $script:MyInvocation.MyCommand.Path
 
 Write-Host "Getting file list"
 
+"getting s3 files" | out-file -append c:\debug.txt
+
 $files = aws s3 ls functal-images
+
+$files.length | out-file -append c:\debug.txt
+
+$files | out-file -append c:\debug.txt
 
 $list = ($files -split '[\r\n]')
 
@@ -21,10 +27,14 @@ $list = ($files -split '[\r\n]')
 $names = @()
 
 foreach ($f in $list) {
+    $f | out-file -append c:\debug.txt
+
     if ($f -notmatch "(-wgl.*|-svg|-3d).jpg") {
         $names += $f.SubString(31)
     }
 }
+
+$names.length | out-file -append c:\debug.txt
 
 while ($true) {
 
