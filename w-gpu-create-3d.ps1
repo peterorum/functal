@@ -4,6 +4,8 @@ $count = 0
 
 $startTime = (get-date)
 
+git pull
+
 # minutes to run
 $runDuration = 50;
 
