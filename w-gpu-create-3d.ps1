@@ -4,6 +4,8 @@ $count = 0
 
 $startTime = (get-date)
 
+del $path\*
+
 # minutes to run
 $runDuration = 55;
 
