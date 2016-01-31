@@ -19,22 +19,17 @@ $files = aws s3 ls functal-images
 
 $files.length | out-file -append c:\debug.txt
 
-$files | out-file -append c:\debug.txt
-
 $list = ($files -split '[\r\n]')
 
 # get acceptable files
 $names = @()
 
 foreach ($f in $list) {
-    $f | out-file -append c:\debug.txt
 
     if ($f -notmatch "(-wgl.*|-svg|-3d).jpg") {
         $names += $f.SubString(31)
     }
 }
-
-$names.length | out-file -append c:\debug.txt
 
 while ($true) {
 
