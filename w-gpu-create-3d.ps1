@@ -14,10 +14,6 @@ $cwd = Split-Path $script:MyInvocation.MyCommand.Path
 
 Write-Host "Loading files....";
 
-
-#get-childitem -recurse -path $path -filter $filter | % {
-#    $file = $_;
-
 $files = @(get-childitem -recurse -path $path -filter $filter)
 
 foreach ($file in $files) {
@@ -37,14 +33,22 @@ foreach ($file in $files) {
 
     if (test-path $path$f".png")  {
 
-      # crop bottom off to 768x1024 & convert to jpg
-      write-host "Cropping to jpg"
+      if ((get-item $path$f".png").length -gt 100kb){
 
-      convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
+        # crop bottom off to 768x1024 & convert to jpg
+        write-host "Cropping to jpg"
 
-      write-host "Moving to s3"
+        convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
 
-      aws s3 cp $path$f"-3d.jpg" s3://functal-images --acl="public-read"
+        write-host "Moving to s3"
+
+        aws s3 cp $path$f"-3d.jpg" s3://functal-images --acl="public-read"
+
+      } else {
+
+        write-host "------------------ too small"
+
+      }
 
     } else {
 
