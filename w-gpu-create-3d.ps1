@@ -17,7 +17,7 @@ Write-Host "Getting file list"
 
 $files = aws s3 ls functal-images
 
-$files.length | out-file -append c:\debug.txt
+"files read " $files.length | out-file -append c:\debug.txt
 
 $list = ($files -split '[\r\n]')
 
