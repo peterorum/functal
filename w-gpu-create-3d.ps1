@@ -2,8 +2,6 @@ $path = "c:\process\"
 $filter = "*.jpg"
 $count = 0
 
-$suffix = "wgl-000001"
-
 $startTime = (get-date)
 
 # minutes to run
@@ -30,6 +28,7 @@ while ($true) {
 
     # select random image
     $image = ($names) | get-random
+    $names.remove($image)
 
     write-host "Image $image"
 
@@ -43,6 +42,8 @@ while ($true) {
     # try to get a large enough jpeg which should show some detail
     $tries = 0
     $ok = $false
+
+    $suffix = get-date -format yyyyMMddHHmmss
 
     while  ( ($tries -lt 10) -and (!($ok)) ) {
 
@@ -62,7 +63,7 @@ while ($true) {
         # crop bottom off to 768x1024 & convert to jpg
         write-host "Cropping to jpg"
 
-        convert $path$f".png" -gravity south -chop 0x5 $path$f"-$suffix.jpg"
+        convert $path$f".png" -gravity south -chop 0x5 $path$f"-wgl-$suffix.jpg"
 
         if ((get-item $path$f"-"$suffix".jpg").length -gt 100kb){
           $count ++;
@@ -70,7 +71,7 @@ while ($true) {
 
           write-host "Moving to s3"
 
-          aws s3 cp $path$f"-"$suffix".jpg" s3://functal-images --acl="public-read"
+          aws s3 cp $path$f"-wgl-"$suffix".jpg" s3://functal-images --acl="public-read"
 
         } else {
 
@@ -90,7 +91,7 @@ while ($true) {
     remove-item $path$f".jpg"
     remove-item $path$f".html"
     remove-item $path$f".png"
-    remove-item $path$f"-"$suffix".jpg"
+    remove-item $path$f"-wgl-"$suffix".jpg"
 
     $currentTime = (get-date)
     $runningTime = ($currentTime-$startTime).totalminutes
