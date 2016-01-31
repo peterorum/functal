@@ -64,7 +64,7 @@ while ($true) {
 
         convert $path$f".png" -gravity south -chop 0x5 $path$f"-wgl-$suffix.jpg"
 
-        if ((get-item $path$f"-"$suffix".jpg").length -gt 100kb){
+        if ((get-item $path$f"-wgl-"$suffix".jpg").length -gt 100kb){
           $count ++;
           $ok = $true;
 
