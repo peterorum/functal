@@ -33,12 +33,13 @@ foreach ($file in $files) {
 
     if (test-path $path$f".png")  {
 
-      if ((get-item $path$f".png").length -gt 100kb){
 
-        # crop bottom off to 768x1024 & convert to jpg
-        write-host "Cropping to jpg"
+      # crop bottom off to 768x1024 & convert to jpg
+      write-host "Cropping to jpg"
 
-        convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
+      convert $path$f".png" -gravity south -chop 0x5 $path$f"-3d.jpg"
+
+      if ((get-item $path$f"-3d.jpg").length -gt 100kb){
 
         write-host "Moving to s3"
 
