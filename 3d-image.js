@@ -80,6 +80,18 @@
         return color;
     }
 
+    //------------- shapes
+
+    let shapeLine = {
+      fn: "ln",
+      sample: (isDev ? 0.2 : 0.4)
+    };
+
+    let shapeCylinder = {
+      fn: "cyl",
+      sample: 1
+    };
+
 
     // ------------ output to html+three.js
 
@@ -177,16 +189,16 @@
 
                 // add line
                 outf.write(`
-                function ln(scene, x3, y3, z3, color) {
+                function ln(scene, options) {
                   var geometry = new THREE.Geometry();
 
                   geometry.vertices.push(
-                    new THREE.Vector3( x3, y3, 0 ),
-                    new THREE.Vector3( x3, y3, z3 )
+                    new THREE.Vector3( options.x, options.y, 0 ),
+                    new THREE.Vector3( options.x, options.y, options.z )
                   );
 
                   var material = new THREE.LineBasicMaterial({
-                    color: color
+                    color: options.color
                   });
 
                   var line = new THREE.Line( geometry, material );
@@ -196,7 +208,6 @@
                 \n`);
 
                 // add cylinder
-                // todo: open/closed ends. vary radius.
 
                 outf.write(`
                 function cyl(scene, options) {
@@ -267,16 +278,14 @@
 
                 // use a small % of points otherwise too big to render
 
-                // 0.4 for lines
+                let shape = shapeLine;
 
-                let sample = (isDev ? 1 : 1);
+                // let maxRadius = Math.max(params.maxRadius, params.maxRadius2);
 
-                let maxRadius = Math.max(params.maxRadius, params.maxRadius2);
-
-                sample = sample / (maxRadius * maxRadius);
+                // sample = sample / (maxRadius * maxRadius);
 
                 xy = R.sortBy(() => math.random(), xy);
-                xy = R.take(xy.length * sample, xy);
+                xy = R.take(xy.length * shape.sample, xy);
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -302,7 +311,7 @@
 
                     let shininess = params.maxShininess;
 
-                    outf.write(`cyl(s, {
+                    outf.write(`${shape.fn}(s, {
                       x: ${x3},
                       y: ${y3},
                       z: ${z3},

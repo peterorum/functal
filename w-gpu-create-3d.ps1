@@ -107,6 +107,18 @@ while ($true) {
     write-host "Expected images " ([math]::Round( $count / $runningTime * $runDuration))
     write-host "-----------------------------------------------"
 
+    # check for spot termination
+
+    try {
+      invoke-restmethod -uri http://169.254.169.254/latest/meta-data/spot/termination-time
+
+      # value found, so terminate. Should check it's a valid time & in the future
+      break;
+    }
+    catch {
+      # 404 - so no termination
+    }
+
     if ($runningTime -gt $runDuration) {
       break;
     }
