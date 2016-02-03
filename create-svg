@@ -18,15 +18,17 @@ then
   echo convert to jpg
 
   time=`date +%s`
-  out=${1/\.jpg/-svg.jpg}
+  out=${1/\.jpg/-svg}$time.jpg
 
-  rsvg-convert --unlimited "${1/\.jpg/.svg}" | convert - "$out"
+  svg=${1/\.jpg/.svg}
+
+  rsvg-convert --unlimited "$svg" | convert - "$out"
 
   echo copy to s3
-  aws s3 cp "${1/\.jpg/-svg.jpg}" s3://functal-images --acl="public-read"
+  aws s3 cp "$out" s3://functal-images --acl="public-read"
 else
   echo zero length file
 fi
 
 echo delete
-rm "$1" "${1/\.jpg/.svg}" "${1/\.jpg/-svg.jpg}"
+rm "$1" "$svg" "$out"
