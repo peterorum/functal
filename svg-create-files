@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo Loading files...
+
+# creat elist of just original functal file names
+aws s3 ls s3://functal-images | grep -ve  "-\(svg\|wgl\|3d\)" | awk '{ print $4 }' > /tmp/files
+
+mkdir -p /data/process
+
+while :
+do
+  # pick a random file
+  file=`sort --sort=random /tmp/files | head -n 1`
+
+  # download it
+  aws s3 cp s3://functal-images/$file /data/process/$file
+
+  # process it
+  ./create-svg /data/process/$file
+done
+
