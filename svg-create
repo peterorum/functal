@@ -7,6 +7,6 @@ cd /home/ec2-user/functal
 
 date >> /home/ec2-user/debug.txt
 
-git pull >> /home/ec2-user/debug.txt
+git pull -X theirs >> /home/ec2-user/debug.txt
 
 ./svg-create-files
