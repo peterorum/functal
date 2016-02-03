@@ -22,17 +22,17 @@ do
   # process it
   ./create-svg /data/process/$file
 
-  # if over 55 minutes
+  # exit if over 55 minutes
   now=`date +%s`
   runtime=$(((now-start)/60))
 
   echo runtime $runtime
 
-  if [ $runtime -gt 1 ]; then
+  if [ $runtime -ge 55 ]; then
     break
   fi
 
 done
 
-echo sudo shutdown -h now
+sudo shutdown -h now
 
