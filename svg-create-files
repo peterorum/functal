@@ -28,7 +28,7 @@ do
 
   echo runtime $runtime
 
-  if [ runtime -gt 1]
+  if [ runtime -gt 1]; then
     break
   fi
 
