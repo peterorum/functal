@@ -27,3 +27,4 @@ do
   # process it
   ./create-svg /data/process/$file
 done
+
