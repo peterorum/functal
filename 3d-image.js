@@ -83,15 +83,25 @@
     //------------- shapes
 
     let shapeLine = {
-      fn: "ln",
-      sample: (isDev ? 0.2 : 0.4)
+        fn: "ln",
+        sample: (isDev ? 0.2 : 0.4)
     };
 
     let shapeCylinder = {
-      fn: "cyl",
-      sample: 1
+        fn: "cyl",
+        sample: 1
     };
 
+    let shapes = [
+        {
+            shape: shapeLine,
+            weight: 100
+        },
+        {
+            shape: shapeCylinder,
+            weight: 100
+        }
+    ];
 
     // ------------ output to html+three.js
 
@@ -131,13 +141,13 @@
 
             let segments = math.randomInt(1, 65);
 
-            let wireframe = (maxRadius > 12) &&  (math.random() < 0.25);
+            let wireframe = (maxRadius > 12) && (math.random() < 0.25);
 
             let minOpacity = math.round(100 * math.random()) / 100;
             let maxOpacity = 1;
 
             if (wireframe) {
-              maxOpacity = math.round(100 * math.random(minOpacity, 1)) / 100;
+                maxOpacity = math.round(100 * math.random(minOpacity, 1)) / 100;
             }
 
             let openEnded = (math.random() < 0.5);
@@ -145,12 +155,12 @@
             let arc = (math.random() < 0.75) ? 2 * Math.PI : math.round(100 * math.random(0, 2 * Math.PI)) / 100;
 
             let rotation = {
-              x: math.random(0, 2 * Math.PI),
-              y: math.random(0, 2 * Math.PI),
-              z: math.random(0, 2 * Math.PI)
+                x: math.random(0, 2 * Math.PI),
+                y: math.random(0, 2 * Math.PI),
+                z: math.random(0, 2 * Math.PI)
             };
 
-          let fieldOfView = 60 + Rp.bandom(30, 2) ;
+            let fieldOfView = 60 + Rp.bandom(30, 2);
 
             let params = {
                 maxz,
@@ -225,7 +235,7 @@
                 \n`);
 
                 if (params.wireframe) {
-                  outf.write(`
+                    outf.write(`
                     materials.push(
 
                       new THREE.MeshBasicMaterial( {
@@ -278,7 +288,7 @@
 
                 // use a small % of points otherwise too big to render
 
-                let shape = shapeLine;
+                let shape = Rp.wandom(shapes).shape;
 
                 // let maxRadius = Math.max(params.maxRadius, params.maxRadius2);
 
@@ -332,7 +342,7 @@
                 params.data = data;
 
                 params.ambientLight = randomColor(params, 0.5);
-                console.log('params.ambientLight ' , params.ambientLight);
+                console.log('params.ambientLight ', params.ambientLight);
 
                 let cameraPositionZ = 1000;
 
@@ -353,8 +363,8 @@
 
                 for (let i = 0; i < spotLights; i++) {
 
-                  let spotLightColor = randomColor(params, 1);
-                  console.log(`spotLightColor${i} `, spotLightColor);
+                    let spotLightColor = randomColor(params, 1);
+                    console.log(`spotLightColor${i} `, spotLightColor);
 
                     outf.write(`
                   var spotLight${i} = new THREE.SpotLight(${spotLightColor});
@@ -370,8 +380,8 @@
 
                 for (let i = 0; i < pointLights; i++) {
 
-                  let pointLightColor = randomColor(params, 1);
-                  console.log(`pointLightColor${i} `, pointLightColor);
+                    let pointLightColor = randomColor(params, 1);
+                    console.log(`pointLightColor${i} `, pointLightColor);
 
                     outf.write(`
                   var pointLight${i} = new THREE.PointLight(${pointLightColor});
