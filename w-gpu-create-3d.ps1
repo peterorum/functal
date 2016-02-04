@@ -119,9 +119,9 @@ while ($true) {
       # 404 - so no termination
     }
 
-    if ($runningTime -gt $runDuration) {
-      break;
-    }
+#    if ($runningTime -gt $runDuration) {
+#      break;
+#    }
 }
 
 shutdown /s
