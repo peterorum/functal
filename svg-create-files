@@ -28,9 +28,9 @@ do
 
   echo runtime $runtime
 
-  if [ $runtime -ge 55 ]; then
-    break
-  fi
+  # if [ $runtime -ge 55 ]; then
+  #   break
+  # fi
 
 done
 

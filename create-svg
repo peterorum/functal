@@ -24,6 +24,8 @@ then
 
   rsvg-convert --unlimited "$svg" | convert - "$out"
 
+  # check for termination
+
   echo copy to s3
   aws s3 cp "$out" s3://functal-images --acl="public-read"
 else
