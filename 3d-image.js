@@ -84,12 +84,12 @@
 
     let shapeLine = {
         fn: "ln",
-        sample: (isDev ? 0.2 : 0.4)
+        sample: (isDev ? 0.02 : 0.4)
     };
 
     let shapeCylinder = {
         fn: "cyl",
-        sample: 1
+        sample: (isDev ? 0.02 : 1.0)
     };
 
     let shapes = [
@@ -99,7 +99,7 @@
         },
         {
             shape: shapeCylinder,
-            weight: 100
+            weight: 400
         }
     ];
 
@@ -162,6 +162,8 @@
 
             let fieldOfView = 60 + Rp.bandom(30, 2);
 
+            let shape = Rp.wandom(shapes).shape;
+
             let params = {
                 maxz,
                 maxRadius,
@@ -176,7 +178,8 @@
                 openEnded,
                 arc,
                 rotation,
-                fieldOfView
+                fieldOfView,
+                shape
             };
 
             console.log('params ', JSON.stringify(params, null, 2));
@@ -286,9 +289,6 @@
                     }
                 }
 
-                // use a small % of points otherwise too big to render
-
-                let shape = Rp.wandom(shapes).shape;
 
                 // let maxRadius = Math.max(params.maxRadius, params.maxRadius2);
 
