@@ -24,10 +24,13 @@ then
 
   rsvg-convert --unlimited "$svg" | convert - "$out"
 
-  # check for termination
+  if curl -s http://169.254.169.254/latest/meta-data/spot/termination-time | grep -q .*T.*Z; then
+    echo terminated;
+  else
+    echo copy to s3
+    aws s3 cp "$out" s3://functal-images --acl="public-read"
+  fi
 
-  echo copy to s3
-  aws s3 cp "$out" s3://functal-images --acl="public-read"
 else
   echo zero length file
 fi
