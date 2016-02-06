@@ -89,7 +89,7 @@
 
     let shapeCylinder = {
         fn: "cyl",
-        sample: (params) =>  (isDev ? 0.02 : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2))
+        sample: (params) =>  (isDev ? 1 : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2))
     };
 
     let shapes = [
@@ -138,6 +138,7 @@
 
             let spotLights = Rp.bandomInt(4, 1);
             let pointLights = (spotLights === 0 ? 1 : 0) + Rp.bandomInt(4, 1);
+            let directionalLights = (spotLights  + pointLights === 0 ? 1 : 0) + Rp.bandomInt(4, 1);
 
             let segments = math.randomInt(1, 65);
 
@@ -171,6 +172,7 @@
                 maxShininess,
                 spotLights,
                 pointLights,
+                directionalLights,
                 segments,
                 wireframe,
                 minOpacity,
@@ -289,12 +291,9 @@
                     }
                 }
 
-
                 xy = R.sortBy(() => math.random(), xy);
                 let sample = shape.sample(params);
-                console.log('sample ' , sample);
                 xy = R.take(xy.length * sample, xy);
-                console.log('xy.length ' , xy.length);
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -362,7 +361,7 @@
 
                 for (let i = 0; i < spotLights; i++) {
 
-                    let spotLightColor = randomColor(params, 1);
+                    let spotLightColor = randomColor(params, 0.75);
                     console.log(`spotLightColor${i} `, spotLightColor);
 
                     outf.write(`
@@ -379,7 +378,7 @@
 
                 for (let i = 0; i < pointLights; i++) {
 
-                    let pointLightColor = randomColor(params, 1);
+                    let pointLightColor = randomColor(params, 0.75);
                     console.log(`pointLightColor${i} `, pointLightColor);
 
                     outf.write(`
@@ -391,6 +390,21 @@
                   \n`);
                 }
 
+                // directionallights
+
+                for (let i = 0; i < directionalLights; i++) {
+
+                    let directionalLightColor = randomColor(params, 0.75);
+                    console.log(`directionalLightColor${i} `, directionalLightColor);
+
+                    outf.write(`
+                  var directionalLight${i} = new THREE.DirectionalLight(${directionalLightColor});
+                  directionalLight${i}.position.set(${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()}, ${ math.randomInt(-100, 1000)});
+                  directionalLight${i}.intensity = ${math.random(0, 3)};
+                  directionalLight${i}.distance = ${Rp.bandom(1000, -3)};
+                  scene.add(directionalLight${i});
+                  \n`);
+                }
 
 
                 // ambient light

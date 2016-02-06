@@ -2,20 +2,8 @@
 
     "use strict";
 
-    /* download files
-    aws s3 cp s3://functal-images . --recursive --exclude "*-svg.jpg" --exclude "*-3d*.*"
-
-    /* choosing a random selection of files
-
-    cd /data/functal/functals/all-images
-    mv `ls | shuf | head -n 250` ../medium
-
-    cd ~/functal
-    nohup ./svg-s3&
-
-   */
-
     // run locally
+    // node svg-image.js functals/small/functal-20160129143624003.jpg
     // rsvg-convert --unlimited functal-20150521220606941.svg | convert - functal-20150521220606941.jpg
 
     var seedrandom = require('seedrandom');
@@ -333,7 +321,23 @@
     shapeLinesSequential.title = 'shaper-lines-sequential';
 
 
-    let shapers = [shapeEllipse, shapeRect, shapeLine, shapeLinesRandom, shapeLinesSequential];
+    let shapers = [
+        {
+            shape: shapeEllipse,
+            weight: 100
+        }, {
+            shape: shapeRect,
+            weight: 100
+        }, {
+            shape: shapeLine,
+            weight: 100
+        }, {
+            shape: shapeLinesRandom,
+            weight: 200
+        }, {
+            shape: shapeLinesSequential,
+            weight: 200
+        }];
 
     // ------------ output to svg
 
@@ -363,7 +367,7 @@
             console.log(chalk.green(`max size: ${maxWidth} x ${maxHeight}`));
 
             // set functions
-            var shaper = Rp.wandom(shapers);
+            var shaper = Rp.wandom(shapers).shape;
             var filler = Rp.wandom(fillers);
 
             // if no filler, ensure stroker has color

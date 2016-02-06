@@ -6,6 +6,6 @@
 # killall -KILL Dock
 
 # find /data/functal/functals/medium/*.jpg -type f -exec bash -c './create-svg "$0"' {} \;
-find functals/small/*.jpg -type f -exec bash -c './create-3d "$0"' {} \;
+find functals/small/*.jpg -type f -exec bash -c './create-3d-local "$0"' {} \;
 
 # sudo shutdown -h now

@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo $1
+
+echo create svg
+node --harmony svg-image.js "$1"
+
+if [ -s "${1/\.jpg/.svg}" ]
+then
+  echo convert to jpg
+
+  time=`date +%s`
+  out=${1/\.jpg/-svg-}$time.jpg
+
+  svg=${1/\.jpg/.svg}
+
+  rsvg-convert --unlimited "$svg" | convert - "$out"
+
+else
+  echo zero length file
+fi
+
