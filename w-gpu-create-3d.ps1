@@ -104,7 +104,7 @@ while ($true) {
 
     write-host "Minutes running " ([math]::Round($runningTime, 2))
     write-host "Seconds per image " ([math]::Round($runningTime / $count * 60))
-    write-host "Expected images " ([math]::Round( $count / $runningTime * $runDuration))
+    #write-host "Expected images " ([math]::Round( $count / $runningTime * $runDuration))
     write-host "-----------------------------------------------"
 
     # check for spot termination
