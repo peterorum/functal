@@ -84,18 +84,18 @@
 
     let shapeLine = {
         fn: "ln",
-        sample: (isDev ? 0.02 : 0.4)
+        sample: () => (isDev ? 0.02 : 0.4)
     };
 
     let shapeCylinder = {
         fn: "cyl",
-        sample: (isDev ? 0.02 : 0.4)
+        sample: (params) =>  (isDev ? 0.02 : 1) / math.sqaure(Math.max(params.maxRadius, params.maxRadius2))
     };
 
     let shapes = [
         {
             shape: shapeLine,
-            weight: 50
+            weight: 100
         },
         {
             shape: shapeCylinder,
@@ -290,12 +290,8 @@
                 }
 
 
-                // let maxRadius = Math.max(params.maxRadius, params.maxRadius2);
-
-                // sample = sample / (maxRadius * maxRadius);
-
                 xy = R.sortBy(() => math.random(), xy);
-                xy = R.take(xy.length * shape.sample, xy);
+                xy = R.take(xy.length * shape.sample(params), xy);
 
                 for (let k = 0; k < xy.length; k++) {
 
