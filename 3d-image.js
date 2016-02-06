@@ -89,13 +89,13 @@
 
     let shapeCylinder = {
         fn: "cyl",
-        sample: (isDev ? 0.02 : 1.0)
+        sample: (isDev ? 0.02 : 0.4)
     };
 
     let shapes = [
         {
             shape: shapeLine,
-            weight: 100
+            weight: 50
         },
         {
             shape: shapeCylinder,
