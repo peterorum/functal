@@ -291,7 +291,10 @@
 
 
                 xy = R.sortBy(() => math.random(), xy);
-                xy = R.take(xy.length * shape.sample(params), xy);
+                let sample = shape.sample(params);
+                console.log('sample ' , sample);
+                xy = R.take(xy.length * sample, xy);
+                console.log('xy.length ' , xy.length);
 
                 for (let k = 0; k < xy.length; k++) {
 
