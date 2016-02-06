@@ -89,13 +89,14 @@
 
     let shapeCylinder = {
         fn: "cyl",
-        sample: (params) =>  (isDev ? 1 : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2))
+        sample: (params) =>  (isDev ? 1
+         : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2))
     };
 
     let shapes = [
         {
             shape: shapeLine,
-            weight: 100
+            weight: 200
         },
         {
             shape: shapeCylinder,
