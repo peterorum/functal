@@ -333,10 +333,10 @@
             weight: 100
         }, {
             shape: shapeLinesRandom,
-            weight: 200
+            weight: 150
         }, {
             shape: shapeLinesSequential,
-            weight: 200
+            weight: 150
         }];
 
     // ------------ output to svg
