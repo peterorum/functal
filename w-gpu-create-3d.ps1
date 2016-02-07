@@ -75,7 +75,7 @@ while ($true) {
 
         if ((get-item $wgl).length -gt 100kb){
 
-          node check-item.js $wgl
+          node check-image.js $wgl
 
           if ($? -eq 0) {
             $count ++;
