@@ -85,7 +85,7 @@
             if (path.extname(file) === '.jpg') {
 
                check(file).then(function(ok){
-                  process.exit(1); ///ok ? 0 : 1);
+                  process.exit(ok ? 0 : 1);
                });
           }
         }

@@ -77,7 +77,7 @@ while ($true) {
 
           node check-image.js $wgl
 
-          if ($? -eq 0) {
+          if ($?) {
             $count ++;
             $ok = $true;
 
