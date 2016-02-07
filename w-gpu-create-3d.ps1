@@ -71,7 +71,7 @@ while ($true) {
 
         convert $path$f".png" -gravity south -chop 0x5 $path$f"-wgl-$suffix.jpg"
 
-        $wgl = $path$f"-wgl-"$suffix".jpg"
+        $wgl = $path + $f + "-wgl-" + $suffix + ".jpg"
 
         if ((get-item $wgl).length -gt 100kb){
 
