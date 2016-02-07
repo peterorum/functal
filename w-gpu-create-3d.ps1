@@ -138,4 +138,4 @@ while ($true) {
 #    }
 }
 
-shutdown /s
+# shutdown /s
