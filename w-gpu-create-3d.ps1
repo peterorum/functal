@@ -79,8 +79,6 @@ while ($true) {
 
           $result = $?
 
-          echo '$result' + $result
-
           if ($result) {
             $count ++;
             $ok = $true;
