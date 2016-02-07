@@ -4,6 +4,7 @@
 
   var math = require('mathjs');
   var clr = require('./color');
+  // var chalk = require('chalk');
 
   var R = require('ramda');
   var Rp = require('./plus-fp/plus-fp');
@@ -18,7 +19,6 @@
     },
     l: {
       std: 0.25,
-      median: 0.5,
       min: 0.1,
       max: 0.9
     },
@@ -28,15 +28,15 @@
     }
   };
 
-  var getIntensity = function(hsl) {
+  function getIntensity(hsl) {
 
     // intensity (max sat at 0.5 l)
     var il = 1 - 2 * math.abs(0.5 - hsl.l); // 0.5 = 1, 0,1 = 0
 
     return il * hsl.s;
-  };
+  }
 
-  var selectHue = function(except, wues) {
+   function selectHue(except, wues) {
 
     var baseHue = Rp.wandomExcept(except, wues).hue;
 
@@ -46,9 +46,9 @@
     var hue = math.mod(baseHue + math.random(hueFrom, hueTo) / 12, 1);
 
     return hue;
-  };
+  }
 
-  var fixColor = function(rgb) {
+  function fixColor(rgb) {
 
     // make color acceptable;
 
@@ -69,7 +69,7 @@
     }
 
     return (changed ? clr.hsl2rgb(hsl) : rgb);
-  };
+  }
 
   // todo: try eliminating fn by returning a function & adding properties to the function
   // don't use "name" - doesn't work
@@ -337,11 +337,11 @@
 
   ];
 
-  var calcHslStats = function(hsls) {
+   function calcHslStats(hsls) {
 
     var hslkeys = ['h', 's', 'l', 'i'];
 
-    var statFns = ['std', 'mean', 'median', 'min', 'max'];
+    var statFns = ['std', 'mean', 'min', 'max'];
 
     var hslStats = {};
 
@@ -363,9 +363,9 @@
     hslStats.h.mode = calcHueMode(hsls);
 
     return hslStats;
-  };
+  }
 
-  var calcHueMode = function(hsls) {
+  function calcHueMode(hsls) {
 
     var dist = R.map(function() {
 
@@ -400,20 +400,20 @@
     mode = mode / 2;
 
     return mode;
-  };
+  }
 
-  var isHueModeOk = function(h12) {
+  function isHueModeOk(h12) {
 
     // less green, brown, purple
 
     var ok = ! R.contains(h12, [3, 3.5, 5, 5.5, 6.5, 9.5]);
 
     return ok;
-  };
+  }
 
   // determine colors within the band
 
-  var interpolateColors = function(rgb1, rgb2, gap, i) {
+  function interpolateColors(rgb1, rgb2, gap, i) {
 
     // calc gradient between 2 colors
     var rgb = {
@@ -426,9 +426,9 @@
     var hsl = clr.rgb2hsl(rgb);
 
     return hsl;
-  };
+  }
 
-  var getLightness = function(index, hue /*, contrast */) {
+  function getLightness(index, hue /*, contrast */) {
 
     var l;
     // alternate bright/dark bands
@@ -445,9 +445,9 @@
     }
 
     return l;
-  };
+  }
 
-  var getSaturation = function(/*hue*/) {
+  function getSaturation(/*hue*/) {
 
     // brightish
     // var s = Rp.bandom(1, -4);
@@ -462,9 +462,9 @@
     // }
 
     return s;
-  };
+  }
 
-  var interpolateWithBlackLine = function(rgb1, rgb2, gap, i, palette) {
+  function interpolateWithBlackLine(rgb1, rgb2, gap, i, palette) {
 
     var hsl;
 
@@ -482,16 +482,16 @@
     }
 
     return hsl;
-  };
+  }
 
-  var solidColors = function(rgb1 /*, rgb2, gap, i*/ ) {
+  function solidColors(rgb1 /*, rgb2, gap, i*/ ) {
 
     // just a single color
 
     var hsl = clr.rgb2hsl(rgb1);
 
     return hsl;
-  };
+  }
 
   // color band
 
@@ -775,11 +775,12 @@
       return minHslStats;
     };
 
-    exports.getIntensity = getIntensity;
-    exports.calcHslStats = calcHslStats;
-    exports.isHueModeOk = isHueModeOk;
-    exports.fixColor = fixColor;
-
     return palette;
   };
+
+  exports.getIntensity = getIntensity;
+  exports.calcHslStats = calcHslStats;
+  exports.isHueModeOk = isHueModeOk;
+  exports.fixColor = fixColor;
+
 }());

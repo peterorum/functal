@@ -71,13 +71,25 @@ while ($true) {
 
         convert $path$f".png" -gravity south -chop 0x5 $path$f"-wgl-$suffix.jpg"
 
-        if ((get-item $path$f"-wgl-"$suffix".jpg").length -gt 100kb){
-          $count ++;
-          $ok = $true;
+        $wgl = $path$f"-wgl-"$suffix".jpg"
 
-          write-host "Moving to s3"
+        if ((get-item $wgl).length -gt 100kb){
 
-          aws s3 cp $path$f"-wgl-"$suffix".jpg" s3://functal-images --acl="public-read"
+          node check-item.js $wgl
+
+          if ($? -eq 0) {
+            $count ++;
+            $ok = $true;
+
+            write-host "Moving to s3"
+
+            aws s3 cp $path$f"-wgl-"$suffix".jpg" s3://functal-images --acl="public-read"
+
+          } else {
+
+            write-host "------------------ colours not ok"
+
+          }
 
         } else {
 

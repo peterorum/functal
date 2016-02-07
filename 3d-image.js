@@ -37,8 +37,9 @@
         var rawData = rawImageData.data;
         var w = rawImageData.width;
         var h = rawImageData.height;
+        var len = w * h * 4;
 
-        for (var d = 0; d < rawImageData.width * rawImageData.height * 4; d += 4) {
+        for (var d = 0; d < len; d += 4) {
             let rgb = {};
 
             rgb.r = rawData[d];
