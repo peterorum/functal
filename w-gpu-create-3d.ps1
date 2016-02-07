@@ -69,9 +69,9 @@ while ($true) {
         # crop bottom off to 768x1024 & convert to jpg
         write-host "Cropping to jpg"
 
-        convert $path$f".png" -gravity south -chop 0x5 $path$f"-wgl-$suffix.jpg"
-
         $wgl = $path + $f + "-wgl-" + $suffix + ".jpg"
+
+        convert $path$f".png" -gravity south -chop 0x5 $wgl
 
         if ((get-item $wgl).length -gt 100kb){
 
