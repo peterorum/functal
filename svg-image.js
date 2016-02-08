@@ -313,9 +313,12 @@
 
     let shapeLinesSequential = function(svgf, options) {
 
-        let point2 = (options.currentPoint + 1) % options.points.length;
+        let point2 = options.currentPoint + 1;
 
-        shapeLinesDraw(svgf, options, point2);
+        // avoid wrap around
+        if (point2 !== options.points.length) {
+           shapeLinesDraw(svgf, options, point2);
+        }
     };
 
     shapeLinesSequential.isFilled = false;
@@ -416,7 +419,7 @@
                 // debug less
                 // xy = R.take(100, xy);
 
-                for (let z = 0; z < xy.length; z++) {
+                for (let z = 0; z < xy.length - 1; z++) {
 
                     let yy = xy[z].y;
                     let xx = xy[z].x;
