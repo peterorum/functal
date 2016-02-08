@@ -97,7 +97,7 @@
     let shapes = [
         {
             shape: shapeLine,
-            weight: 200
+            weight: 100
         },
         {
             shape: shapeCylinder,
@@ -145,6 +145,7 @@
             let segments = math.randomInt(1, 65);
 
             let wireframe = (maxRadius > 12) && (math.random() < 0.25);
+            let wireframeLinewidth = 1 + Rp.bandomInt(100, 3);
 
             let minOpacity = math.round(100 * math.random()) / 100;
             let maxOpacity = 1;
@@ -177,6 +178,7 @@
                 directionalLights,
                 segments,
                 wireframe,
+                wireframeLinewidth,
                 minOpacity,
                 maxOpacity,
                 openEnded,
@@ -248,7 +250,8 @@
 
                       new THREE.MeshBasicMaterial( {
                         color: options.color,
-                        wireframe: true
+                        wireframe: true,
+                        wireframeLinewidth: options.wireframeLinewidth
                       } )
 
                     );
@@ -313,7 +316,7 @@
                     let x3 = (x / dimensions.inputWidth) * dimensions.outputWidth - dimensions.outputWidth / 2;
                     let y3 = -((y / dimensions.inputHeight) * dimensions.outputHeight - dimensions.outputHeight / 2);
 
-                    let z3 = math.round(hsl.l * maxz, 0); /// outputHeight;
+                    let z3 = math.round(hsl.l * maxz, 0);
 
                     let radius = params.maxRadius;
                     let radius2 = params.maxRadius2;
