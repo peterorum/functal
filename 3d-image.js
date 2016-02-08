@@ -236,7 +236,8 @@
                     color: options.color,
                     opacity: options.opacity,
                     transparent: true,
-                    shininess: options.shininess
+                    shininess: options.shininess,
+                    side: THREE.DoubleSide
                   } )
                 ];
                 \n`);
