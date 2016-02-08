@@ -168,11 +168,14 @@
 
             let shape = Rp.wandom(shapes).shape;
 
+            let metal = math.random() < 0.5;
+
             let params = {
                 maxz,
                 maxRadius,
                 maxRadius2,
                 maxShininess,
+                metal,
                 spotLights,
                 pointLights,
                 directionalLights,
@@ -341,7 +344,8 @@
                       radius2: ${radius2},
                       opacity: ${opacity},
                       shininess: ${shininess},
-                      specular: ${specular}
+                      specular: ${specular},
+                      metal: ${params.metal}
                     });
                     \n`);
                 }
