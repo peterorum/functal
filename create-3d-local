@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo create 3d "$1"
-node 3d-image "${1}"
+node  3d-image "${1}"
 
 # needs full path
 echo create png

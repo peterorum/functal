@@ -67,7 +67,7 @@
         return (d < 16 ? "0" : "") + d.toString(16);
     }
 
-    function randomColor(params, maxLightness) {
+    function randomColor(params, maxLightness ) {
         let k = math.randomInt(params.xy.length);
         let yy = params.xy[k].y;
         let xx = params.xy[k].x;
@@ -239,7 +239,8 @@
                     opacity: options.opacity,
                     transparent: true,
                     shininess: options.shininess,
-                    side: THREE.DoubleSide
+                    side: THREE.DoubleSide,
+                    specular: options.specular
                   } )
                 ];
                 \n`);
@@ -301,6 +302,10 @@
                 let sample = shape.sample(params);
                 xy = R.take(xy.length * sample, xy);
 
+                params.xy = xy;
+                params.data = data;
+
+
                 for (let k = 0; k < xy.length; k++) {
 
                     let yy = xy[k].y;
@@ -325,6 +330,8 @@
 
                     let shininess = params.maxShininess;
 
+                    let specular = randomColor(params, 1);
+
                     outf.write(`${shape.fn}(s, {
                       x: ${x3},
                       y: ${y3},
@@ -333,7 +340,8 @@
                       radius: ${radius},
                       radius2: ${radius2},
                       opacity: ${opacity},
-                      shininess: ${shininess}
+                      shininess: ${shininess},
+                      specular: ${specular}
                     });
                     \n`);
                 }
@@ -341,9 +349,6 @@
                 // end
 
                 let backgroundColor = '0x000000';
-
-                params.xy = xy;
-                params.data = data;
 
                 params.ambientLight = randomColor(params, 0.5);
                 console.log('params.ambientLight ', params.ambientLight);
