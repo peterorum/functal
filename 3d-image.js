@@ -341,7 +341,8 @@
                       radius2: ${radius2},
                       opacity: ${opacity},
                       shininess: ${shininess},
-                      specular: ${specular}
+                      specular: ${specular},
+                      emissive: 0xff0000
                     });
                     \n`);
                 }
