@@ -169,6 +169,7 @@
             let shape = Rp.wandom(shapes).shape;
 
             let params = {
+                randomSeed,
                 maxz,
                 maxRadius,
                 maxRadius2,
@@ -372,7 +373,7 @@
 
                 for (let i = 0; i < spotLights; i++) {
 
-                    let spotLightColor = randomColor(params, 0.75);
+                    let spotLightColor = randomColor(params, 0.33);
                     console.log(`spotLightColor${i} `, spotLightColor);
 
                     outf.write(`
@@ -389,7 +390,7 @@
 
                 for (let i = 0; i < pointLights; i++) {
 
-                    let pointLightColor = randomColor(params, 0.75);
+                    let pointLightColor = randomColor(params, 0.33);
                     console.log(`pointLightColor${i} `, pointLightColor);
 
                     outf.write(`
@@ -405,7 +406,7 @@
 
                 for (let i = 0; i < directionalLights; i++) {
 
-                    let directionalLightColor = randomColor(params, 0.75);
+                    let directionalLightColor = randomColor(params, 0.33);
                     console.log(`directionalLightColor${i} `, directionalLightColor);
 
                     outf.write(`
