@@ -129,6 +129,14 @@
         }
     };
 
+    let shapeRing = {
+        fn: "ring",
+        sample: (params) => (isDev ? 1
+                : 1) / math.square(params.maxRadius + params.maxRadius2),
+        init: () => {
+        }
+    };
+
     let shapeWall = {
         fn: "wall",
         sample: (params) => (isDev ? 1
@@ -145,6 +153,10 @@
         {
             shape: shapeCircle,
             weight: 10
+        },
+        {
+            shape: shapeRing,
+            weight: 5
         },
         {
             shape: shapeCylinder,
@@ -403,6 +415,37 @@
                   circle.receiveShadow = true;
 
                   scene.add(circle);
+                }
+                \n`);
+
+                // add ring
+
+                outf.write(`
+                function ring(scene, options) {
+
+                  let geometry = new THREE.RingGeometry(options.radius, options.radius + options.radius2, ${params.segments}, ${params.segments}, ${params.theta});
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                outf.write(`
+                  let ring = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  // ring.rotation.x = ${params.theta} + 2 * Math.PI * options.hsl.h;
+                  ring.rotation.y = ${params.theta} + 2 * Math.PI * options.hsl.h;
+
+                  ring.position.x = options.x;
+                  ring.position.y = options.y;
+                  ring.position.z = options.z;
+
+
+                  ring.castShadow = true;
+                  ring.receiveShadow = true;
+
+                  scene.add(ring);
                 }
                 \n`);
 
