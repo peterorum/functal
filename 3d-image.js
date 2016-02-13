@@ -113,6 +113,14 @@
         init: () => {}
     };
 
+    let shapeBox = {
+        fn: "box",
+        sample: (params) => (isDev ? 1
+                : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2)),
+        init: () => {}
+    };
+
+
     let shapePlane = {
         fn: "plane",
         sample: (params) => (isDev ? 1
@@ -161,6 +169,10 @@
         {
             shape: shapeCylinder,
             weight: 400
+        },
+        {
+            shape: shapeBox,
+            weight: 5
         },
         {
             shape: shapePlane,
@@ -233,7 +245,8 @@
 
             let planeSegments = {
                 w: math.randomInt(1, 16),
-                h: math.randomInt(1, 16)
+                h: math.randomInt(1, 16),
+                d: math.randomInt(1, 16)
             };
 
             let wireframe = (maxRadius > 12) && (math.random() < 0.25);
@@ -354,6 +367,37 @@
                   cylinder.receiveShadow = true;
 
                   scene.add(cylinder);
+                }
+                \n`);
+
+                // add box
+
+                outf.write(`
+                function box(scene, options) {
+
+                  var geometry = new THREE.BoxGeometry(options.radius, options.radius2, options.z, ${params.planeSegments.w}, ${params.planeSegments.h}, ${params.planeSegments.d});
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                outf.write(`
+                  var box = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  box.rotation.x = ${params.rotation.x};
+                  box.rotation.y = ${params.rotation.y};
+                  box.rotation.z = ${params.rotation.z};
+
+                  box.position.x = options.x;
+                  box.position.y = options.y;
+                  box.position.z = options.z / 2;
+
+                  box.castShadow = true;
+                  box.receiveShadow = true;
+
+                  scene.add(box);
                 }
                 \n`);
 
