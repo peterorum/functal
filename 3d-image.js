@@ -117,6 +117,12 @@
                 : 1) / params.maxRadius / 8
     };
 
+    let shapeCircle = {
+        fn: "circle",
+        sample: (params) => (isDev ? 1
+                : 1) / math.square(params.maxRadius)
+    };
+
     let shapeWall = {
         fn: "wall",
         sample: (params) => (isDev ? 1
@@ -126,7 +132,11 @@
     let shapes = [
         {
             shape: shapeLine,
-            weight: 100
+            weight: 80
+        },
+        {
+            shape: shapeCircle,
+            weight: 10
         },
         {
             shape: shapeCylinder,
@@ -134,7 +144,7 @@
         },
         {
             shape: shapePlane,
-            weight: 100
+            weight: 50
         },
         {
             shape: shapeWall,
@@ -327,7 +337,7 @@
                 outf.write(`
                 function plane(scene, options) {
 
-                  let geometry = new THREE.PlaneGeometry(options.radius, options.z, 2, 8);
+                  let geometry = new THREE.PlaneGeometry(options.radius, options.z, ${params.planeSegments.w}, ${params.planeSegments.h});
 
                   ${phongMaterial()}
 
@@ -348,6 +358,35 @@
                   plane.receiveShadow = true;
 
                   scene.add(plane);
+                }
+                \n`);
+
+                // add circle
+
+                outf.write(`
+                function circle(scene, options) {
+
+                  let geometry = new THREE.CircleGeometry(options.radius, ${params.segments});
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                outf.write(`
+                  let circle = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  // circle.rotation.x = ${Math.PI / 2};
+
+                  circle.position.x = options.x;
+                  circle.position.y = options.y;
+                  circle.position.z = options.z;
+
+                  circle.castShadow = true;
+                  circle.receiveShadow = true;
+
+                  scene.add(circle);
                 }
                 \n`);
 
