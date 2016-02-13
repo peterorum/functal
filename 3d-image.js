@@ -120,6 +120,15 @@
         init: () => {}
     };
 
+    let shapeSphere = {
+        fn: "sphere",
+        sample: (params) => (isDev ? 1
+                : 1) / math.pow(params.maxRadius, 2),
+        init: (params) => {
+          params.maxRadius = math.max(10, params.maxRadius);
+        }
+    };
+
 
     let shapePlane = {
         fn: "plane",
@@ -173,6 +182,10 @@
         {
             shape: shapeBox,
             weight: 5
+        },
+        {
+            shape: shapeSphere,
+            weight: 100,
         },
         {
             shape: shapePlane,
@@ -398,6 +411,33 @@
                   box.receiveShadow = true;
 
                   scene.add(box);
+                }
+                \n`);
+
+                // add sphere
+
+                outf.write(`
+                function sphere(scene, options) {
+
+                  var geometry = new THREE.SphereGeometry(options.radius * (1 - options.hsl.l), ${params.segments}, ${params.segments});
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                outf.write(`
+                  var sphere = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  sphere.position.x = options.x;
+                  sphere.position.y = options.y;
+                  sphere.position.z = options.z;
+
+                  sphere.castShadow = true;
+                  sphere.receiveShadow = true;
+
+                  scene.add(sphere);
                 }
                 \n`);
 
