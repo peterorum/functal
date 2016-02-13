@@ -102,31 +102,39 @@
 
     let shapeLine = {
         fn: "ln",
-        sample: () => (isDev ? 0.02 : 0.4)
+        sample: () => (isDev ? 0.02 : 0.4),
+        init: () => {}
     };
 
     let shapeCylinder = {
         fn: "cyl",
         sample: (params) => (isDev ? 1
-                : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2))
+                : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2)),
+        init: () => {}
     };
 
     let shapePlane = {
         fn: "plane",
         sample: (params) => (isDev ? 1
-                : 1) / params.maxRadius / 8
+                : 1) / params.maxRadius / 8,
+        init: () => {}
     };
 
     let shapeCircle = {
         fn: "circle",
         sample: (params) => (isDev ? 1
-                : 1) / math.square(params.maxRadius)
+                : 1) / math.square(params.maxRadius2),
+        init: (params) => {
+          params.maxRadius2 = math.max(10, params.maxRadius2);
+        }
     };
 
     let shapeWall = {
         fn: "wall",
         sample: (params) => (isDev ? 1
-                : 1) / params.dimensions.outputWidth / math.randomInt(1, 10)
+                : 1) / params.dimensions.outputWidth / math.randomInt(1, 10),
+        init: () => {}
+
     };
 
     let shapes = [
@@ -236,6 +244,9 @@
                 z: math.random(0, 2 * Math.PI)
             };
 
+            // any initial angle
+            let theta = math.random(0, Math.PI * 2);
+
             let fieldOfView = 60 + Rp.bandom(30, 2);
 
             let shape = Rp.wandom(shapes).shape;
@@ -253,6 +264,7 @@
                 planeSegments,
                 wireframe,
                 wireframeLinewidth,
+                theta,
                 minOpacity,
                 maxOpacity,
                 openEnded,
@@ -261,6 +273,8 @@
                 fieldOfView,
                 shape
             };
+
+            shape.init(params);
 
             console.log('params ', JSON.stringify(params, null, 2));
 
@@ -366,7 +380,7 @@
                 outf.write(`
                 function circle(scene, options) {
 
-                  let geometry = new THREE.CircleGeometry(options.radius, ${params.segments});
+                  let geometry = new THREE.CircleGeometry(options.radius2, ${params.segments});
 
                   ${phongMaterial()}
 
@@ -377,11 +391,13 @@
                 outf.write(`
                   let circle = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 
-                  // circle.rotation.x = ${Math.PI / 2};
+                  // circle.rotation.x = ${params.theta} + 2 * Math.PI * options.hsl.h;
+                  circle.rotation.y = ${params.theta} + 2 * Math.PI * options.hsl.h;
 
                   circle.position.x = options.x;
                   circle.position.y = options.y;
                   circle.position.z = options.z;
+
 
                   circle.castShadow = true;
                   circle.receiveShadow = true;
@@ -491,7 +507,8 @@
                       radius2: ${radius2},
                       opacity: ${opacity},
                       shininess: ${shininess},
-                      specular: ${specular}
+                      specular: ${specular},
+                      hsl: {h: ${hsl.h}, s: ${hsl.s}, l: ${hsl.l}}
                     });
                     \n`);
                 }
