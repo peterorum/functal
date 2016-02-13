@@ -64,7 +64,7 @@
             let ok =
               stats.l.mean >0.17 &&
               stats.l.mean < 0.9 &&
-              stats.l.std > 0.18 &&
+              stats.l.std > 0.177 &&
               stats.s.mean > 0.17
               ;
 
