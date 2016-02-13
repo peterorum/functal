@@ -314,6 +314,9 @@
                   cylinder.position.y = options.y;
                   cylinder.position.z = options.z / 2;
 
+                  cylinder.castShadow = true;
+                  cylinder.receiveShadow = true;
+
                   scene.add(cylinder);
                 }
                 \n`);
@@ -340,6 +343,9 @@
                   plane.position.x = options.x;
                   plane.position.y = options.y;
                   plane.position.z = 0;
+
+                  plane.castShadow = true;
+                  plane.receiveShadow = true;
 
                   scene.add(plane);
                 }
@@ -370,6 +376,9 @@
                   plane.position.x = options.x;
                   plane.position.y = options.y;
                   plane.position.z = 0;
+
+                  plane.castShadow = true;
+                  plane.receiveShadow = true;
 
                   scene.add(plane);
                 }
@@ -461,6 +470,9 @@
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
 
+                  renderer.shadowMapEnabled = true;
+                  renderer.shadowMapType = THREE.BasicShadowMap;
+
                   var camera = new THREE.PerspectiveCamera( ${params.fieldOfView}, width / height, 0.1, 1000 );
 
                   camera.position.x = ${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()};
@@ -483,6 +495,12 @@
                   spotLight${i}.angle = ${math.random(Math.PI)};
                   spotLight${i}.distance = ${Rp.bandom(1000, -3)};
                   spotLight${i}.exponent = ${math.random(20)};
+                  spotLight${i}.castShadows = true;
+
+                  // var target = new THREE.Object3D();
+                  // target.position = new THREE.Vector3(${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()}, ${ Rp.bandomInt(1000, -2)});
+                  // spotLight${i}.target = target;
+
                   scene.add(spotLight${i});
                   \n`);
                 }
@@ -515,10 +533,10 @@
                   directionalLight${i}.position.set(${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()}, ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()}, ${ math.randomInt(-100, 1000)});
                   directionalLight${i}.intensity = ${math.random(0, 3)};
                   directionalLight${i}.distance = ${Rp.bandom(1000, -3)};
+                  directionalLight${i}.castShadows = true;
                   scene.add(directionalLight${i});
                   \n`);
                 }
-
 
                 // ambient light
                 outf.write(`
