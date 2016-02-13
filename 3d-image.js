@@ -10,6 +10,8 @@
         global: true
     });
 
+    // ./create-3d-local functals/small/functal-20160213075951459.jpg
+
     var chalk = require('chalk');
     var math = require('mathjs');
     var jpeg = require('jpeg-js');
@@ -219,7 +221,7 @@
         },
         {
             shape: shapePlane,
-            weight: 50
+            weight: 20
         },
         {
             shape: shapeWall,

@@ -7,3 +7,6 @@ node  3d-image "${1}"
 echo create png
 node screenshot `pwd`/"${1/\.jpg/}"
 
+convert `pwd`/"${1/\.jpg/.png}" -gravity south -chop 0x5 `pwd`/"${1/\.jpg/-wgl.jpg}"
+
+node check-image.js `pwd`/"${1/\.jpg/-wgl.jpg}"
