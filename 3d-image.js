@@ -67,7 +67,7 @@
         return (d < 16 ? "0" : "") + d.toString(16);
     }
 
-    function randomColor(params, maxLightness ) {
+    function randomColor(params, maxLightness) {
         let k = math.randomInt(params.xy.length);
         let yy = params.xy[k].y;
         let xx = params.xy[k].x;
@@ -81,6 +81,23 @@
         return color;
     }
 
+    function setWireframe(params, outf) {
+
+      if (params.wireframe) {
+          outf.write(`
+          materials.push(
+
+            new THREE.MeshBasicMaterial( {
+              color: options.color,
+              wireframe: true,
+              wireframeLinewidth: options.wireframeLinewidth
+            } )
+
+          );
+        \n`);
+      }
+    }
+
     //------------- shapes
 
     let shapeLine = {
@@ -90,14 +107,20 @@
 
     let shapeCylinder = {
         fn: "cyl",
-        sample: (params) =>  (isDev ? 1
-         : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2))
+        sample: (params) => (isDev ? 1
+                : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2))
     };
 
     let shapePlane = {
-        fn: "pl",
-        sample: (params) =>  (isDev ? 1
-         : 1) / params.maxRadius / 8
+        fn: "plane",
+        sample: (params) => (isDev ? 1
+                : 1) / params.maxRadius / 8
+    };
+
+    let shapeWall = {
+        fn: "wall",
+        sample: (params) => (isDev ? 1
+                : 1) / params.dimensions.outputWidth
     };
 
     let shapes = [
@@ -112,6 +135,10 @@
         {
             shape: shapePlane,
             weight: 100
+        },
+        {
+            shape: shapeWall,
+            weight: 100
         }
     ];
 
@@ -119,7 +146,7 @@
 
     function phongMaterial() {
 
-      return `
+        return `
         var materials = [
           new THREE.MeshPhongMaterial( {
             color: options.color,
@@ -170,7 +197,7 @@
 
             let spotLights = Rp.bandomInt(4, 1);
             let pointLights = (spotLights === 0 ? 1 : 0) + Rp.bandomInt(4, 1);
-            let directionalLights = (spotLights  + pointLights === 0 ? 1 : 0) + Rp.bandomInt(4, 1);
+            let directionalLights = (spotLights + pointLights === 0 ? 1 : 0) + Rp.bandomInt(4, 1);
 
             let segments = math.randomInt(1, 65);
 
@@ -268,19 +295,7 @@
 
                 \n`);
 
-                if (params.wireframe) {
-                    outf.write(`
-                    materials.push(
-
-                      new THREE.MeshBasicMaterial( {
-                        color: options.color,
-                        wireframe: true,
-                        wireframeLinewidth: options.wireframeLinewidth
-                      } )
-
-                    );
-                  \n`);
-                }
+                setWireframe(params, outf);
 
                 outf.write(`
                   var cylinder = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
@@ -301,30 +316,18 @@
                 // add plane
 
                 outf.write(`
-                function pl(scene, options) {
+                function plane(scene, options) {
 
-                  var geometry = new THREE.PlaneGeometry(options.radius, options.z, 2, 8);
+                  let geometry = new THREE.PlaneGeometry(options.radius, options.z, 2, 8);
 
                   ${phongMaterial()}
 
                 \n`);
 
-                if (params.wireframe) {
-                    outf.write(`
-                    materials.push(
-
-                      new THREE.MeshBasicMaterial( {
-                        color: options.color,
-                        wireframe: true,
-                        wireframeLinewidth: options.wireframeLinewidth
-                      } )
-
-                    );
-                  \n`);
-                }
+                setWireframe(params, outf);
 
                 outf.write(`
-                  var plane = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+                  let plane = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 
                   plane.rotation.x = ${Math.PI / 2};
 
@@ -336,7 +339,35 @@
                 }
                 \n`);
 
+                // add wall
 
+                outf.write(`
+                function wall(scene, options) {
+
+                  let geometry = new THREE.PlaneGeometry(1000, 1000, 2, 8);
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                outf.write(`
+                  let plane = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  plane.rotation.x = Math.random() < 0.5 ? 0 : Math.PI / 2;
+                  plane.rotation.y = Math.random() < 0.5 ? 0 : Math.PI / 2;
+                  plane.rotation.z = Math.random() < 0.5 ? 0 : Math.PI / 2;
+
+                  plane.position.x = options.x;
+                  plane.position.y = options.y;
+                  plane.position.z = 0;
+
+                  scene.add(plane);
+                }
+                \n`);
+
+                // --------------------
 
                 outf.write(`
                   draw();
@@ -368,7 +399,6 @@
 
                 params.xy = xy;
                 params.data = data;
-
 
                 for (let k = 0; k < xy.length; k++) {
 
