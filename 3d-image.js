@@ -129,6 +129,15 @@
         }
     };
 
+    let shapeTorus = {
+        fn: "torus",
+        sample: (params) => (isDev ? 1
+                : 1) / math.pow(params.maxRadius + params.maxRadius2, 2),
+        init: (params) => {
+          // params.maxRadius = math.max(10, params.maxRadius);
+        }
+    };
+
 
     let shapePlane = {
         fn: "plane",
@@ -186,6 +195,10 @@
         {
             shape: shapeSphere,
             weight: 100
+        },
+        {
+            shape: shapeTorus,
+            weight: 50
         },
         {
             shape: shapePlane,
@@ -441,6 +454,34 @@
                 }
                 \n`);
 
+                // add torus
+
+                outf.write(`
+                function torus(scene, options) {
+
+                  var geometry = new THREE.TorusGeometry(options.radius + options.radius2, options.radius, ${params.segments}, ${params.segments});
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                outf.write(`
+                  var torus = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  torus.rotation.y = ${params.theta} + 2 * Math.PI * options.hsl.h;
+
+                  torus.position.x = options.x;
+                  torus.position.y = options.y;
+                  torus.position.z = options.z;
+
+                  torus.castShadow = true;
+                  torus.receiveShadow = true;
+
+                  scene.add(torus);
+                }
+                \n`);
 
                 // add plane
 
