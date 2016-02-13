@@ -185,7 +185,7 @@
         },
         {
             shape: shapeSphere,
-            weight: 100,
+            weight: 100
         },
         {
             shape: shapePlane,
@@ -193,7 +193,7 @@
         },
         {
             shape: shapeWall,
-            weight: 100
+            weight: 150
         }
     ];
 
