@@ -94,6 +94,12 @@
          : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2))
     };
 
+    let shapePlane = {
+        fn: "pl",
+        sample: (params) =>  (isDev ? 1
+         : 1) / params.maxRadius / 8
+    };
+
     let shapes = [
         {
             shape: shapeLine,
@@ -102,8 +108,32 @@
         {
             shape: shapeCylinder,
             weight: 400
+        },
+        {
+            shape: shapePlane,
+            weight: 100
         }
     ];
+
+    //------------- material
+
+    function phongMaterial() {
+
+      return `
+        var materials = [
+          new THREE.MeshPhongMaterial( {
+            color: options.color,
+            opacity: options.opacity,
+            transparent: true,
+            shininess: options.shininess,
+            side: THREE.DoubleSide,
+            specular: options.specular
+          } )
+        ];
+      `;
+    }
+
+
 
     // ------------ output to html+three.js
 
@@ -234,16 +264,8 @@
 
                   var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments}, 1, ${params.openEnded}, 0, ${params.arc});
 
-                  var materials = [
-                  new THREE.MeshPhongMaterial( {
-                    color: options.color,
-                    opacity: options.opacity,
-                    transparent: true,
-                    shininess: options.shininess,
-                    side: THREE.DoubleSide,
-                    specular: options.specular
-                  } )
-                ];
+                  ${phongMaterial()}
+
                 \n`);
 
                 if (params.wireframe) {
@@ -274,6 +296,47 @@
                   scene.add(cylinder);
                 }
                 \n`);
+
+
+                // add plane
+
+                outf.write(`
+                function pl(scene, options) {
+
+                  var geometry = new THREE.PlaneGeometry(options.radius, options.z, 2, 8);
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                if (params.wireframe) {
+                    outf.write(`
+                    materials.push(
+
+                      new THREE.MeshBasicMaterial( {
+                        color: options.color,
+                        wireframe: true,
+                        wireframeLinewidth: options.wireframeLinewidth
+                      } )
+
+                    );
+                  \n`);
+                }
+
+                outf.write(`
+                  var plane = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  plane.rotation.x = ${Math.PI / 2};
+
+                  plane.position.x = options.x;
+                  plane.position.y = options.y;
+                  plane.position.z = 0;
+
+                  scene.add(plane);
+                }
+                \n`);
+
+
 
                 outf.write(`
                   draw();
