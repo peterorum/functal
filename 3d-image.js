@@ -177,7 +177,7 @@
         },
         {
             shape: shapeCylinder,
-            weight: 4000000000///
+            weight: 400
         },
         {
             shape: shapeBox,
@@ -357,7 +357,7 @@
                 outf.write(`
                 function cyl(scene, options) {
 
-                  var geometry = new THREE.CylinderGeometry(-options.radius, options.radius2, options.z, ${params.segments}, 1, ${params.openEnded}, 0, ${params.arc});
+                  var geometry = new THREE.CylinderGeometry(options.radius, options.radius2, options.z, ${params.segments}, 1, ${params.openEnded}, 0, ${params.arc});
 
                   ${phongMaterial()}
 
