@@ -83,8 +83,8 @@
 
     function setWireframe(params, outf) {
 
-      if (params.wireframe) {
-          outf.write(`
+        if (params.wireframe) {
+            outf.write(`
           materials.push(
 
             new THREE.MeshBasicMaterial( {
@@ -95,7 +95,7 @@
 
           );
         \n`);
-      }
+        }
     }
 
     //------------- shapes
@@ -120,7 +120,7 @@
     let shapeWall = {
         fn: "wall",
         sample: (params) => (isDev ? 1
-                : 1) / params.dimensions.outputWidth
+                : 1) / params.dimensions.outputWidth / math.randomInt(1, 10)
     };
 
     let shapes = [
@@ -201,6 +201,11 @@
 
             let segments = math.randomInt(1, 65);
 
+            let planeSegments = {
+                w: math.randomInt(1, 16),
+                h: math.randomInt(1, 16)
+            };
+
             let wireframe = (maxRadius > 12) && (math.random() < 0.25);
             let wireframeLinewidth = 1 + Rp.bandomInt(100, 3);
 
@@ -235,6 +240,7 @@
                 pointLights,
                 directionalLights,
                 segments,
+                planeSegments,
                 wireframe,
                 wireframeLinewidth,
                 minOpacity,
@@ -341,10 +347,12 @@
 
                 // add wall
 
+                let length = params.dimensions.outputWidth;
+
                 outf.write(`
                 function wall(scene, options) {
 
-                  let geometry = new THREE.PlaneGeometry(1000, 1000, 2, 8);
+                  let geometry = new THREE.PlaneGeometry(${length}, options.z, ${params.planeSegments.w}, ${params.planeSegments.h});
 
                   ${phongMaterial()}
 
@@ -355,9 +363,9 @@
                 outf.write(`
                   let plane = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 
-                  plane.rotation.x = Math.random() < 0.5 ? 0 : Math.PI / 2;
+                  plane.rotation.x = Math.PI / 2;
                   plane.rotation.y = Math.random() < 0.5 ? 0 : Math.PI / 2;
-                  plane.rotation.z = Math.random() < 0.5 ? 0 : Math.PI / 2;
+                  plane.rotation.z = Math.PI / 2;
 
                   plane.position.x = options.x;
                   plane.position.y = options.y;
