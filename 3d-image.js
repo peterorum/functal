@@ -126,6 +126,7 @@
                 : 1) / math.pow(params.maxRadius, 2),
         init: (params) => {
           params.maxRadius = math.max(10, params.maxRadius);
+          params.segments = math.max(4, params.segments);
         }
     };
 
@@ -134,7 +135,8 @@
         sample: (params) => (isDev ? 1
                 : 1) / math.pow(params.maxRadius + params.maxRadius2, 2),
         init: (params) => {
-          // params.maxRadius = math.max(10, params.maxRadius);
+          params.maxRadius = math.max(10, params.maxRadius);
+          params.segments = math.max(4, params.segments);
         }
     };
 
@@ -459,7 +461,7 @@
                 outf.write(`
                 function torus(scene, options) {
 
-                  var geometry = new THREE.TorusGeometry(options.radius + options.radius2, options.radius, ${params.segments}, ${params.segments});
+                  var geometry = new THREE.TorusGeometry(options.radius + options.radius2, options.radius, ${params.segments}, ${params.segments}, ${params.arc});
 
                   ${phongMaterial()}
 
