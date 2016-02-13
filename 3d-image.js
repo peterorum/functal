@@ -140,6 +140,17 @@
         }
     };
 
+    let shapeKnot = {
+        fn: "knot",
+        sample: (params) => (isDev ? 1
+                : 1) / math.pow(params.maxRadius + params.maxRadius2, 2),
+        init: (params) => {
+          params.maxRadius = math.min(20, params.maxRadius);
+          params.maxRadius2 = math.max(2 * params.maxRadius, params.maxRadius2);
+          params.segments = math.max(4, params.segments);
+        }
+    };
+
 
     let shapePlane = {
         fn: "plane",
@@ -201,6 +212,10 @@
         {
             shape: shapeTorus,
             weight: 50
+        },
+        {
+            shape: shapeKnot,
+            weight: 400
         },
         {
             shape: shapePlane,
@@ -297,6 +312,9 @@
                 z: math.random(0, 2 * Math.PI)
             };
 
+            let knotP = 2 + Rp.bandomInt(7, 1);
+            let knotQ = 2 + Rp.bandomInt(7, 1);
+
             // any initial angle
             let theta = math.random(0, Math.PI * 2);
 
@@ -322,6 +340,8 @@
                 maxOpacity,
                 openEnded,
                 arc,
+                knotP,
+                knotQ,
                 rotation,
                 fieldOfView,
                 shape
@@ -482,6 +502,37 @@
                   torus.receiveShadow = true;
 
                   scene.add(torus);
+                }
+                \n`);
+
+                // add knot
+
+                outf.write(`
+                function knot(scene, options) {
+
+                  var size = (1 - options.hsl.l / 2);
+
+                  var geometry = new THREE.TorusKnotGeometry(size * (options.radius + options.radius2), size * (options.radius), ${params.segments}, ${params.segments}, ${params.knotP}, ${params.knotQ});
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                outf.write(`
+                  var knot = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  knot.rotation.y = ${params.theta} + 2 * Math.PI * options.hsl.h;
+
+                  knot.position.x = options.x;
+                  knot.position.y = options.y;
+                  knot.position.z = options.z;
+
+                  knot.castShadow = true;
+                  knot.receiveShadow = true;
+
+                  scene.add(knot);
                 }
                 \n`);
 
