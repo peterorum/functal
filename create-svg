@@ -15,7 +15,7 @@ node --harmony svg-image.js "$1"
 
 if [ -s "${1/\.jpg/.svg}" ]
 then
-  echo convert to jpg
+  echo 'convert to jpg'
 
   time=`date +%s`
   out=${1/\.jpg/-svg-}$time.jpg
@@ -24,6 +24,7 @@ then
 
   rsvg-convert --unlimited "$svg" | convert - "$out"
 
+  echo 'check stats'
   node ./check-image.js "$out"
 
   if [$? -eq 0]
