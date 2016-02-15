@@ -217,7 +217,7 @@
         },
         {
             shape: shapeKnot,
-            weight: 400
+            weight: 300
         },
         {
             shape: shapePlane,

@@ -16,6 +16,8 @@ then
 
   rsvg-convert --unlimited "$svg" | convert - "$out"
 
+  node ./check-image.js "$out"
+
 else
   echo zero length file
 fi
