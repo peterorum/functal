@@ -62,9 +62,8 @@
             console.log(JSON.stringify(stats, null, 2));
 
             let ok =
-              stats.l.mean >0.17 &&
-              stats.l.mean < 0.9 &&
-              stats.l.std > 0.177 &&
+              ((stats.l.std > 0.177 && stats.l.mean > 0.17) || stats.i.mean > 0.2) &&
+              stats.l.mean < 0.8 &&
               stats.s.mean > 0.17
               ;
 

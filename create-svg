@@ -24,15 +24,22 @@ then
 
   rsvg-convert --unlimited "$svg" | convert - "$out"
 
-  if curl -s http://169.254.169.254/latest/meta-data/spot/termination-time | grep -q .*T.*Z; then
-    echo terminated
+  node ./check-image.js "$out"
+
+  if [$? -eq 0]
+  then
+    if curl -s http://169.254.169.254/latest/meta-data/spot/termination-time | grep -q .*T.*Z; then
+      echo terminated
+    else
+      echo copy to s3
+      aws s3 cp "$out" s3://functal-images --acl="public-read"
+    fi
   else
-    echo copy to s3
-    aws s3 cp "$out" s3://functal-images --acl="public-read"
+    echo 'not ok'
   fi
 
 else
-  echo zero length file
+  echo 'zero length file'
 fi
 
 echo delete
