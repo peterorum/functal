@@ -100,6 +100,22 @@
         }
     }
 
+    function setPosition(params, outf) {
+      outf.write(`
+        var shape = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+        shape.position.x = options.x;
+        shape.position.y = options.y;
+        shape.position.z = options.z;
+
+        shape.castShadow = true;
+        shape.receiveShadow = true;
+
+        scene.add(shape);
+      }
+      \n`);
+    }
+
     //------------- shapes
 
     let shapeLine = {
@@ -129,6 +145,15 @@
         init: (params) => {
           params.maxRadius = math.max(10, params.maxRadius);
           params.segments = math.max(4, params.segments);
+        }
+    };
+
+    let shapePolyhedron = {
+        fn: "poly",
+        sample: (params) => (isDev ? 1
+                : 1) / math.pow(params.maxRadius2, 1.5),
+        init: (params) => {
+          params.maxRadius2 = math.max(64, params.maxRadius2);
         }
     };
 
@@ -210,6 +235,10 @@
         {
             shape: shapeSphere,
             weight: 100
+        },
+        {
+            shape: shapePolyhedron,
+            weight: 10
         },
         {
             shape: shapeTorus,
@@ -317,6 +346,8 @@
             let knotP = 2 + Rp.bandomInt(7, 1);
             let knotQ = 2 + Rp.bandomInt(7, 1);
 
+            let polyhedron = Rp.wandom(['Icosa', 'Tetra', 'Dodeca', 'Octa']);
+
             // any initial angle
             let theta = math.random(0, Math.PI * 2);
 
@@ -338,6 +369,7 @@
                 wireframe,
                 wireframeLinewidth,
                 theta,
+                polyhedron,
                 minOpacity,
                 maxOpacity,
                 openEnded,
@@ -464,19 +496,23 @@
 
                 setWireframe(params, outf);
 
+                setPosition(params, outf);
+
+
+                // add polyhedron
+
                 outf.write(`
-                  var sphere = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+                function poly(scene, options) {
 
-                  sphere.position.x = options.x;
-                  sphere.position.y = options.y;
-                  sphere.position.z = options.z;
+                  var geometry = new THREE.${params.polyhedron}hedronGeometry(options.radius2 * (1 - options.hsl.l), 0);
 
-                  sphere.castShadow = true;
-                  sphere.receiveShadow = true;
+                  ${phongMaterial()}
 
-                  scene.add(sphere);
-                }
                 \n`);
+
+                setWireframe(params, outf);
+
+                setPosition(params, outf);
 
                 // add torus
 
