@@ -141,7 +141,7 @@
     let shapeSphere = {
         fn: "sphere",
         sample: (params) => (isDev ? 1
-                : 1) / math.pow(params.maxRadius, 2),
+                : 1) / math.pow(params.maxRadius, 1.5),
         init: (params) => {
           params.maxRadius = math.max(10, params.maxRadius);
           params.segments = math.max(4, params.segments);
@@ -238,7 +238,7 @@
         },
         {
             shape: shapePolyhedron,
-            weight: 10
+            weight: 20
         },
         {
             shape: shapeTorus,
