@@ -211,6 +211,16 @@
 
     };
 
+    let shapeConvex = {
+        fn: "convex",
+        sample: (params) => (isDev ? 1
+                : 1) / math.pow(params.maxRadius, 1.75),
+        init: (params) => {
+          params.maxRadius = math.max(40, params.maxRadius);
+        }
+    };
+
+
     let shapes = [
         {
             shape: shapeLine,
@@ -250,6 +260,10 @@
         },
         {
             shape: shapePlane,
+            weight: 20
+        },
+        {
+            shape: shapeConvex,
             weight: 20
         },
         {
@@ -395,11 +409,33 @@
                 <head>
                     <meta charset='UTF-8'>
                     <title>${outputFilename}</title>
-                    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.min.js'></script>
+                    <script src='file://${process.cwd()}/libs/three.min.js'></script>
+                    <script src='file://${process.cwd()}/libs/ConvexGeometry.js'></script>
                 </head>
                 <body style='margin:0; padding:0; overflow: hidden'>\n`);
 
                 outf.write(`<script>\n`);
+
+                outf.write(`
+                function generatePoints() {
+
+                  var points = [];
+
+                  var n = ${3 + Rp.bandomInt(100, 3)};
+
+                  var w = ${params.maxRadius};
+
+                  for (var i = 0; i < n; i++) {
+                    var x = -w/2 + Math.round(Math.random() * w);
+                    var y = -w/2 + Math.round(Math.random() * w);
+                    var z = -w/2 + Math.round(Math.random() * w);
+
+                    points.push(new THREE.Vector3(x, y, z));
+                  }
+
+                  return points;
+                }
+                \n`);
 
                 // add line
                 outf.write(`
@@ -698,6 +734,21 @@
                 }
                 \n`);
 
+                // add convex
+
+                outf.write(`
+                function convex(scene, options) {
+
+                  var geometry = new THREE.ConvexGeometry(options.points);
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                setPosition(params, outf);
+
                 // --------------------
 
                 outf.write(`
@@ -710,6 +761,9 @@
 
                       var scene = new THREE.Scene();
                       var s = scene;
+
+                      var points = generatePoints();
+
                 \n`);
 
                 let xy = [];
@@ -767,7 +821,8 @@
                       opacity: ${opacity},
                       shininess: ${shininess},
                       specular: ${specular},
-                      hsl: {h: ${hsl.h}, s: ${hsl.s}, l: ${hsl.l}}
+                      hsl: {h: ${hsl.h}, s: ${hsl.s}, l: ${hsl.l}},
+                      points: points
                     });
                     \n`);
                 }
