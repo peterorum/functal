@@ -6,7 +6,7 @@
 
     var chalk = require('chalk');
     var jpeg = require('jpeg-js');
-    var R = require('ramda');
+    // var R = require('ramda');
 
     var clr = require('./color');
     var pal = require('./palette');
@@ -63,7 +63,7 @@
 
             let ok =
               ((stats.l.std > 0.177 && stats.l.mean > 0.17) || stats.i.mean > 0.2) &&
-              stats.l.mean < 0.8 &&
+              stats.l.mean < 0.55 &&
               stats.s.mean > 0.17
               ;
 

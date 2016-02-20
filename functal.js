@@ -46,7 +46,7 @@
   var fractal = {};
 
   fractal.jpegQuality = 70;
-  fractal.maxCount = 10000;
+  fractal.maxCount = 20000;
 
   fractal.finite = R.curry(function(max, z) {
 

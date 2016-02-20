@@ -104,6 +104,10 @@
       outf.write(`
         var shape = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 
+        shape.rotation.x = ${params.rotation.x};
+        shape.rotation.y = ${params.rotation.y};
+        shape.rotation.z = ${params.rotation.z};
+
         shape.position.x = options.x;
         shape.position.y = options.y;
         shape.position.z = options.z;
@@ -211,12 +215,12 @@
 
     };
 
-    let shapeConvex = {
-        fn: "convex",
-        sample: (params) => (isDev ? 1
-                : 1) / math.pow(params.maxRadius, 1.75),
+    let shapeLathe = {
+        fn: "lathe",
+        sample: (params) => 1 / math.pow(params.maxRadius * params.maxRadius2, 1.4),
         init: (params) => {
-          params.maxRadius = math.max(40, params.maxRadius);
+          params.maxRadius = math.max(10, params.maxRadius);
+          params.maxRadius2 = math.max(10, params.maxRadius2);
         }
     };
 
@@ -263,8 +267,8 @@
             weight: 20
         },
         {
-            shape: shapeConvex,
-            weight: 20
+            shape: shapeLathe,
+            weight: 300
         },
         {
             shape: shapeWall,
@@ -410,7 +414,6 @@
                     <meta charset='UTF-8'>
                     <title>${outputFilename}</title>
                     <script src='file://${process.cwd()}/libs/three.min.js'></script>
-                    <script src='file://${process.cwd()}/libs/ConvexGeometry.js'></script>
                 </head>
                 <body style='margin:0; padding:0; overflow: hidden'>\n`);
 
@@ -431,6 +434,27 @@
                     var z = -w/2 + Math.round(Math.random() * w);
 
                     points.push(new THREE.Vector3(x, y, z));
+                  }
+
+                  return points;
+                }
+                \n`);
+
+                outf.write(`
+                function generateLathe() {
+
+                  var points = [];
+                  var width = ${params.maxRadius};
+                  var minWidth = Math.random() * width;
+                  var height = 8 * ${params.maxRadius2};
+                  var n = ${3 + Rp.bandomInt(100, 1)};
+                  var freq1 = Math.pow(Math.random(), 4) * 10;
+                  var freq2 = Math.pow(Math.random(), 4) * 10;
+                  var phase1 = Math.PI * 2 * Math.random();
+                  var phase2 = Math.PI * 2 * Math.random();
+
+                  for (var i = 0; i < n; i++) {
+                      points.push(new THREE.Vector3((Math.sin(phase1 + i * freq1 * Math.PI) + Math.cos(phase2 + i * freq2 * Math.PI)) * width + minWidth, 0, -height/2 + height * i / n ));
                   }
 
                   return points;
@@ -734,12 +758,12 @@
                 }
                 \n`);
 
-                // add convex
+                // add lathe
 
                 outf.write(`
-                function convex(scene, options) {
+                function lathe(scene, options) {
 
-                  var geometry = new THREE.ConvexGeometry(options.points);
+                  var geometry = new THREE.LatheGeometry(options.lathe, ${params.segments.h}, ${params.theta}, ${params.arc});
 
                   ${phongMaterial()}
 
@@ -763,6 +787,7 @@
                       var s = scene;
 
                       var points = generatePoints();
+                      var lathePoints = generateLathe();
 
                 \n`);
 
@@ -822,7 +847,8 @@
                       shininess: ${shininess},
                       specular: ${specular},
                       hsl: {h: ${hsl.h}, s: ${hsl.s}, l: ${hsl.l}},
-                      points: points
+                      points: points,
+                      lathe: lathePoints
                     });
                     \n`);
                 }
