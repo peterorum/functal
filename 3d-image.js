@@ -285,7 +285,7 @@
         },
         {
             shape: shapeTubular,
-            weight: 300000000//////////////////////
+            weight: 300
         },
         {
             shape: shapeWall,
@@ -943,8 +943,8 @@
 
                   var camera = new THREE.PerspectiveCamera( ${params.fieldOfView}, width / height, 0.1, 2000 );
 
-                  camera.position.x = 0; // ${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()};
-                  camera.position.y = 0; // ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()};
+                  camera.position.x = ${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()};
+                  camera.position.y = ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()};
                   camera.position.z = ${params.cameraPositionZ};
 
                   camera.lookAt(scene.position);
