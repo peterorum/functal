@@ -101,7 +101,7 @@
     }
 
     function setPosition(params, outf) {
-      outf.write(`
+        outf.write(`
         var shape = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 
         shape.rotation.x = ${params.rotation.x};
@@ -125,21 +125,24 @@
     let shapeLine = {
         fn: "ln",
         sample: () => (isDev ? 0.02 : 0.4),
-        init: () => {}
+        init: () => {
+        }
     };
 
     let shapeCylinder = {
         fn: "cyl",
         sample: (params) => (isDev ? 1
                 : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2)),
-        init: () => {}
+        init: () => {
+        }
     };
 
     let shapeBox = {
         fn: "box",
         sample: (params) => (isDev ? 1
                 : 1) / math.square(Math.max(params.maxRadius, params.maxRadius2)),
-        init: () => {}
+        init: () => {
+        }
     };
 
     let shapeSphere = {
@@ -147,8 +150,8 @@
         sample: (params) => (isDev ? 1
                 : 1) / math.pow(params.maxRadius, 1.5),
         init: (params) => {
-          params.maxRadius = math.max(10, params.maxRadius);
-          params.segments = math.max(4, params.segments);
+            params.maxRadius = math.max(10, params.maxRadius);
+            params.segments = math.max(4, params.segments);
         }
     };
 
@@ -157,7 +160,7 @@
         sample: (params) => (isDev ? 1
                 : 1) / math.pow(params.maxRadius2, 1.5),
         init: (params) => {
-          params.maxRadius2 = math.max(64, params.maxRadius2);
+            params.maxRadius2 = math.max(64, params.maxRadius2);
         }
     };
 
@@ -166,8 +169,8 @@
         sample: (params) => (isDev ? 1
                 : 1) / math.pow(params.maxRadius + params.maxRadius2, 2),
         init: (params) => {
-          params.maxRadius = math.max(10, params.maxRadius);
-          params.segments = math.max(4, params.segments);
+            params.maxRadius = math.max(10, params.maxRadius);
+            params.segments = math.max(4, params.segments);
         }
     };
 
@@ -176,18 +179,25 @@
         sample: (params) => (isDev ? 1
                 : 1) / math.pow(params.maxRadius + params.maxRadius2, 2),
         init: (params) => {
-          params.maxRadius = math.min(20, params.maxRadius);
-          params.maxRadius2 = math.max(2 * params.maxRadius, params.maxRadius2);
-          params.segments = math.max(4, params.segments);
+            params.maxRadius = math.min(20, params.maxRadius);
+            params.maxRadius2 = math.max(2 * params.maxRadius, params.maxRadius2);
+            params.segments = math.max(4, params.segments);
         }
     };
 
+    let shapeTubular = {
+        fn: "tub",
+        sample: (params) => 1 / params.xy.length, // just one big shape
+        init: () => {
+        }
+    };
 
     let shapePlane = {
         fn: "plane",
         sample: (params) => (isDev ? 1
                 : 1) / params.maxRadius / 8,
-        init: () => {}
+        init: () => {
+        }
     };
 
     let shapeCircle = {
@@ -195,7 +205,7 @@
         sample: (params) => (isDev ? 1
                 : 1) / math.square(params.maxRadius2),
         init: (params) => {
-          params.maxRadius2 = math.max(10, params.maxRadius2);
+            params.maxRadius2 = math.max(10, params.maxRadius2);
         }
     };
 
@@ -211,7 +221,8 @@
         fn: "wall",
         sample: (params) => (isDev ? 1
                 : 1) / params.dimensions.outputWidth / math.randomInt(1, 10),
-        init: () => {}
+        init: () => {
+        }
 
     };
 
@@ -219,8 +230,8 @@
         fn: "lathe",
         sample: (params) => 1 / math.pow(params.maxRadius * params.maxRadius2, 1.4),
         init: (params) => {
-          params.maxRadius = math.max(10, params.maxRadius);
-          params.maxRadius2 = math.max(10, params.maxRadius2);
+            params.maxRadius = math.max(10, params.maxRadius);
+            params.maxRadius2 = math.max(10, params.maxRadius2);
         }
     };
 
@@ -269,6 +280,10 @@
         {
             shape: shapeLathe,
             weight: 300
+        },
+        {
+            shape: shapeTubular,
+            weight: 300000000//////////////////////
         },
         {
             shape: shapeWall,
@@ -371,6 +386,9 @@
 
             let fieldOfView = 60 + Rp.bandom(30, 2);
 
+            let cameraPositionZ = math.random(1000, 2000);
+
+
             let shape = Rp.wandom(shapes).shape;
 
             let params = {
@@ -396,6 +414,7 @@
                 knotQ,
                 rotation,
                 fieldOfView,
+                cameraPositionZ,
                 shape
             };
 
@@ -634,6 +653,56 @@
                 }
                 \n`);
 
+                // add tubular
+                // just a single large shape
+
+                let radius = math.randomInt(1, 16);
+
+                outf.write(`
+                function tub(scene, options) {
+
+                  var size = (1 - options.hsl.l / 2);
+
+                  let radius = ${ radius };
+                  let numberOfPoints = ${ math.randomInt(8, 16000 / radius)};
+                  let segments = numberOfPoints;
+                  let radiusSegments = ${math.randomInt(4, params.segments)};
+                  let closed = true;
+                  let points = [];
+
+                  for (var i = 0; i < numberOfPoints; i++) {
+                      var randomX = -500 + Math.round(Math.random() * 1000);
+                      var randomY = -500 + Math.round(Math.random() * 1000);
+                      var randomZ = Math.round(Math.random() * ${params.cameraPositionZ / 2});
+
+                      points.push(new THREE.Vector3(randomX, randomY, randomZ));
+                  }
+
+                  var geometry = new THREE.TubeGeometry(new THREE.SplineCurve3(points), segments, radius, radiusSegments, closed);
+
+                  ${phongMaterial()}
+
+                \n`);
+
+                setWireframe(params, outf);
+
+                outf.write(`
+                  var tubular = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+
+                  // tubular.rotation.y = ${params.theta} + 2 * Math.PI * options.hsl.h;
+
+                  tubular.position.x = 0;
+                  tubular.position.y = 0;
+                  tubular.position.z = 0;
+
+                  tubular.castShadow = true;
+                  tubular.receiveShadow = true;
+
+                  scene.add(tubular);
+                }
+                \n`);
+
+
                 // add plane
 
                 outf.write(`
@@ -793,6 +862,9 @@
 
                 let xy = [];
 
+                params.xy = xy;
+                params.data = data;
+
                 for (let y = 0; y < dimensions.outputHeight; y++) {
 
                     for (let x = 0; x < dimensions.outputWidth; x++) {
@@ -807,8 +879,6 @@
                 let sample = shape.sample(params);
                 xy = R.take(xy.length * sample, xy);
 
-                params.xy = xy;
-                params.data = data;
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -860,8 +930,6 @@
                 params.ambientLight = randomColor(params, 0.5);
                 console.log('params.ambientLight ', params.ambientLight);
 
-                let cameraPositionZ = 1000;
-
                 // camera
                 outf.write(`
                   var renderer = new THREE.WebGLRenderer();
@@ -869,11 +937,11 @@
                   renderer.shadowMapEnabled = true;
                   renderer.shadowMapType = THREE.BasicShadowMap;
 
-                  var camera = new THREE.PerspectiveCamera( ${params.fieldOfView}, width / height, 0.1, 1000 );
+                  var camera = new THREE.PerspectiveCamera( ${params.fieldOfView}, width / height, 0.1, 2000 );
 
-                  camera.position.x = ${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()};
-                  camera.position.y = ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()};
-                  camera.position.z = ${cameraPositionZ};
+                  camera.position.x = 0; // ${Rp.bandomInt(dimensions.outputWidth / 2, 2) * Rp.randomSign()};
+                  camera.position.y = 0; // ${Rp.bandomInt(dimensions.outputHeight / 2, 2) * Rp.randomSign()};
+                  camera.position.z = ${params.cameraPositionZ};
 
                   camera.lookAt(scene.position);
                   \n`);
