@@ -187,8 +187,10 @@
 
     let shapeTubular = {
         fn: "tub",
-        sample: (params) => 1 / params.xy.length, // just one big shape
-        init: () => {
+        // around 20,000 points base
+        sample: (params) => math.pow(params.dimensions.outputWidth * params.dimensions.outputHeight, -0.3) /  math.pow(params.maxRadius, 2),
+        init: (params) => {
+          params.maxRadius = math.randomInt(1, 16);
         }
     };
 
@@ -337,8 +339,6 @@
                 outputHeight
             };
 
-            let maxz = 100 + Rp.bandomInt(outputHeight - 100, 3);
-
             let maxRadius = 1 + Rp.bandomInt(128, 2);
             let maxRadius2 = (maxRadius < 10 ? 10 + Rp.bandomInt(128, 2) : (math.random() < 0.5 ? maxRadius : 1 + Rp.bandomInt(128, 2)));
 
@@ -388,6 +388,8 @@
 
             let cameraPositionZ = math.random(1000, 2000);
 
+            let maxz = cameraPositionZ * 0.6;
+
 
             let shape = Rp.wandom(shapes).shape;
 
@@ -425,6 +427,25 @@
             params.dimensions = dimensions;
 
             try {
+                let xy = [];
+
+                for (let y = 0; y < dimensions.outputHeight; y++) {
+
+                    for (let x = 0; x < dimensions.outputWidth; x++) {
+                        xy.push({
+                            x: x,
+                            y: y
+                        });
+                    }
+                }
+
+                xy = R.sortBy(() => math.random(), xy);
+                let sample = shape.sample(params);
+                xy = R.take(xy.length * sample, xy);
+
+                params.xy = xy;
+                params.data = data;
+
                 var outf = fs.createWriteStream(`${outputFilename}`);
 
                 outf.write(`<!DOCTYPE html>
@@ -656,49 +677,48 @@
                 // add tubular
                 // just a single large shape
 
-                let radius = math.randomInt(1, 16);
-
                 outf.write(`
                 function tub(scene, options) {
 
-                  var size = (1 - options.hsl.l / 2);
+                  scene.localStorage.points = scene.localStorage.points || [];
 
-                  let radius = ${ radius };
-                  let numberOfPoints = ${ math.randomInt(8, 16000 / radius)};
-                  let segments = numberOfPoints;
-                  let radiusSegments = ${math.randomInt(4, params.segments)};
-                  let closed = true;
-                  let points = [];
+                  scene.localStorage.points.push(new THREE.Vector3(options.x, options.y, options.z));
 
-                  for (var i = 0; i < numberOfPoints; i++) {
-                      var randomX = -500 + Math.round(Math.random() * 1000);
-                      var randomY = -500 + Math.round(Math.random() * 1000);
-                      var randomZ = Math.round(Math.random() * ${params.cameraPositionZ / 2});
+                  // start draw after last one
 
-                      points.push(new THREE.Vector3(randomX, randomY, randomZ));
-                  }
+                  if (scene.localStorage.points.length === options.numberOfPoints) {
 
-                  var geometry = new THREE.TubeGeometry(new THREE.SplineCurve3(points), segments, radius, radiusSegments, closed);
+                    let radius = ${ params.maxRadius };
+                    let numberOfPoints = scene.localStorage.points.length;
+                    let segments = numberOfPoints;
+                    let radiusSegments = ${math.randomInt(4, params.segments)};
+                    let closed = true;
 
-                  ${phongMaterial()}
+                    //todo: use CatmullRomCurve3
+                    var geometry = new THREE.TubeGeometry(new THREE.SplineCurve3(scene.localStorage.points), segments, radius, radiusSegments, closed);
+
+                    options.color = ${ randomColor(params, 1)};
+
+                    ${phongMaterial()}
 
                 \n`);
 
                 setWireframe(params, outf);
 
                 outf.write(`
-                  var tubular = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+                    var tubular = new THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
 
-                  // tubular.rotation.y = ${params.theta} + 2 * Math.PI * options.hsl.h;
+                    tubular.position.x = 0;
+                    tubular.position.y = 0;
+                    tubular.position.z = 0;
 
-                  tubular.position.x = 0;
-                  tubular.position.y = 0;
-                  tubular.position.z = 0;
+                    tubular.castShadow = true;
+                    tubular.receiveShadow = true;
 
-                  tubular.castShadow = true;
-                  tubular.receiveShadow = true;
+                    scene.add(tubular);
 
-                  scene.add(tubular);
+                  } // end draw
+
                 }
                 \n`);
 
@@ -859,29 +879,9 @@
                       var lathePoints = generateLathe();
 
                       // general storage
-                      s.localPoints = [];
+                      s.localStorage = {};
 
                 \n`);
-
-                let xy = [];
-
-                params.xy = xy;
-                params.data = data;
-
-                for (let y = 0; y < dimensions.outputHeight; y++) {
-
-                    for (let x = 0; x < dimensions.outputWidth; x++) {
-                        xy.push({
-                            x: x,
-                            y: y
-                        });
-                    }
-                }
-
-                xy = R.sortBy(() => math.random(), xy);
-                let sample = shape.sample(params);
-                xy = R.take(xy.length * sample, xy);
-
 
                 for (let k = 0; k < xy.length; k++) {
 
@@ -921,7 +921,8 @@
                       specular: ${specular},
                       hsl: {h: ${hsl.h}, s: ${hsl.s}, l: ${hsl.l}},
                       points: points,
-                      lathe: lathePoints
+                      lathe: lathePoints,
+                      numberOfPoints: ${xy.length}
                     });
                     \n`);
                 }
