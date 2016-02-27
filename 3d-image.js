@@ -858,6 +858,9 @@
                       var points = generatePoints();
                       var lathePoints = generateLathe();
 
+                      // general storage
+                      s.localPoints = [];
+
                 \n`);
 
                 let xy = [];
