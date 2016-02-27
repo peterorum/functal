@@ -17,7 +17,7 @@ if [ -s "${1/\.jpg/.svg}" ]
 then
   echo 'convert to jpg'
 
-  time=`date +%s`
+  time=`date +%Y%m%d%H%M%S`
   out=${1/\.jpg/-svg-}$time.jpg
 
   svg=${1/\.jpg/.svg}
