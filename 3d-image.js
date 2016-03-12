@@ -237,6 +237,13 @@
         }
     };
 
+    let shapePoint = {
+        fn: "pt",
+        sample: (params) => (isDev ? 1
+                : 1) / math.square(params.pointSize),
+        init: () => {
+        }
+    };
 
     let shapes = [
         {
@@ -290,6 +297,10 @@
         {
             shape: shapeWall,
             weight: 150
+        },
+        {
+            shape: shapePoint,
+            weight: 20
         }
     ];
 
@@ -390,6 +401,7 @@
 
             let maxz = cameraPositionZ * 0.6;
 
+            let pointSize = math.randomInt(1, 5);
 
             let shape = Rp.wandom(shapes).shape;
 
@@ -398,6 +410,7 @@
                 maxz,
                 maxRadius,
                 maxRadius2,
+                pointSize,
                 maxShininess,
                 spotLights,
                 pointLights,
@@ -861,6 +874,25 @@
                 setWireframe(params, outf);
 
                 setPosition(params, outf);
+
+                // add point
+
+                outf.write(`
+                function pt(scene, options) {
+
+                  var material = new THREE.PointsMaterial({size: ${params.pointSize}, vertexColors: true, color: 0xffffff});
+
+                  var geometry = new THREE.Geometry();
+                  var point = new THREE.Vector3(options.x, options.y, options.z );
+
+                  geometry.vertices.push(point);
+                  geometry.colors.push(new THREE.Color(options.color));
+
+                  var particle = new THREE.Points(geometry, material);
+
+                  scene.add(particle);
+                }
+                \n`);
 
                 // --------------------
 
