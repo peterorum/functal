@@ -13,6 +13,7 @@ cd /home/ec2-user/functal
 
 while :
 do
+    git pull -X theirs
     node --harmony functal
     sleep 1
 done
