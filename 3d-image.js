@@ -300,7 +300,7 @@
         },
         {
             shape: shapePoint,
-            weight: 20
+            weight: 50
         }
     ];
 
@@ -707,8 +707,7 @@
                     let radiusSegments = ${math.randomInt(4, params.segments)};
                     let closed = true;
 
-                    //todo: use CatmullRomCurve3
-                    var geometry = new THREE.TubeGeometry(new THREE.SplineCurve3(scene.localStorage.points), segments, radius, radiusSegments, closed);
+                    var geometry = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(scene.localStorage.points), segments, radius, radiusSegments, closed);
 
                     options.color = ${ randomColor(params, 1)};
 
