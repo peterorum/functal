@@ -84,7 +84,7 @@
 
             // analogous complementary color scheme (adjacents & complemt)
 
-            var hue = selectHue([3, 5], wues);
+            var hue = selectHue([3, 5, 8], wues);
 
             palette.mainHue = hue * 12;
 
