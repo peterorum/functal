@@ -239,7 +239,7 @@
 
     let shapePoint = {
         fn: "pt",
-        sample: (params) => (isDev ? 1
+        sample: (params) => (isDev ? 0.1
                 : 1) / math.square(params.pointSize),
         init: () => {
         }
@@ -880,7 +880,12 @@
                 outf.write(`
                 function pt(scene, options) {
 
-                  var material = new THREE.PointsMaterial({size: ${params.pointSize}, vertexColors: true, color: 0xffffff});
+                  var material = new THREE.PointsMaterial({
+                    size: ${params.pointSize},
+                    vertexColors: true,
+                    opacity: options.opacity,
+                    transparent: true,
+                    color: 0xffffff});
 
                   var geometry = new THREE.Geometry();
                   var point = new THREE.Vector3(options.x, options.y, options.z );
