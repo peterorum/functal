@@ -627,7 +627,7 @@
       {
         // orange
         hue: 1 / 12,
-        weight: 0 //30
+        weight: 50 //30
       },
       {
         // yellow
