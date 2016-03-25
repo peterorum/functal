@@ -447,6 +447,13 @@
     return ok;
   }
 
+  function isHueModeSLOk(sl) {
+
+    var ok = ! R.contains(sl, ['0,0,1', '0,2,1']);
+
+    return ok;
+  }
+
   // determine colors within the band
 
   function interpolateColors(rgb1, rgb2, gap, i) {
@@ -786,6 +793,7 @@
         // palette.hslStats.l.min < minHslStats.l.min &&
         // palette.hslStats.l.max > minHslStats.l.max &&
         // isHueModeOk(palette.hslStats.h.mode) &&
+        // isHueModeSLOk(palette.hslStats.h.modesl) &&
         true;
 
     } while (!ok);
@@ -817,6 +825,7 @@
   exports.getIntensity = getIntensity;
   exports.calcHslStats = calcHslStats;
   exports.isHueModeOk = isHueModeOk;
+  exports.isHueModeSLOk = isHueModeSLOk;
   exports.fixColor = fixColor;
 
 }());

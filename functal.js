@@ -837,6 +837,7 @@
           functal.hslStats.l.max > functal.minHslStats.l.max &&
           functal.hslStats.i.max > functal.minHslStats.i.max &&
           pal.isHueModeOk(functal.hslStats.h.mode) &&
+          pal.isHueModeSLOk(functal.hslStats.h.modesl) &&
           functal.uniques > functal.sampleCount &&
           true;
 
