@@ -361,6 +361,7 @@
     }, hslkeys);
 
     hslStats.h.mode = calcHueMode(hsls);
+    hslStats.h.modesl = calcHueModesl(hsls);
 
     return hslStats;
   }
@@ -400,6 +401,41 @@
     mode = mode / 2;
 
     return mode;
+  }
+
+  function calcHueModesl(hsls) {
+
+    // reduce s & l to 4 broad ranges
+
+    var dist = {};
+    var max = -1;
+    var maxc = '';
+
+    R.forEach(function(hsl) {
+
+      var h = math.round(hsl.h * 12 * 2) / 2;
+      var s = math.round(hsl.s * 4);
+      var l = math.round(hsl.l * 4);
+
+      var c = h + ',' + s + ',' + l;
+
+      if (dist[c]) {
+
+        dist[c] += 1;
+      }
+      else {
+
+        dist[c] = 1;
+      }
+
+      if (dist[c] > max) {
+        max = dist[c];
+        maxc = c;
+      }
+    }, hsls);
+
+
+    return maxc;
   }
 
   function isHueModeOk(h12) {
