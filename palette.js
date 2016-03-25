@@ -449,7 +449,11 @@
 
   function isHueModeSLOk(sl) {
 
-    var ok = ! R.contains(sl, ['0,0,1', '0,2,1']);
+    var ok = ! R.contains(sl, [
+      '0,0,1',
+      '0,2,1',
+      '0,0,3'
+      ]);
 
     return ok;
   }
