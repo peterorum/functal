@@ -442,7 +442,7 @@
 
     // less green, brown, purple
 
-    var ok = ! R.contains(h12, [3, 3.5, 5, 5.5, 6.5, 9.5]);
+    var ok = true; /// ! R.contains(h12, [3, 3.5, 5, 5.5, 6.5, 9.5]);
 
     return ok;
   }
