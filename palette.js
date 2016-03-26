@@ -11,7 +11,7 @@
 
   var minHslStats = {
     h: {
-      std: 0.05
+      std: 0.20
     },
     s: {
       std: 0.25,
@@ -450,10 +450,11 @@
   function isHueModeSLOk(sl) {
 
     var ok = ! R.contains(sl, [
-      '0,0,1',
-      '0,2,1',
-      '0,0,3',
-      '0,4,4'
+      // '0,0,1',
+      // '0,0,3',
+      // '0,2,1',
+      // '0,3,1',
+      // '0,4,4'
       ]);
 
     return ok;
@@ -794,12 +795,12 @@
       palette.hslStats = calcHslStats(palette.colors);
 
       ok =
+        palette.hslStats.h.std > minHslStats.h.std;
         // palette.hslStats.l.std > minHslStats.l.std &&
         // palette.hslStats.l.min < minHslStats.l.min &&
         // palette.hslStats.l.max > minHslStats.l.max &&
         // isHueModeOk(palette.hslStats.h.mode) &&
         // isHueModeSLOk(palette.hslStats.h.modesl) &&
-        true;
 
     } while (!ok);
 
