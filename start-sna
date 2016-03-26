@@ -1,0 +1,4 @@
+#!/bin/sh
+
+aws ec2 start-instances --instance-ids i-6032a543
+
