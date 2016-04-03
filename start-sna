@@ -4,5 +4,5 @@ aws ec2 start-instances --instance-ids i-6032a543
 
 sleep 10
 
-aws ec2 associate-address --instance-id i-0ddae9555b347beb6 --public-ip 107.20.192.143
+aws ec2 associate-address --instance-id i-6032a543 --public-ip 107.20.192.143
 
