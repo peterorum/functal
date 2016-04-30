@@ -555,8 +555,8 @@
         height: 1024
       },
       large: {
-        width: 1920,
-        height: 1080
+        width: 2048,
+        height: 2732
       }
     };
 
