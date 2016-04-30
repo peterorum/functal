@@ -12,7 +12,7 @@
   var mongodb = promise.promisifyAll(require("mongodb"));
   var mongoClient = promise.promisifyAll(mongodb.MongoClient);
 
-  var msg = '#fractal #functal #digitalart iPhone app https://bit.ly/dailyfunctal';
+  var msg = '#fractal #functal #digitalart';//  iPhone app https://bit.ly/dailyfunctal';
 
   var bucket = 'functal-images';
   // var bucketJson = 'functal-json';
