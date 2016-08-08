@@ -2,9 +2,9 @@
 
 printjson(word)
 
-// use functal
-// db.images.remove({'title': {$regex: word }})
+use functal
+db.images.remove({'title': {$regex: word }})
 
-// use topics
-// db.titles.remove({title: {$regex: word }})
-// db.tweets.remove({text: {$regex: word }})
+use topics
+db.titles.remove({title: {$regex: word }})
+db.tweets.remove({text: {$regex: word }})
