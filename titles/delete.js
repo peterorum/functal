@@ -1,4 +1,4 @@
-// useage mongo (login) --eval"var word='bi?tch'" delete.js"
+// useage mongo (login) --eval"var word='bi?tch'" delete.js
 
 printjson('deleting ' + word);
 
