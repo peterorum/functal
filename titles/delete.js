@@ -7,6 +7,8 @@ printjson(db.getCollectionNames());
 
 // db.images.remove({'title': {$regex: word }});
 
-// db = db.getSiblingDB('topics');
+db = db.getSiblingDB('topics');
+printjson(db.getCollectionNames());
+
 // db.titles.remove({title: {$regex: word }});
 // db.tweets.remove({text: {$regex: word }});
