@@ -1,10 +1,12 @@
 // useage mongo (login) --eval"var word='bi?tch'" delete.js"
 
-printjson(word)
+printjson(word);
 
-use functal
-db.images.remove({'title': {$regex: word }})
+db = db.getSiblingDB('functal');
+printjson(db.getCollectionNames());
 
-use topics
-db.titles.remove({title: {$regex: word }})
-db.tweets.remove({text: {$regex: word }})
+// db.images.remove({'title': {$regex: word }});
+
+// db = db.getSiblingDB('topics');
+// db.titles.remove({title: {$regex: word }});
+// db.tweets.remove({text: {$regex: word }});
