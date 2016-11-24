@@ -39,10 +39,11 @@
           db.collection('images').findOneAsync(
             {
               name: key
-            }).then(function(image) {
-            if (image && image.title) {
-              msg = '"' + image.title + '" ' + msg;
-            }
+            }).then(function(/*image*/) {
+
+            // if (image && image.title) {
+            //   msg = '"' + image.title + '" ' + msg;
+            // }
 
             twit.tweet(msg, tmpFile, function() {});
 
