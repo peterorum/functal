@@ -1,8 +1,10 @@
 (function() {
 
+  // old version - uses NLP to add title
+
   "use strict";
 
-  var version = '3.0.0';
+  var version = '2.2.4';
 
   var seedrandom = require('seedrandom');
   var randomSeed = (new Date()).getTime();
@@ -803,7 +805,7 @@
   // ------------ make a functal
 
 
-  fractal.create = function(dbFunctal) {
+  fractal.create = function(dbFunctal, dbTopics) {
 
     var deferred = Q.defer();
 
@@ -875,6 +877,8 @@
 
     if (functal.accept) {
 
+      functal.topic = modifiers.getTopic(functal);
+
       // save options spec
       fsq.writeFile(functal.file + '.json', JSON.stringify(R.omit(['zs', 'data', 'modifiers'], functal), null, 4))
         .then(function() {
@@ -882,13 +886,41 @@
           // save jpg
           return fractal.jpg(functal);
         })
-        .then(function(/*doc*/) {
+        // .then(function() {
 
-          var image = {
-            name: functal.filename + '.jpg'
-          };
+        //   // save processing
+        //   return fractal.processing(functal);
+        // })
+        .then(function() {
 
-          return dbFunctal.collection('images').insertAsync(image);
+          // get title
+
+          console.log('getting title for topic:' + functal.topic);
+
+          return dbTopics.collection('titles').findOneAsync({
+            topic: functal.topic
+          });
+        })
+        .then(function(doc) {
+
+          if (doc) {
+
+            console.log(functal.topic + ': ' + doc.title);
+
+            var image = {
+              name: functal.filename + '.jpg',
+              title: doc.title,
+              topic: functal.topic
+            };
+
+            // delete topic & save title
+            return dbTopics.collection('titles').removeAsync(doc).then(function() {
+              return dbFunctal.collection('images').insertAsync(image);
+            });
+          }
+          else {
+            console.log('no title for topic');
+          }
         })
         .then(function() {
           if (!isDev) {
@@ -932,6 +964,7 @@
 
   mongoClient.connectAsync(process.env.mongo_functal).then(function(client) {
     var dbFunctal = client.db('functal');
+    var dbTopics = client.db('topics');
 
     fractal.isOkToMake().then(function(ok) {
 
@@ -944,7 +977,7 @@
 
         for (var i = 0; i < count; i++) {
           result = result.then(function() {
-            return fractal.create(dbFunctal);
+            return fractal.create(dbFunctal, dbTopics);
           }, function() {
             console.log('fail - rejected');
           });
