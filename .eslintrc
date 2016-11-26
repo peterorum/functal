@@ -9,6 +9,9 @@
   "ecmaFeatures": {
     "modules": true
   },
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "globals": {
     "require": true,
     "exports": true,
