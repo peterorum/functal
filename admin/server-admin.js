@@ -74,7 +74,7 @@
         if (image) {
             image.likes = doc.likes || 0;
             image.dislikes = doc.dislikes || 0;
-            image.title = doc.title;
+            image.caption = doc.caption;
         }
     };
 
@@ -136,6 +136,7 @@
                         name: img.Key,
                         likes: 0,
                         dislikes: 0,
+                        caption: '',
                         title: '',
                         sort: img.LastModified.getTime()
                     };
@@ -166,13 +167,16 @@
                             });
                     }, unpopular);
 
-                    // only return populer
+                    // only return popular
                     images = R.filter(function(i) {
                         return typeof i.likes === 'undefined' || i.likes >= i.dislikes;
                     }, images);
 
                     // newsest ones first
                     images = R.sortBy((i) => - i.sort, images);
+
+                    // map caption to title for backward compatibility
+                    R.forEach((i) => {i.title = i.caption}, images);
 
                     resolve();
                 });
