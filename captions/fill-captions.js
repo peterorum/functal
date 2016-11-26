@@ -1,6 +1,6 @@
 "use strict";
 
-let {getCaption} = require('./set-captions');
+let getCaption = require('./set-captions').getCaption;
 
 console.log(getCaption);
 
