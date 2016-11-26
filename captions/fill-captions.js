@@ -2,8 +2,6 @@
 
 let getCaption = require('./set-captions').getCaption;
 
-console.log(getCaption);
-
 // add a caption to each image without one
 
 let promise = require("bluebird");
@@ -33,13 +31,13 @@ let setCaptions = function(db) {
 
       docs.reverse();
 
-      console.log('count: ' + docs.length);
+      console.log('full count: ' + docs.length);
 
-      docs = docs.slice(0,5);
-
-      console.log('count: ' + docs.length);
-
+      // vision api limit
+      docs = docs.slice(0, 5000);
       let delay = 3000;
+
+      console.log('limit count: ' + docs.length);
 
       let counter = 0;
 
