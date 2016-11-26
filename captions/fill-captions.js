@@ -39,8 +39,8 @@ let setCaptions = function(db) {
       // console.log('limit count: ' + docs.length);
 
       // full blast
-      // 10 per second
-      let delay = 0.1;
+      // 10 per second = 100ms
+      let delay = 100;
 
       let counter = 0;
 
