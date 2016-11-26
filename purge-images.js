@@ -48,15 +48,17 @@
               if (keys.indexOf(image.name) >= 0) {
                 // found
               } else {
-                console.log('delete', image.name);
+                // console.log('delete', image.name);
                 toDelete.push(image.name);
               }
             });
 
             console.log('delete count', toDelete.length);
 
-            db.close();
-
+            dbImages.removeAsync({name: {$in: toDelete}}).then(() =>{
+              console.log('deleted');
+              db.close()
+            });
         });
 
       }
