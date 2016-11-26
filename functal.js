@@ -36,6 +36,8 @@
   var mongodb = promise.promisifyAll(require("mongodb"));
   var mongoClient = promise.promisifyAll(mongodb.MongoClient);
 
+  var getCaption = require('./captions/set-captions').getCaption;
+
   // smaller image, no tweet
   var isDev = /Apple_Terminal|iterm\.app/i.test(process.env.TERM_PROGRAM);
 
@@ -882,14 +884,6 @@
           // save jpg
           return fractal.jpg(functal);
         })
-        .then(function(/*doc*/) {
-
-          var image = {
-            name: functal.filename + '.jpg'
-          };
-
-          return dbFunctal.collection('images').insertAsync(image);
-        })
         .then(function() {
           if (!isDev) {
             return s3.upload('functal-images', functal.filename + '.jpg', functal.file + '.jpg');
@@ -899,6 +893,25 @@
           if (!isDev) {
             return s3.upload('functal-json', functal.filename + '.json', functal.file + '.json');
           }
+        })
+        .then(function() {
+          // get caption, assumes on s3
+
+          let url = `https://s3.amazonaws.com/functal-images/${functal.filename}.jpg`;
+
+          return getCaption(url);
+
+        })
+        .then(function(caption) {
+
+          console.log('caption', caption);
+
+          var image = {
+            name: functal.filename + '.jpg',
+            caption: caption
+          };
+
+          return dbFunctal.collection('images').insertAsync(image);
         })
         .then(function() {
           if (!isDev) {

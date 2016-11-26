@@ -50,7 +50,7 @@ let setCaptions = function(db) {
           counter++;
           setTimeout(function() {
 
-            let imageUrl = `https://d1aienjtp63qx3.cloudfront.net/${image.name}`;
+            let imageUrl = `https://s3.amazonaws.com/functal-images/${image.name}`;
 
             console.log(imageUrl);
 
