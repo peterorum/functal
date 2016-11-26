@@ -25,6 +25,15 @@ function getCaption(image) {
         reject(error);
       } else {
         let caption = body.description && body.description.captions && body.description.captions[0].text;
+
+        if (! caption) {
+          console.log(response);
+
+          // body:
+          //  { statusCode: 429,
+          //    message: 'Rate limit is exceeded. Try again in 1 seconds.' } }
+        }
+
         resolve(caption);
       }
     });

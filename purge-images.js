@@ -30,8 +30,6 @@
 
         console.log('keys count', keys.length);
 
-        console.log(keys[0]);
-
         // process each db image
         // delete if not in s3 list
 

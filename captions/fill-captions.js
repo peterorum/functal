@@ -34,13 +34,13 @@ let setCaptions = function(db) {
       console.log('full count: ' + docs.length);
 
       // vision api limit
-      // docs = docs.slice(0, 5000);
+      // docs = docs.slice(0, 50);
       // let delay = 3000;
       // console.log('limit count: ' + docs.length);
 
       // full blast
       // 10 per second = 100ms
-      let delay = 100;
+      let delay = 200;
 
       let counter = 0;
 
