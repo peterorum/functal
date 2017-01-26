@@ -35,7 +35,7 @@ let setCaptions = function(db) {
 
       // vision api limit
       // docs = docs.slice(0, 50);
-      let delay = 3000;
+      let delay = 4000;
 
       // full blast
       // 10 per second = 100ms
