@@ -66,11 +66,30 @@ let setCaptions = function(db) {
                   }, image).then(function() {
                   updateResolve();
                 });
+
               } else {
                 console.log('no caption');
                 updateResolve();
 
               }
+            }, (error, message) => {
+              console.log('error', error, message);
+
+              if (message === 'Image URL is not accessible.') {
+                console.log('delete image');
+
+                db.collection('images').removeAsync(
+                  {
+                    name: image.name
+                  }).then(function() {
+                  updateResolve();
+                });
+
+              } else {
+                updateResolve();
+
+              }
+
             });
 
           // shedule the delay

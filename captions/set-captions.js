@@ -22,19 +22,27 @@ function getCaption(image) {
     }, (error, response, body) => {
 
       if (error) {
-        reject(error);
+        reject('api error', error);
       } else {
         let caption = body.description && body.description.captions && body.description.captions[0].text;
 
-        if (! caption) {
+        if (!caption) {
           console.log(response);
 
-          // body:
-          //  { statusCode: 429,
-          //    message: 'Rate limit is exceeded. Try again in 1 seconds.' } }
-        }
+          reject('no caption', body.message);
 
-        resolve(caption);
+        // body:
+        //  { statusCode: 429,
+        //    message: 'Rate limit is exceeded. Try again in 1 seconds.' } }
+
+        // body:
+        // { code: 'InvalidImageUrl',
+        //   message: 'Image URL is not accessible.' } }
+
+
+        } else {
+          resolve(caption);
+        }
       }
     });
 
