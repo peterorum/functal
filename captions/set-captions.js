@@ -28,8 +28,8 @@ function getCaption(image) {
 
         if (!caption) {
 
-          console.log('response', response);
-          console.log('=== body', body);
+          // console.log('response', response);
+          // console.log('=== body', body);
 
           reject(body);
 
