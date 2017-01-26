@@ -72,10 +72,10 @@ let setCaptions = function(db) {
                 updateResolve();
 
               }
-            }, (error, code) => {
-              console.log('error', error, code);
+            }, (result) => {
+              console.log('error result', result);
 
-              if (code === 'InvalidImageUrl.') {
+              if (result.code === 'InvalidImageUrl.') {
                 console.log('delete image');
 
                 db.collection('images').removeAsync(

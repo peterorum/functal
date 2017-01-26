@@ -31,7 +31,7 @@ function getCaption(image) {
           console.log('response', response);
           console.log('=== body', body);
 
-          reject('no caption', body.code);
+          reject(body);
 
         // body:
         //  { statusCode: 429,
