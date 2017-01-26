@@ -8,7 +8,8 @@ function getCaption(image) {
 
   return new Promise(function(resolve, reject) {
     request.post({
-      uri: 'https://api.projectoxford.ai/vision/v1.0/analyze',
+      // uri: 'https://api.projectoxford.ai/vision/v1.0/analyze',
+      uri: 'https://westus.api.cognitive.microsoft.com/vision/v1.0/analyze',
       headers: {
         'Ocp-Apim-Subscription-Key': process.env.ms_key1
       },
