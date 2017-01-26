@@ -28,7 +28,8 @@ function getCaption(image) {
 
         if (!caption) {
 
-          console.log(response);
+          console.log('response', response);
+          console.log('=== body', body);
 
           reject('no caption', body.code);
 
