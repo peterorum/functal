@@ -27,7 +27,9 @@ function getCaption(image) {
         let caption = body.description && body.description.captions && body.description.captions[0].text;
 
         if (!caption) {
-          console.log(response);
+          console.log('error', error);
+          console.log('response', response);
+          console.log('body', body);
 
           reject('no caption', response.IncomingMessage.body.message);
 
