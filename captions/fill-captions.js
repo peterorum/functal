@@ -72,10 +72,10 @@ let setCaptions = function(db) {
                 updateResolve();
 
               }
-            }, (error, message) => {
-              console.log('error', error, message);
+            }, (error, code) => {
+              console.log('error', error, code);
 
-              if (message === 'Image URL is not accessible.') {
+              if (code === 'InvalidImageUrl.') {
                 console.log('delete image');
 
                 db.collection('images').removeAsync(

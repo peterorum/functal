@@ -27,11 +27,10 @@ function getCaption(image) {
         let caption = body.description && body.description.captions && body.description.captions[0].text;
 
         if (!caption) {
-          console.log('error', error);
-          console.log('response', response);
-          console.log('body', body);
 
-          reject('no caption', response.IncomingMessage.body.message);
+          console.log(response);
+
+          reject('no caption', body.code);
 
         // body:
         //  { statusCode: 429,
