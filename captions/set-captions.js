@@ -29,7 +29,7 @@ function getCaption(image) {
         if (!caption) {
           console.log(response);
 
-          reject('no caption', body.message);
+          reject('no caption', response.IncomingMessage.body.message);
 
         // body:
         //  { statusCode: 429,
