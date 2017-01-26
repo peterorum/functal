@@ -75,7 +75,7 @@ let setCaptions = function(db) {
             }, (result) => {
               console.log('error result', result);
 
-              if (result.code === 'InvalidImageUrl.') {
+              if (result.code === 'InvalidImageUrl') {
                 console.log('delete image');
 
                 db.collection('images').removeAsync(
