@@ -7,3 +7,14 @@ MAILTO=peter.orum@gmail.com
 #00 * * * * /home/ec2-user/data-hmm/tweet_common
 20 01 * * * /home/ec2-user/functal/titles/get-titles
 40 04 * * * /home/ec2-user/functal/titles/fill-empty-titles
+
+
+PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/aws/bin:/home/ec2-user/bin
+MAILTO=peter.orum@gmail.com
+00 01,07,20 * * * /home/ec2-user/functal/tweet
+30 01,13  * * * /home/ec2-user/functalbook/facebook
+15 00,08,16 * * * /home/ec2-user/functalbook/tumblr
+00 17 * * * /home/ec2-user/functalbook/reblog
+55 07 * * * /home/ec2-user/functal/start-sna
+03 08 * * * /home/ec2-user/random/dailyjzx
+*/5 * * * * /home/ec2-user/functal/captions/fill-captions
