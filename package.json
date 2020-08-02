@@ -25,7 +25,7 @@
     "body-parser": "^1.12.3",
     "chalk": "^1.1.1",
     "express": "^4.12.3",
-    "jpeg-js": "^0.1.1",
+    "jpeg-js": "^0.4.1",
     "lodash.debounce": "^3.1.0",
     "mathjs": "^1.2.0",
     "moment": "^2.10.6",
